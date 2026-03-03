@@ -143,11 +143,21 @@
         .project-image {
             width: 100%; height: 200px; position: relative; overflow: hidden;
         }
-        .project-image img {
+        .project-image img, .project-image video {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.4s ease;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .project-image video {
+            position: absolute; top: 0; left: 0;
+            opacity: 0;
         }
         .project-card:hover .project-image img { transform: scale(1.05); }
+        .project-card:hover .project-image video {
+            opacity: 1; transform: scale(1.05);
+        }
+        .project-card:hover .project-image img.has-video {
+            opacity: 0;
+        }
 
         .grad-1 { background: linear-gradient(135deg, #1a1040 0%, #2d1b69 40%, #7c5cfc 100%); }
         .grad-2 { background: linear-gradient(135deg, #0a192f 0%, #112240 40%, #2a6496 100%); }
@@ -229,6 +239,57 @@
         }
         footer p { font-size: 13px; color: var(--text-dim); }
 
+        /* SCROLL INDICATOR */
+        .scroll-hint {
+            position: absolute; bottom: 36px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 22px 10px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(124,92,252,0.3);
+            background: rgba(124,92,252,0.06);
+            color: var(--accent-2); font-size: 12px; font-weight: 600;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s;
+            animation: hintFade 2s ease 1.5s both, hintPulse 3s ease-in-out 3.5s infinite;
+        }
+        .scroll-hint:hover {
+            color: #fff;
+            border-color: rgba(124,92,252,0.6);
+            background: rgba(124,92,252,0.15);
+            box-shadow: 0 0 24px rgba(124,92,252,0.25);
+        }
+        .scroll-hint svg {
+            animation: bobDown 1.8s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        @keyframes bobDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
+        }
+        @keyframes hintFade {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124,92,252,0); }
+            50% { box-shadow: 0 0 20px 4px rgba(124,92,252,0.15); }
+        }
+
+        /* HERO TYPING EFFECT */
+        .hero-typed {
+            display: block; min-height: 1.2em;
+            color: var(--accent-2); font-style: italic; font-weight: 400;
+        }
+        .hero-typed .cursor {
+            display: inline-block; width: 2px; height: 1em;
+            background: var(--accent-2); margin-left: 2px;
+            animation: blink 0.7s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
         /* ANIMATIONS */
         .reveal {
             opacity: 0; transform: translateY(30px);
@@ -277,7 +338,8 @@
         <div class="hero-content">
             <div class="hero-label">AI Creative Specialist & Product Designer</div>
             <h1>I design tools that&nbsp;make AI work&nbsp;for&nbsp;creatives.</h1>
-            <p class="hero-desc">20+ years building at the intersection of design, AI, and engineering. Currently at Sett, where I've built 45+ AI production tools that generate game assets, animate characters, and ship playable ads end-to-end.</p>
+            <span class="hero-typed" id="heroTyped"><span class="cursor"></span></span>
+            <p class="hero-desc" style="margin-top: 20px;">20+ years building at the intersection of design, AI, and engineering. Currently at Sett, where I've built 45+ AI production tools that generate game assets, animate characters, and ship playable ads end-to-end.</p>
             <div class="hero-links">
                 <a href="https://github.com/ilanlenzner-design" class="btn btn-primary" target="_blank">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -288,6 +350,10 @@
             </div>
         </div>
     </div>
+    <a href="#work" class="scroll-hint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <span>See Projects</span>
+    </a>
 </section>
 
 <!-- WORK -->
@@ -300,7 +366,10 @@
         <div class="projects-grid stagger">
 
             <a href="https://github.com/ilanlenzner-design/InkForge" target="_blank" class="project-card reveal" style="--i:0">
-                <div class="project-image"><img src="images/inkforge-preview.jpg" alt="InkForge"></div>
+                <div class="project-image">
+                    <img src="images/inkforge-preview.jpg" alt="InkForge" class="has-video">
+                    <video src="videos/inkforge-preview.mp4" muted loop playsinline preload="metadata"></video>
+                </div>
                 <div class="project-body">
                     <div class="project-title">InkForge</div>
                     <p class="project-desc">Native macOS drawing app with AI-powered editing, layers, selections, texture brushes, and a Procreate-inspired UI. Built for concept art and asset creation.</p>
@@ -314,7 +383,10 @@
             </a>
 
 <a href="https://github.com/ilanlenzner-design/Sprite-Studio" target="_blank" class="project-card reveal" style="--i:2">
-                <div class="project-image"><img src="images/spritestudio-preview.jpg" alt="Sprite Studio"></div>
+                <div class="project-image">
+                    <img src="images/spritestudio-preview.jpg" alt="Sprite Studio" class="has-video">
+                    <video src="videos/spritestudio-preview.mp4" muted loop playsinline preload="metadata"></video>
+                </div>
                 <div class="project-body">
                     <div class="project-title">Sprite Studio</div>
                     <p class="project-desc">Web-based tool for converting video sequences into sprite sheets. Features chroma key, AI-powered grid detection, real-time animation preview, and multi-format export.</p>
@@ -342,7 +414,10 @@
             </a>
 
             <a href="https://github.com/ilanlenzner-design/ai-studio" target="_blank" class="project-card reveal" style="--i:4">
-                <div class="project-image"><img src="images/aistudio-preview.jpg" alt="AI Studio"></div>
+                <div class="project-image">
+                    <img src="images/aistudio-preview.jpg" alt="AI Studio" class="has-video">
+                    <video src="videos/aistudio-preview.mp4" muted loop playsinline preload="metadata"></video>
+                </div>
                 <div class="project-body">
                     <div class="project-title">AI Studio</div>
                     <p class="project-desc">Modular AI platform with unlimited tools — image generation, video processing, 3D modeling, background removal. Built on Replicate API with a clean panel interface.</p>
@@ -640,6 +715,63 @@
         requestAnimationFrame(tick);
     })();
 
+    /* ── Video hover on project cards ── */
+    document.querySelectorAll('.project-card').forEach(function(card) {
+        var video = card.querySelector('video');
+        if (!video) return;
+        card.addEventListener('mouseenter', function() {
+            video.currentTime = 0;
+            video.play().catch(function() {});
+        });
+        card.addEventListener('mouseleave', function() {
+            video.pause();
+            video.currentTime = 0;
+        });
+    });
+
+    /* ── Hero typing effect ── */
+    (function() {
+        var phrases = [
+            'AI agents that ship playable ads autonomously',
+            'a native macOS drawing app with AI editing',
+            'sprite sheet tools with AI-powered detection',
+            'After Effects extensions with 10 AI modules',
+            'multi-platform chatbots on Claude, GPT-4 & Gemini',
+            'an AI studio with unlimited creative tools',
+        ];
+        var el = document.getElementById('heroTyped');
+        if (!el) return;
+        var cursor = el.querySelector('.cursor');
+        var idx = 0, charIdx = 0, deleting = false;
+        var typeSpeed = 45, deleteSpeed = 25, holdTime = 2200, pauseTime = 400;
+
+        function tick() {
+            var phrase = phrases[idx];
+            if (!deleting) {
+                charIdx++;
+                el.textContent = phrase.substring(0, charIdx);
+                el.appendChild(cursor);
+                if (charIdx >= phrase.length) {
+                    setTimeout(function() { deleting = true; tick(); }, holdTime);
+                    return;
+                }
+                setTimeout(tick, typeSpeed);
+            } else {
+                charIdx--;
+                el.textContent = phrase.substring(0, charIdx);
+                el.appendChild(cursor);
+                if (charIdx <= 0) {
+                    deleting = false;
+                    idx = (idx + 1) % phrases.length;
+                    setTimeout(tick, pauseTime);
+                    return;
+                }
+                setTimeout(tick, deleteSpeed);
+            }
+        }
+        setTimeout(tick, 800);
+    })();
+
     /* ── Force-field dot grid with dot-matrix banner ── */
     (function() {
         const canvas = document.getElementById('dotfield');
@@ -815,7 +947,17 @@
             var cx = Math.floor(cols / 2);
             var cy = Math.floor(rows / 2);
             var isVisual = msg.image || msg.video;
-            var imgData = offCtx.getImageData(0, 0, cols, rows).data;
+            var imgData;
+            try {
+                imgData = offCtx.getImageData(0, 0, cols, rows).data;
+            } catch (e) {
+                // Canvas tainted (file:// protocol) — recreate and skip this frame
+                offCanvas = document.createElement('canvas');
+                offCanvas.width = cols;
+                offCanvas.height = rows;
+                offCtx = offCanvas.getContext('2d');
+                return;
+            }
             litPixels = [];
             for (var r = 0; r < rows; r++) {
                 for (var c = 0; c < cols; c++) {
