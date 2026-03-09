@@ -1,20 +1,15 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ilans.net
 
-# Run and deploy your AI Studio app
+Personal portfolio site for **Ilan Lenzner** — AI Creative Specialist & Product Designer.
 
-This contains everything you need to run your app locally.
+**Live:** [ilans.net](https://ilans.net)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1APlcFl1nlFyqo9bs4XobDJh2GQkrUtVE
+## About
 
-## Run Locally
+20+ years at the intersection of AI, design, and engineering. This site showcases selected projects including AI-powered creative tools, game development frameworks, and design systems.
 
-**Prerequisites:**  Node.js
+## Stack
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- Single-page HTML/CSS/JS
+- Canvas particle background
+- Hosted on GitHub Pages with custom domain
