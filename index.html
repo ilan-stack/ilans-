@@ -1370,9 +1370,10 @@
     thick.style.strokeDasharray  = L;
     thick.style.strokeDashoffset = L;
 
-    var DUR = 2800;            // total cycle ms
-    var DRAW_END  = 0.6;       // drawing finishes at 60%
-    var HOLD_END  = 0.8;       // line holds fully visible until 80%
+    var DUR = 6300;            // total cycle ms
+    var DRAW_END  = 0.24;      // draw: 1.5s
+    var HOLD_END  = 0.71;      // hold: 3s
+    var FADE_END  = 0.84;      // fade: 0.8s, then pause until restart
     var start = null;
 
     /* ease-in-out (matches cubic-bezier 0.42,0,0.58,1) */
@@ -1387,14 +1388,18 @@
         if (t < DRAW_END) {
             draw   = ease(t / DRAW_END);
             lineOp = 1;
-            penOp  = t < 0.02 ? 0 : 0.9;
+            penOp  = t < 0.01 ? 0 : 0.9;
         } else if (t < HOLD_END) {
             draw   = 1;
             lineOp = 1;
-            penOp  = Math.max(0, 0.9 * (1 - (t - DRAW_END) / 0.1));
-        } else {
+            penOp  = Math.max(0, 0.9 * (1 - (t - DRAW_END) / 0.05));
+        } else if (t < FADE_END) {
             draw   = 1;
-            lineOp = 1 - (t - HOLD_END) / (1 - HOLD_END);
+            lineOp = 1 - (t - HOLD_END) / (FADE_END - HOLD_END);
+            penOp  = 0;
+        } else {
+            draw   = 0;
+            lineOp = 0;
             penOp  = 0;
         }
 
