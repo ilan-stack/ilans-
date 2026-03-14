@@ -3,8 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilan Lenzner — AI Creative Specialist & Product Designer</title>
-    <meta name="description" content="I design AI-powered tools that automate creative production. 20+ years at the intersection of AI, design, and engineering.">
+    <title>Ilan Lenzner | AI Product Architect & Creative Technologist</title>
+    <meta name="description" content="I build production AI systems that ship real creative products. 20+ years architecting GenAI pipelines, autonomous agents, and creative automation tools.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Ilan Lenzner | AI Product Architect & Creative Technologist">
+    <meta property="og:description" content="I design AI systems that ship creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
+    <meta property="og:image" content="https://ilans.net/images/portrait.jpg">
+    <meta property="og:url" content="https://ilans.net">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ilan Lenzner | AI Product Architect">
+    <meta name="twitter:description" content="I design AI systems that ship creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
+    <meta name="twitter:image" content="https://ilans.net/images/portrait.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Ilan Lenzner",
+        "jobTitle": "AI Product Architect & Creative Technologist",
+        "url": "https://ilans.net",
+        "sameAs": [
+            "https://github.com/ilan-stack",
+            "https://www.linkedin.com/in/ilan-lenzner-395ba64/"
+        ],
+        "knowsAbout": ["AI", "GenAI", "Creative Automation", "Product Design", "LLM Integration"]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +57,7 @@
             --radius: 12px;
         }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -67,6 +100,11 @@
         .nav-links { display: flex; gap: 32px; }
         .nav-links a { color: var(--text-muted); font-size: 14px; font-weight: 500; }
         .nav-links a:hover { color: var(--text); }
+        .nav-burger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+        .nav-burger span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+        .nav-burger.open span:nth-child(1) { transform: rotate(45deg) translate(4px, 5px); }
+        .nav-burger.open span:nth-child(2) { opacity: 0; }
+        .nav-burger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -5px); }
 
         /* HERO */
         .hero {
@@ -79,7 +117,7 @@
                 radial-gradient(ellipse 80% 60% at 50% -20%, rgba(124,92,252,0.12) 0%, transparent 60%),
                 radial-gradient(ellipse 60% 40% at 80% 50%, rgba(192,132,252,0.06) 0%, transparent 50%);
         }
-        .hero-content { position: relative; z-index: 1; max-width: 700px; }
+        .hero-content { position: relative; z-index: 1; max-width: 700px; padding-bottom: 60px; }
         .hero-label {
             display: inline-block; font-size: 13px; font-weight: 600;
             letter-spacing: 2px; text-transform: uppercase;
@@ -89,6 +127,23 @@
             font-size: clamp(40px, 7vw, 64px); font-weight: 700;
             line-height: 1.1; letter-spacing: -2px; color: #fff; margin-bottom: 20px;
         }
+        .hero-wavy-wrap {
+            display: inline-block;
+            -webkit-text-fill-color: initial;
+            vertical-align: middle;
+            margin: 0 4px;
+            position: relative;
+            width: 90px;
+            height: 32px;
+            overflow: visible;
+        }
+        .hero-wavy-wrap svg {
+            position: absolute;
+            top: 0; left: 0;
+            overflow: visible;
+            filter: drop-shadow(0 0 8px rgba(124,92,252,0.5));
+        }
+        /* wavy line + pen driven by JS for arc-length-perfect sync */
         .hero-desc {
             font-size: 18px; color: var(--text-muted); line-height: 1.7;
             max-width: 540px; margin-bottom: 36px;
@@ -138,8 +193,8 @@
         }
         a.project-card { cursor: pointer; }
         .project-card:hover {
-            border-color: var(--border-hover); transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4); color: var(--text);
+            border-color: rgba(124,92,252,0.3); transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,92,252,0.1); color: var(--text);
         }
         .project-image {
             width: 100%; height: 200px; position: relative; overflow: hidden;
@@ -190,6 +245,7 @@
         .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
         /* SKILLS */
+        #skills .section-title { margin-bottom: 32px; }
         .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .skill-group {
             padding: 28px; background: var(--bg-card);
@@ -216,7 +272,7 @@
             content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
             width: 1px; background: var(--border);
         }
-        .timeline-item { position: relative; padding-bottom: 28px; }
+        .timeline-item { position: relative; padding-bottom: 36px; }
         .timeline-item:last-child { padding-bottom: 0; }
         .timeline-item::before {
             content: ''; position: absolute; left: -29px; top: 8px;
@@ -224,9 +280,10 @@
             background: var(--accent); border: 2px solid var(--bg);
         }
         .timeline-item.current::before { box-shadow: 0 0 0 4px rgba(124,92,252,0.2); }
-        .timeline-role { font-size: 15px; font-weight: 600; color: #fff; }
-        .timeline-company { font-size: 14px; color: var(--text-muted); }
+        .timeline-role { font-size: 16px; font-weight: 700; color: #fff; }
+        .timeline-company { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
         .timeline-dates { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+        .timeline-impact { font-size: 13px; color: var(--text-dim); margin-top: 10px; line-height: 1.7; border-left: 2px solid var(--border); padding-left: 12px; }
 
         /* CONTACT */
         .contact-section { text-align: center; padding: 120px 0; }
@@ -242,8 +299,8 @@
 
         /* SCROLL INDICATOR */
         .scroll-hint {
-            position: absolute; bottom: 36px; left: 50%;
-            transform: translateX(-50%);
+            position: absolute; bottom: 28px; left: 50%;
+            transform: translateX(-50%); z-index: 2;
             display: flex; align-items: center; gap: 8px;
             padding: 10px 22px 10px 18px;
             border-radius: 40px;
@@ -278,6 +335,87 @@
             50% { box-shadow: 0 0 20px 4px rgba(124,92,252,0.15); }
         }
 
+        /* TRUSTED BY LOGOS BAR */
+        .trusted-bar {
+            padding: 40px 0 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .trusted-row {
+            display: flex; justify-content: center; align-items: center;
+            gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+        }
+        .trusted-row-label {
+            font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-dim); font-weight: 500; margin-right: 8px;
+            white-space: nowrap;
+        }
+        .trusted-row-logos {
+            display: flex; align-items: center; gap: 24px;
+            opacity: 0.5; transition: opacity 0.3s;
+        }
+        .trusted-row:hover .trusted-row-logos { opacity: 0.8; }
+        .trusted-row-logos span {
+            font-size: 13px; font-weight: 600; letter-spacing: 1px;
+            color: var(--text-muted); white-space: nowrap;
+        }
+        .trusted-row-logos .dot {
+            color: var(--text-dim); font-size: 10px; opacity: 0.4;
+        }
+
+        /* ABOUT SECTION WITH PHOTO */
+        .about-photo-grid {
+            display: grid; grid-template-columns: 180px 1fr;
+            gap: 40px; align-items: start; margin-bottom: 40px;
+        }
+        .about-portrait {
+            width: 100%; border-radius: 12px;
+            border: 1px solid var(--border);
+            filter: grayscale(20%);
+            transition: filter 0.3s;
+        }
+        .about-portrait:hover { filter: grayscale(0%); }
+        .about-bio p { margin-bottom: 20px; line-height: 1.8; font-size: 16px; }
+        .about-bio .highlight {
+            font-weight: 500;
+            background: linear-gradient(90deg, #7c5cfc, #c084fc, #4ade80, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* CONTACT CTA ENHANCED */
+        .cta-box {
+            background: linear-gradient(135deg, rgba(124,92,252,0.08), rgba(192,132,252,0.05));
+            border: 1px solid rgba(124,92,252,0.2);
+            border-radius: 16px; padding: 48px; text-align: center;
+            margin-top: 32px;
+        }
+        .cta-box h3 {
+            font-size: 24px; color: var(--text); margin-bottom: 12px; font-weight: 600;
+        }
+        .cta-tagline {
+            color: var(--text-muted); font-size: 16px; margin-bottom: 28px; line-height: 1.6;
+        }
+        .cta-availability {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 13px; color: #4ade80; margin-top: 20px;
+        }
+        .cta-availability::before {
+            display: none;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+        }
+
+        @media (max-width: 900px) {
+            .about-photo-grid { grid-template-columns: 1fr; }
+            .about-portrait { max-width: 240px; margin: 0 auto; }
+            .trusted-row { flex-direction: column; gap: 4px; }
+            .trusted-row-logos { gap: 16px; justify-content: center; }
+        }
+
         /* HERO TYPING EFFECT */
         .hero-typed {
             display: block; min-height: 1.2em;
@@ -304,15 +442,28 @@
             .projects-grid { grid-template-columns: 1fr; }
             .about-content { grid-template-columns: 1fr; gap: 40px; }
             .skills-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+            .nav-burger { display: block; }
+            .nav-links {
+                display: none; flex-direction: column; gap: 0;
+                position: absolute; top: 100%; left: 0; right: 0;
+                background: #0a0a0a;
+                padding: 8px 24px 16px; border-bottom: 1px solid var(--border);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { padding: 12px 0; font-size: 16px; border-bottom: 1px solid var(--border); }
+            .nav-links a:last-child { border-bottom: none; }
         }
         @media (max-width: 600px) {
-            .hero h1 { font-size: 36px; letter-spacing: -1px; }
-            .hero-desc { font-size: 16px; }
+            .hero h1 { font-size: 32px; letter-spacing: -1px; }
+            .hero-wavy-wrap { width: 54px; height: 20px; }
+            .hero-desc { font-size: 15px; }
             section { padding: 60px 0; }
+            .container { padding: 0 20px; }
             .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .stat { padding: 16px; }
             .stat-number { font-size: 24px; }
+            .timeline-impact { font-size: 12.5px; }
+            .contact-card h2 { font-size: 22px; }
         }
     </style>
 </head>
@@ -323,7 +474,8 @@
 <nav id="nav">
     <div class="container">
         <a href="#" class="nav-logo">IL</a>
-        <div class="nav-links">
+        <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" id="navLinks">
             <a href="#work">Work</a>
             <a href="#about">About</a>
             <a href="#experience">Experience</a>
@@ -337,10 +489,10 @@
     <div class="hero-bg"></div>
     <div class="container">
         <div class="hero-content">
-            <div class="hero-label">AI Creative Specialist & Product Designer</div>
-            <h1>I design tools that&nbsp;make AI work&nbsp;for&nbsp;creatives.</h1>
+            <div class="hero-label">AI Product Architect · Creative Technologist</div>
+            <h1>I design AI systems that&nbsp;ship<span class="hero-wavy-wrap"><svg id="heroWaveSvg" width="90" height="32" viewBox="0 0 120 40" fill="none"><path id="heroWaveThin" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGrad)" stroke-width="3" stroke-linecap="round" fill="none"/><path id="heroWaveThick" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGradThick)" stroke-width="7" stroke-linecap="round" fill="none"/><g id="heroWavePen" opacity="0"><g transform="scale(2) translate(-7,-14.3) rotate(-30,8,8)"><path d="M12 3l1.2-1.2a1.5 1.5 0 012.1 2.1L7.5 11.7a3 3 0 01-1.3.8L4 13l.5-2.2a3 3 0 01.8-1.3L12 3z" stroke="url(#heroWaveGrad)" stroke-width="0.8" stroke-linecap="round" fill="none"/></g></g><defs><linearGradient id="heroWaveGrad" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="33%" stop-color="#c084fc"/><stop offset="66%" stop-color="#4ade80"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient><linearGradient id="heroWaveGradThick" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc" stop-opacity="0"/><stop offset="35%" stop-color="#c084fc" stop-opacity="0.3"/><stop offset="65%" stop-color="#4ade80" stop-opacity="0.7"/><stop offset="100%" stop-color="#60a5fa" stop-opacity="1"/></linearGradient></defs></svg></span> creative&nbsp;production.</h1>
             <span class="hero-typed" id="heroTyped"><span class="cursor"></span></span>
-            <p class="hero-desc" style="margin-top: 20px;">20+ years building at the intersection of design, AI, and engineering. Currently at Sett, where I've built 45+ AI production tools that generate game assets, animate characters, and ship playable ads end-to-end.</p>
+            <p class="hero-desc" style="margin-top: 20px;">From autonomous ad pipelines to AI tools used daily by production teams — I build GenAI systems that replace manual workflows with scalable automation. Currently leading AI creative tooling at Sett.</p>
             <div class="hero-links">
                 <a href="https://github.com/ilan-stack" class="btn btn-primary" target="_blank">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -348,6 +500,10 @@
                 </a>
                 <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank">LinkedIn</a>
                 <a href="mailto:ilan@ilans.net" class="btn btn-outline">Email Me</a>
+                <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Resume
+                </a>
             </div>
         </div>
     </div>
@@ -364,6 +520,26 @@
             <div class="section-label">Featured Work</div>
             <h2 class="section-title">Things I've built.</h2>
         </div>
+        <div class="trusted-bar reveal">
+            <div class="trusted-row">
+                <span class="trusted-row-label">Worked at</span>
+                <div class="trusted-row-logos">
+                    <span>SETT</span><span class="dot">·</span>
+                    <span>CLALIT</span><span class="dot">·</span>
+                    <span>SIZMEK</span><span class="dot">·</span>
+                    <span>PLAYBATCH</span>
+                </div>
+            </div>
+            <div class="trusted-row">
+                <span class="trusted-row-label">Built campaigns for</span>
+                <div class="trusted-row-logos">
+                    <span>STARBUCKS</span><span class="dot">·</span>
+                    <span>VOLVO</span><span class="dot">·</span>
+                    <span>HIDDEN VALLEY</span><span class="dot">·</span>
+                    <span>HASBRO</span>
+                </div>
+            </div>
+        </div>
         <div class="projects-grid stagger">
 
             <a href="https://github.com/ilan-stack/InkForge" target="_blank" class="project-card reveal" style="--i:0">
@@ -373,7 +549,7 @@
                 </div>
                 <div class="project-body">
                     <div class="project-title">InkForge</div>
-                    <p class="project-desc">Native macOS drawing app with AI-powered editing, layers, selections, texture brushes, and a Procreate-inspired UI. Built for concept art and asset creation.</p>
+                    <p class="project-desc"><strong>Problem:</strong> Artists needed a fast, native tool for concept art that integrates AI editing without leaving their canvas. <strong>Built:</strong> A full macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI, designed in collaboration with the art team to fit real production workflows.</p>
                     <div class="project-tags">
                         <span class="tag">Swift</span>
                         <span class="tag">macOS</span>
@@ -390,7 +566,7 @@
                 </div>
                 <div class="project-body">
                     <div class="project-title">Sprite Studio</div>
-                    <p class="project-desc">Web-based tool for converting video sequences into sprite sheets. Features chroma key, AI-powered grid detection, real-time animation preview, and multi-format export.</p>
+                    <p class="project-desc"><strong>Problem:</strong> Converting video sequences to sprite sheets took artists hours of manual work per asset. <strong>Built:</strong> A production pipeline with AI-powered grid detection, chroma key, and multi-format export. Integrated into the team's existing workflow, reducing a multi-hour process to minutes.</p>
                     <div class="project-tags">
                         <span class="tag">JavaScript</span>
                         <span class="tag">Canvas</span>
@@ -404,7 +580,7 @@
                 <div class="project-image"><img src="images/settae-preview.jpg" alt="After Effects Hub"></div>
                 <div class="project-body">
                     <div class="project-title">After Effects Hub</div>
-                    <p class="project-desc">Adobe After Effects extension with 10 AI modules — image expander, upscaler, background remover, video generation (Kling), sound FX, music, voiceover (ElevenLabs), and smart copywriting.</p>
+                    <p class="project-desc"><strong>Problem:</strong> Motion designers constantly context-switched between AE and external AI tools. <strong>Built:</strong> A 10-module AI extension embedded directly in After Effects: image expansion, upscaling, background removal, video generation, audio, and copywriting. Developed with the motion team to eliminate round-trips and keep artists in their native environment.</p>
                     <div class="project-tags">
                         <span class="tag">CEP Extension</span>
                         <span class="tag">After Effects</span>
@@ -421,7 +597,7 @@
                 </div>
                 <div class="project-body">
                     <div class="project-title">AI Studio</div>
-                    <p class="project-desc">Modular AI platform with unlimited tools — image generation, video processing, 3D modeling, background removal. Built on Replicate API with a clean panel interface.</p>
+                    <p class="project-desc"><strong>Problem:</strong> The creative team needed one unified interface for multiple GenAI capabilities instead of juggling separate tools. <strong>Built:</strong> A modular production platform for image generation, video processing, 3D modeling, and background removal, on Replicate API, deployed for daily use by the creative and production teams.</p>
                     <div class="project-tags">
                         <span class="tag">JavaScript</span>
                         <span class="tag">Replicate</span>
@@ -446,10 +622,13 @@
             <h2 class="section-title">Design meets AI engineering.</h2>
         </div>
         <div class="about-content">
-            <div class="about-text reveal">
-                <p>I started in motion graphics and 3D animation, moved into interactive advertising where I directed campaigns for Fortune 500 brands, then into product design for AI tools and healthcare systems.</p>
-                <p>Now I build the AI systems themselves. At Sett, I architect autonomous agents that generate game assets, animate characters, and ship playable ads — designing both the tools and the AI pipelines behind them. I think in design systems and ship in code.</p>
-                <p>Based in Tel Aviv. Open to opportunities where AI and creative production intersect.</p>
+            <div class="about-photo-grid reveal">
+                <img src="images/portrait-new.png" alt="Ilan Lenzner" class="about-portrait">
+                <div class="about-bio">
+                    <p>20+ years from <span class="highlight">3D animation</span> to <span class="highlight">interactive ads</span> to <span class="highlight">AI product engineering</span>.</p>
+                    <p>Today I architect <span class="highlight">autonomous AI pipelines</span> that generate, animate, and ship creative assets end-to-end, replacing workflows that used to take <strong>days with minutes</strong>.</p>
+                    <p>I think in systems, design in Figma, and ship in code.</p>
+                </div>
             </div>
             <div class="stats-grid reveal">
                 <div class="stat"><div class="stat-number">20+</div><div class="stat-label">Years in design & tech</div></div>
@@ -534,37 +713,44 @@
             <div class="timeline-item current">
                 <div class="timeline-role">AI Creative Lead & Product Designer</div>
                 <div class="timeline-company">Sett</div>
-                <div class="timeline-dates">2024 — Present</div>
+                <div class="timeline-dates">2024 - Present</div>
+                <p class="timeline-impact">Built 45+ AI production tools (image gen, video animation, 3D modeling, background removal). Architected an autonomous agent pipeline that ships playable ad creatives end-to-end, replacing multi-day manual workflows with minutes. Built InkForge (native macOS drawing app with AI editing), Sprite Studio, and a 10-module After Effects AI extension used daily by the creative team.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">AI & Design Innovation Lead</div>
                 <div class="timeline-company">Rabin Medical Center (Clalit Health Services)</div>
                 <div class="timeline-dates">2024</div>
+                <p class="timeline-impact">Designed and prototyped AI-assisted clinical workflows for Israel's largest health services organization. Bridged medical staff requirements with technical implementation.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">Product Designer & AI Workflow Developer</div>
                 <div class="timeline-company">PlayBatch, Tel Aviv</div>
-                <div class="timeline-dates">2022 — 2023</div>
+                <div class="timeline-dates">2022 - 2023</div>
+                <p class="timeline-impact">Designed the product UX for a playable ads platform. Introduced AI-powered asset generation workflows that accelerated creative production for gaming clients.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">Product Designer</div>
                 <div class="timeline-company">Bites</div>
-                <div class="timeline-dates">2020 — 2022</div>
+                <div class="timeline-dates">2020 - 2022</div>
+                <p class="timeline-impact">Led UX/UI design for an AI-powered micro-learning platform. Designed the content creation flow and learner experience used across enterprise clients.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">Creative Director</div>
                 <div class="timeline-company">justAd & Market Group</div>
-                <div class="timeline-dates">2013 — 2020</div>
+                <div class="timeline-dates">2013 - 2020</div>
+                <p class="timeline-impact">Directed 500+ interactive ad campaigns for brands including Starbucks, Volvo, Hasbro, and Hidden Valley. Built the creative team and production pipeline from scratch. Pioneered playable ad formats before they became an industry standard.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">Rich Media Specialist</div>
                 <div class="timeline-company">eyeblaster (MediaMind / Sizmek)</div>
-                <div class="timeline-dates">2007 — 2013</div>
+                <div class="timeline-dates">2007 - 2013</div>
+                <p class="timeline-impact">Built rich media ad formats and interactive experiences at one of the industry's leading ad tech platforms. Developed reusable templates and tools adopted across the global creative team.</p>
             </div>
             <div class="timeline-item">
                 <div class="timeline-role">3D & Motion Specialist</div>
                 <div class="timeline-company">Gorni Digital, DPSI, ScanMaster</div>
-                <div class="timeline-dates">2000 — 2007</div>
+                <div class="timeline-dates">2000 - 2007</div>
+                <p class="timeline-impact">Created 3D animations, product visualizations, and motion graphics for broadcast and industrial clients. Foundation in real-time 3D that later informed interactive and game work.</p>
             </div>
         </div>
     </div>
@@ -575,12 +761,23 @@
     <div class="container">
         <div class="reveal">
             <div class="section-label">Contact</div>
-            <h2 class="section-title">Let's talk.</h2>
-            <p class="contact-desc">Open to AI creative, product design, and creative technology roles.</p>
-            <div class="contact-links">
-                <a href="mailto:ilan@ilans.net" class="btn btn-primary">ilan@ilans.net</a>
-                <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank">LinkedIn</a>
-                <a href="https://github.com/ilan-stack" class="btn btn-outline" target="_blank">GitHub</a>
+            <h2 class="section-title">Let's build something that ships.</h2>
+            <div class="cta-box">
+                <h3>Looking for someone who builds AI tools, not just talks about them?</h3>
+                <p class="cta-tagline">I bring 20+ years of shipping creative products, deep GenAI production experience, and the rare ability to bridge design, engineering, and AI into systems that actually work.</p>
+                <div class="contact-links">
+                    <a href="mailto:ilan@ilans.net" class="btn btn-primary">ilan@ilans.net</a>
+                    <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank">LinkedIn</a>
+                    <a href="https://github.com/ilan-stack" class="btn btn-outline" target="_blank">GitHub</a>
+                    <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Resume
+                    </a>
+                </div>
+                <a href="https://t.me/ilanzner" target="_blank" class="cta-availability" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#4ade80"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    @ilanzner
+                </a>
             </div>
         </div>
     </div>
@@ -588,7 +785,7 @@
 
 <footer>
     <div class="container">
-        <p>Ilan Lenzner — Tel Aviv, Israel</p>
+        <p>Ilan Lenzner | Tel Aviv, Israel</p>
     </div>
 </footer>
 
@@ -597,6 +794,26 @@
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
         nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    /* ── Mobile burger menu ── */
+    const burger = document.getElementById('navBurger');
+    const navLinks = document.getElementById('navLinks');
+    burger.addEventListener('click', () => {
+        burger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+            burger.classList.remove('open');
+            navLinks.classList.remove('open');
+        });
+    });
+    document.addEventListener('click', (e) => {
+        if (navLinks.classList.contains('open') && !nav.contains(e.target)) {
+            burger.classList.remove('open');
+            navLinks.classList.remove('open');
+        }
     });
 
     /* ── Reveal on scroll ── */
@@ -733,12 +950,12 @@
     /* ── Hero typing effect ── */
     (function() {
         var phrases = [
-            'AI agents that ship playable ads autonomously',
-            'a native macOS drawing app with AI editing',
-            'sprite sheet tools with AI-powered detection',
+            'autonomous pipelines that ship playable ads end-to-end',
+            'AI tools used daily by production teams',
+            'GenAI workflows that replaced 3-day manual processes',
             'After Effects extensions with 10 AI modules',
-            'multi-platform chatbots on Claude, GPT-4 & Gemini',
-            'an AI studio with unlimited creative tools',
+            'production systems processing thousands of creative assets',
+            'cross-functional tools built with artists, devs & PMs',
         ];
         var el = document.getElementById('heroTyped');
         if (!el) return;
@@ -1137,6 +1354,65 @@
         init();
         animate();
     })();
+</script>
+
+<script>
+/* Wavy-line + pen: JS-driven so pen & stroke share exact arc-length sync */
+(function(){
+    var thin  = document.getElementById('heroWaveThin');
+    var thick = document.getElementById('heroWaveThick');
+    var pen   = document.getElementById('heroWavePen');
+    if (!thin) return;
+
+    var L = thin.getTotalLength();
+    thin.style.strokeDasharray  = L;
+    thin.style.strokeDashoffset = L;
+    thick.style.strokeDasharray  = L;
+    thick.style.strokeDashoffset = L;
+
+    var DUR = 2800;            // total cycle ms
+    var DRAW_END  = 0.6;       // drawing finishes at 60%
+    var HOLD_END  = 0.8;       // line holds fully visible until 80%
+    var start = null;
+
+    /* ease-in-out (matches cubic-bezier 0.42,0,0.58,1) */
+    function ease(t){ return 0.5 - 0.5 * Math.cos(Math.PI * t); }
+
+    function tick(ts){
+        if (!start) start = ts;
+        var t = ((ts - start) % DUR) / DUR;
+
+        var draw, lineOp, penOp;
+
+        if (t < DRAW_END) {
+            draw   = ease(t / DRAW_END);
+            lineOp = 1;
+            penOp  = t < 0.02 ? 0 : 0.9;
+        } else if (t < HOLD_END) {
+            draw   = 1;
+            lineOp = 1;
+            penOp  = Math.max(0, 0.9 * (1 - (t - DRAW_END) / 0.1));
+        } else {
+            draw   = 1;
+            lineOp = 1 - (t - HOLD_END) / (1 - HOLD_END);
+            penOp  = 0;
+        }
+
+        var off = L * (1 - draw);
+        thin.style.strokeDashoffset  = off;
+        thick.style.strokeDashoffset = off;
+        thin.style.opacity  = lineOp;
+        thick.style.opacity = lineOp;
+
+        /* pen sits exactly where the stroke has been drawn to */
+        var pt = thin.getPointAtLength(draw * L);
+        pen.setAttribute('transform', 'translate(' + pt.x + ',' + pt.y + ')');
+        pen.style.opacity = penOp;
+
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+})();
 </script>
 
 </body>
