@@ -336,33 +336,6 @@
         }
 
         /* TRUSTED BY LOGOS BAR */
-        .trusted-bar {
-            padding: 40px 0 20px;
-            border-top: 1px solid var(--border);
-            text-align: center;
-        }
-        .trusted-row {
-            display: flex; justify-content: center; align-items: center;
-            gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
-        }
-        .trusted-row-label {
-            font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-            color: var(--text-dim); font-weight: 500; margin-right: 8px;
-            white-space: nowrap;
-        }
-        .trusted-row-logos {
-            display: flex; align-items: center; gap: 24px;
-            opacity: 0.5; transition: opacity 0.3s;
-        }
-        .trusted-row:hover .trusted-row-logos { opacity: 0.8; }
-        .trusted-row-logos span {
-            font-size: 13px; font-weight: 600; letter-spacing: 1px;
-            color: var(--text-muted); white-space: nowrap;
-        }
-        .trusted-row-logos .dot {
-            color: var(--text-dim); font-size: 10px; opacity: 0.4;
-        }
-
         /* ABOUT SECTION WITH PHOTO */
         .about-photo-grid {
             display: grid; grid-template-columns: 180px 1fr;
@@ -412,8 +385,6 @@
         @media (max-width: 900px) {
             .about-photo-grid { grid-template-columns: 1fr; }
             .about-portrait { max-width: 240px; margin: 0 auto; }
-            .trusted-row { flex-direction: column; gap: 4px; }
-            .trusted-row-logos { gap: 16px; justify-content: center; }
         }
 
         /* HERO TYPING EFFECT */
@@ -519,26 +490,6 @@
         <div class="reveal">
             <div class="section-label">Featured Work</div>
             <h2 class="section-title">Things I've built.</h2>
-        </div>
-        <div class="trusted-bar reveal">
-            <div class="trusted-row">
-                <span class="trusted-row-label">Worked at</span>
-                <div class="trusted-row-logos">
-                    <span>SETT</span><span class="dot">·</span>
-                    <span>CLALIT</span><span class="dot">·</span>
-                    <span>SIZMEK</span><span class="dot">·</span>
-                    <span>PLAYBATCH</span>
-                </div>
-            </div>
-            <div class="trusted-row">
-                <span class="trusted-row-label">Built campaigns for</span>
-                <div class="trusted-row-logos">
-                    <span>STARBUCKS</span><span class="dot">·</span>
-                    <span>VOLVO</span><span class="dot">·</span>
-                    <span>HIDDEN VALLEY</span><span class="dot">·</span>
-                    <span>HASBRO</span>
-                </div>
-            </div>
         </div>
         <div class="projects-grid stagger">
 
