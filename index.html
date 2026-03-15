@@ -267,13 +267,17 @@
         }
 
         /* TIMELINE */
-        .timeline { position: relative; padding-left: 32px; }
+        .timeline { position: relative; padding-left: 32px; z-index: 1; }
         .timeline::before {
             content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
             width: 1px; background: var(--border);
         }
-        .timeline-item { position: relative; padding-bottom: 36px; }
-        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item {
+            position: relative; padding: 16px 20px 36px;
+            background: rgba(10, 10, 10, 0.85);
+            border-radius: 8px; margin-bottom: 8px;
+        }
+        .timeline-item:last-child { padding-bottom: 16px; margin-bottom: 0; }
         .timeline-item::before {
             content: ''; position: absolute; left: -29px; top: 8px;
             width: 9px; height: 9px; border-radius: 50%;
