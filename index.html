@@ -791,13 +791,7 @@
 
 <script>
     /* ── A/B hero verb ── */
-    (function(){
-        var key = 'hero_verb';
-        var stored = localStorage.getItem(key);
-        var verb = stored || (['power','ship'][Math.random() < 0.5 ? 0 : 1]);
-        if (!stored) localStorage.setItem(key, verb);
-        document.getElementById('heroVerb').textContent = verb;
-    })();
+    document.getElementById('heroVerb').textContent = Math.random() < 0.5 ? 'power' : 'ship';
 
     /* ── Nav scroll ── */
     const nav = document.getElementById('nav');
@@ -1088,7 +1082,7 @@
             offCanvas = document.createElement('canvas');
             offCanvas.width = cols;
             offCanvas.height = rows;
-            offCtx = offCanvas.getContext('2d');
+            offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
 
             // Sample first message
             sampleMessage(MESSAGES[0]);
@@ -1182,7 +1176,7 @@
                 offCanvas = document.createElement('canvas');
                 offCanvas.width = cols;
                 offCanvas.height = rows;
-                offCtx = offCanvas.getContext('2d');
+                offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
                 return;
             }
             litPixels = [];
