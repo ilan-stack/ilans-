@@ -8,7 +8,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="Ilan Lenzner | AI Product Architect & Creative Technologist">
-    <meta property="og:description" content="I design AI systems that ship creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
+    <meta property="og:description" content="I design AI systems that power creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
     <meta property="og:image" content="https://ilans.net/images/portrait.jpg">
     <meta property="og:url" content="https://ilans.net">
     <meta property="og:type" content="website">
@@ -16,7 +16,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Ilan Lenzner | AI Product Architect">
-    <meta name="twitter:description" content="I design AI systems that ship creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
+    <meta name="twitter:description" content="I design AI systems that power creative production. 20+ years from 3D animation to interactive ads to AI product engineering.">
     <meta name="twitter:image" content="https://ilans.net/images/portrait.jpg">
 
     <!-- Favicon -->
@@ -490,7 +490,7 @@
     <div class="container">
         <div class="hero-content">
             <div class="hero-label">AI Product Architect · Creative Technologist</div>
-            <h1>I design AI systems that&nbsp;ship<span class="hero-wavy-wrap"><svg id="heroWaveSvg" width="90" height="32" viewBox="0 0 120 40" fill="none"><path id="heroWaveThin" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGrad)" stroke-width="3" stroke-linecap="round" fill="none"/><path id="heroWaveThick" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGradThick)" stroke-width="7" stroke-linecap="round" fill="none"/><g id="heroWavePen" opacity="0"><g transform="scale(2) translate(-7,-14.3) rotate(-30,8,8)"><path d="M12 3l1.2-1.2a1.5 1.5 0 012.1 2.1L7.5 11.7a3 3 0 01-1.3.8L4 13l.5-2.2a3 3 0 01.8-1.3L12 3z" stroke="url(#heroWaveGrad)" stroke-width="0.8" stroke-linecap="round" fill="none"/></g></g><defs><linearGradient id="heroWaveGrad" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="33%" stop-color="#c084fc"/><stop offset="66%" stop-color="#4ade80"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient><linearGradient id="heroWaveGradThick" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc" stop-opacity="0"/><stop offset="35%" stop-color="#c084fc" stop-opacity="0.3"/><stop offset="65%" stop-color="#4ade80" stop-opacity="0.7"/><stop offset="100%" stop-color="#60a5fa" stop-opacity="1"/></linearGradient></defs></svg></span> creative&nbsp;production.</h1>
+            <h1>I design AI systems that&nbsp;<span id="heroVerb">power</span><span class="hero-wavy-wrap"><svg id="heroWaveSvg" width="90" height="32" viewBox="0 0 120 40" fill="none"><path id="heroWaveThin" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGrad)" stroke-width="3" stroke-linecap="round" fill="none"/><path id="heroWaveThick" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGradThick)" stroke-width="7" stroke-linecap="round" fill="none"/><g id="heroWavePen" opacity="0"><g transform="scale(2) translate(-7,-14.3) rotate(-30,8,8)"><path d="M12 3l1.2-1.2a1.5 1.5 0 012.1 2.1L7.5 11.7a3 3 0 01-1.3.8L4 13l.5-2.2a3 3 0 01.8-1.3L12 3z" stroke="url(#heroWaveGrad)" stroke-width="0.8" stroke-linecap="round" fill="none"/></g></g><defs><linearGradient id="heroWaveGrad" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="33%" stop-color="#c084fc"/><stop offset="66%" stop-color="#4ade80"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient><linearGradient id="heroWaveGradThick" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc" stop-opacity="0"/><stop offset="35%" stop-color="#c084fc" stop-opacity="0.3"/><stop offset="65%" stop-color="#4ade80" stop-opacity="0.7"/><stop offset="100%" stop-color="#60a5fa" stop-opacity="1"/></linearGradient></defs></svg></span> creative&nbsp;production.</h1>
             <span class="hero-typed" id="heroTyped"><span class="cursor"></span></span>
             <p class="hero-desc" style="margin-top: 20px;">From autonomous ad pipelines to AI tools used daily by production teams — I build GenAI systems that replace manual workflows with scalable automation. Currently leading AI creative tooling at Sett.</p>
             <div class="hero-links">
@@ -790,6 +790,15 @@
 </footer>
 
 <script>
+    /* ── A/B hero verb ── */
+    (function(){
+        var key = 'hero_verb';
+        var stored = localStorage.getItem(key);
+        var verb = stored || (['power','ship'][Math.random() < 0.5 ? 0 : 1]);
+        if (!stored) localStorage.setItem(key, verb);
+        document.getElementById('heroVerb').textContent = verb;
+    })();
+
     /* ── Nav scroll ── */
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
