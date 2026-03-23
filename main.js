@@ -91,7 +91,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     // Reset element and its children
     function resetEffect(el) {
         el.style.opacity = '';
-        el.style.transform = '';
+        el.style.transform = el.dataset.tilt || '';
         el.style.overflow = '';
         var children = el.children;
         for (var i = 0; i < children.length; i++) {
@@ -433,6 +433,7 @@ document.querySelectorAll('.project-card').forEach(function(card) {
 
     function animate() {
         ctx.clearRect(0, 0, W, H);
+
         frame++;
 
         // Cycle messages
@@ -624,3 +625,102 @@ document.querySelectorAll('.project-card').forEach(function(card) {
     }
     requestAnimationFrame(tick);
 })();
+
+/* ── 3D tilt on project cards ── */
+document.querySelectorAll('.project-card').forEach(function(card) {
+    var tiltX = 0, tiltY = 0, targetX = 0, targetY = 0, rafId = null;
+
+    function lerp() {
+        tiltX += (targetX - tiltX) * 0.08;
+        tiltY += (targetY - tiltY) * 0.08;
+        var tilt = 'perspective(800px) rotateY(' + tiltX + 'deg) rotateX(' + tiltY + 'deg) translateY(-4px)';
+        card.dataset.tilt = tilt;
+        card.style.transform = tilt;
+        if (Math.abs(targetX - tiltX) > 0.01 || Math.abs(targetY - tiltY) > 0.01) {
+            rafId = requestAnimationFrame(lerp);
+        } else {
+            // Snap to target
+            if (targetX === 0 && targetY === 0) {
+                delete card.dataset.tilt;
+                card.style.transform = '';
+                rafId = null;
+            }
+        }
+    }
+
+    card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        targetX = x * 6;
+        targetY = -y * 6;
+        if (!rafId) rafId = requestAnimationFrame(lerp);
+    });
+    card.addEventListener('mouseleave', function() {
+        targetX = 0;
+        targetY = 0;
+        if (!rafId) rafId = requestAnimationFrame(lerp);
+    });
+});
+
+/* ── Animated stat counters ── */
+(function() {
+    var statEls = document.querySelectorAll('.stat-number');
+    statEls.forEach(function(el) {
+        var text = el.textContent.trim();
+        var match = text.match(/^(\d+)(.*)$/);
+        if (!match) return;
+        el._countTarget = parseInt(match[1]);
+        el._countSuffix = match[2];
+    });
+
+    function animateCounter(el) {
+        var target = el._countTarget;
+        var suffix = el._countSuffix;
+        var duration = 1500;
+        var start = performance.now();
+        requestAnimationFrame(function step(now) {
+            var t = Math.min((now - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.round(eased * target) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+        });
+    }
+
+    var statObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                statObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    statEls.forEach(function(el) {
+        if (el._countTarget !== undefined) statObserver.observe(el);
+    });
+})();
+
+/* ── Scroll progress bar ── */
+(function() {
+    var bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    window.addEventListener('scroll', function() {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (scrollTop / docHeight * 100) + '%';
+    }, { passive: true });
+})();
+
+/* ── Magnetic buttons ── */
+document.querySelectorAll('.btn').forEach(function(btn) {
+    btn.addEventListener('mousemove', function(e) {
+        var rect = btn.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width / 2;
+        var y = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = 'translate(' + (x * 0.15) + 'px,' + (y * 0.15) + 'px)';
+    });
+    btn.addEventListener('mouseleave', function() {
+        btn.style.transform = '';
+    });
+});
