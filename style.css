@@ -258,6 +258,11 @@ footer {
     padding: 40px 0; border-top: 1px solid var(--border); text-align: center;
 }
 footer p { font-size: 13px; color: var(--text-dim); }
+.old-days-nav {
+    font-size: 12px !important; opacity: 0.5;
+    border-left: 1px solid var(--border); padding-left: 32px !important; margin-left: 8px;
+}
+.old-days-nav:hover { opacity: 1; color: var(--accent-2) !important; }
 
 /* SCROLL INDICATOR */
 .scroll-hint {
