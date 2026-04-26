@@ -217,6 +217,7 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         { text: 'AI + DESIGN', scale: 0.9 },
         { video: 'videos/ilans-talk.mp4', bgFilter: 'grey' },
         { image: 'images/rhino.png' },
+        { video: 'videos/bg_video.mp4', bgFilter: 'grey' },
         { video: 'videos/portrait-anim.mp4' },
         { text: '45+ TOOLS', scale: 0.9 },
         { text: 'CREATIVE TECH', scale: 0.9 },
