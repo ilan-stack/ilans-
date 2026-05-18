@@ -203,6 +203,44 @@
                 </div>
             </a>
 
+            <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" class="project-card reveal" style="--i:6">
+                <div class="project-image">
+                    <picture><source srcset="images/ytdownloader-preview.webp" type="image/webp"><img src="images/ytdownloader-preview.png" alt="YouTube Downloader"></picture>
+                </div>
+                <div class="project-body">
+                    <div class="project-title">YouTube Downloader <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">MAC + WINDOWS</span></div>
+                    <p class="project-desc"><strong>Problem:</strong> Existing YouTube downloaders are either sketchy ad-laden web services or command-line tools nobody non-technical wants to touch. <strong>Built:</strong> A native desktop app — SwiftUI on macOS, a Flask + Edge --app shell on Windows — wrapping yt-dlp, ffmpeg, and deno into one drop-in installer. Quality picker (up to 4K), trim, multi-language subtitles with auto-translate, "Make compatible" mp4 re-encoder, inline player, self-updating yt-dlp. Shipped as signed .dmg and Inno Setup installer with GitHub Actions auto-builds.</p>
+                    <div class="project-tags">
+                        <span class="tag">Swift</span>
+                        <span class="tag">SwiftUI</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Flask</span>
+                        <span class="tag">PyInstaller</span>
+                        <span class="tag">FFmpeg</span>
+                        <span class="tag">yt-dlp</span>
+                        <span class="tag">Inno Setup</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="https://github.com/ilan-stack/caption-app" target="_blank" class="project-card reveal" style="--i:7">
+                <div class="project-image">
+                    <picture><source srcset="images/captionapp-preview.webp" type="image/webp"><img src="images/captionapp-preview.png" alt="Auto-Caption"></picture>
+                </div>
+                <div class="project-body">
+                    <div class="project-title">Auto-Caption</div>
+                    <p class="project-desc"><strong>Problem:</strong> Burning styled captions into videos is a slow round-trip through Premiere or paid SaaS, and YouTube's auto-translate is famously out of sync. <strong>Built:</strong> A self-hosted FastAPI app that runs OpenAI Whisper on the audio, optionally polishes the segments with Claude, and burns the result through FFmpeg + libass. In-browser editor with a timeline, drag-to-position overlays, and a live preview that matches the burned output to the pixel. Bundled into the YouTube Downloader's "Caption" tab via an embedded WKWebView.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">FastAPI</span>
+                        <span class="tag">Whisper</span>
+                        <span class="tag">Claude</span>
+                        <span class="tag">FFmpeg</span>
+                        <span class="tag">libass</span>
+                    </div>
+                </div>
+            </a>
+
         </div>
         <p style="text-align:center; margin-top:40px; color:var(--text-dim); font-size:14px;">
             See more on <a href="https://github.com/ilan-stack?tab=repositories" target="_blank">GitHub</a>
