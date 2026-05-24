@@ -104,13 +104,35 @@
         </div>
         <div class="projects-grid stagger">
 
-            <a href="https://github.com/ilan-stack/InkForge" target="_blank" class="project-card reveal" style="--i:0">
-                <div class="project-image">
+            <div class="project-card reveal" style="--i:0">
+                <a href="https://site-steel-alpha.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="Lens — open live site">
+                    <picture><source srcset="images/lens-preview.webp" type="image/webp"><img src="images/lens-preview.jpg" alt="Lens" class="has-video"></picture>
+                    <video src="videos/lens-preview.mp4" muted loop playsinline preload="metadata"></video>
+                </a>
+                <div class="project-body">
+                    <div class="project-title"><a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Lens</a></div>
+                    <p class="project-desc"><strong>Problem:</strong> Accessibility on the web is fragmented — every site, app, and reader-mode tool asks the user to reconfigure font size, contrast, color-blindness filters, and reading aids from scratch. <strong>Built:</strong> A cross-browser extension + Cloudflare Worker backend that carries a single user profile across every page — adaptive reading view, 8 color-blindness filters, low-vision reflow, form simplification, AI alt-text, and a screen-reader companion mode. End-to-end design system, marketing site, privacy policy, and Chrome Web Store submission package shipped.</p>
+                    <div class="project-tags">
+                        <span class="tag">MV3 Extension</span>
+                        <span class="tag">Cloudflare Workers</span>
+                        <span class="tag">Anthropic API</span>
+                        <span class="tag">Accessibility</span>
+                        <span class="tag">Design System</span>
+                    </div>
+                    <div style="margin-top:14px; display:flex; gap:18px; font-size:13px; font-weight:600;">
+                        <a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:var(--accent-2); text-decoration:none;">Live site →</a>
+                        <a href="https://site-steel-alpha.vercel.app/design/#colors" target="_blank" style="color:var(--accent-2); text-decoration:none;">Design system →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card reveal" style="--i:1">
+                <a href="https://github.com/ilan-stack/InkForge" target="_blank" class="project-image" style="display:block;" aria-label="InkForge — GitHub">
                     <picture><source srcset="images/inkforge-preview.webp" type="image/webp"><img src="images/inkforge-preview.jpg" alt="InkForge" class="has-video"></picture>
                     <video src="videos/inkforge-preview.mp4" muted loop playsinline preload="metadata"></video>
-                </div>
+                </a>
                 <div class="project-body">
-                    <div class="project-title">InkForge</div>
+                    <div class="project-title"><a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:inherit;text-decoration:none">InkForge</a></div>
                     <p class="project-desc"><strong>Problem:</strong> Artists needed a fast, native tool for concept art that integrates AI editing without leaving their canvas. <strong>Built:</strong> A full macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI, designed in collaboration with the art team to fit real production workflows.</p>
                     <div class="project-tags">
                         <span class="tag">Swift</span>
@@ -118,15 +140,19 @@
                         <span class="tag">AI Editing</span>
                         <span class="tag">CoreGraphics</span>
                     </div>
+                    <div style="margin-top:14px; display:flex; gap:18px; font-size:13px; font-weight:600;">
+                        <a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
+                        <a href="https://design-liart-nu.vercel.app/" target="_blank" style="color:var(--accent-2); text-decoration:none;">Design system →</a>
+                    </div>
                 </div>
-            </a>
+            </div>
 
-<a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" class="project-card reveal" style="--i:1">
-                <div class="project-image">
+<div class="project-card reveal" style="--i:2">
+                <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" class="project-image" style="display:block;" aria-label="TaperSafe — App Store">
                     <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="TaperSafe"></picture>
-                </div>
+                </a>
                 <div class="project-body">
-                    <div class="project-title">TaperSafe <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">LIVE ON APP STORE</span></div>
+                    <div class="project-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:inherit;text-decoration:none">TaperSafe</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">LIVE ON APP STORE</span></div>
                     <p class="project-desc"><strong>Problem:</strong> Patients tapering off medications need a safe, clear way to track gradual dose reductions, while providers need a way to share evidence-based taper plans. <strong>Built:</strong> A native iOS app with separate patient and provider modes, on-device data privacy, daily dose reminders, and QR code plan sharing between clinicians and patients. Shipped end-to-end and live on the App Store.</p>
                     <div class="project-tags">
                         <span class="tag">React Native</span>
@@ -135,10 +161,14 @@
                         <span class="tag">iOS</span>
                         <span class="tag">Healthcare</span>
                     </div>
+                    <div style="margin-top:14px; display:flex; gap:18px; font-size:13px; font-weight:600;">
+                        <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:var(--accent-2); text-decoration:none;">App Store →</a>
+                        <a href="https://tapersafe-design.vercel.app/" target="_blank" style="color:var(--accent-2); text-decoration:none;">Design system →</a>
+                    </div>
                 </div>
-            </a>
+            </div>
 
-            <a href="https://github.com/ilan-stack/Sprite-Studio" target="_blank" class="project-card reveal" style="--i:2">
+            <a href="https://sprite-studio-nine.vercel.app" target="_blank" class="project-card reveal" style="--i:3">
                 <div class="project-image">
                     <picture><source srcset="images/spritestudio-preview.webp" type="image/webp"><img src="images/spritestudio-preview.jpg" alt="Sprite Studio" class="has-video"></picture>
                     <video src="videos/spritestudio-preview.mp4" muted loop playsinline preload="metadata"></video>
@@ -155,7 +185,7 @@
                 </div>
             </a>
 
-            <a href="https://github.com/ilan-stack/after-effects-hub" target="_blank" class="project-card reveal" style="--i:3; text-decoration: none; color: inherit;">
+            <a href="https://github.com/ilan-stack/after-effects-hub" target="_blank" class="project-card reveal" style="--i:4; text-decoration: none; color: inherit;">
                 <div class="project-image"><picture><source srcset="images/settae-preview.webp" type="image/webp"><img src="images/settae-preview.jpg" alt="After Effects Hub"></picture></div>
                 <div class="project-body">
                     <div class="project-title">After Effects Hub</div>
@@ -169,7 +199,7 @@
                 </div>
             </a>
 
-            <a href="https://cubelets.vercel.app/" target="_blank" class="project-card reveal" style="--i:4">
+            <a href="https://cubelets.vercel.app/" target="_blank" class="project-card reveal" style="--i:5">
                 <div class="project-image">
                     <picture><source srcset="images/cubelets-preview.webp" type="image/webp"><img src="images/cubelets-preview.png" alt="Cubelets"></picture>
                 </div>
@@ -186,7 +216,7 @@
                 </div>
             </a>
 
-            <a href="https://github.com/ilan-stack/ai-studio" target="_blank" class="project-card reveal" style="--i:5">
+            <a href="https://github.com/ilan-stack/ai-studio" target="_blank" class="project-card reveal" style="--i:6">
                 <div class="project-image">
                     <picture><source srcset="images/aistudio-preview.webp" type="image/webp"><img src="images/aistudio-preview.jpg" alt="AI Studio" class="has-video"></picture>
                     <video src="videos/aistudio-preview.mp4" muted loop playsinline preload="metadata"></video>
@@ -203,7 +233,7 @@
                 </div>
             </a>
 
-            <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" class="project-card reveal" style="--i:6">
+            <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" class="project-card reveal" style="--i:7">
                 <div class="project-image">
                     <picture><source srcset="images/ytdownloader-preview.webp" type="image/webp"><img src="images/ytdownloader-preview.png" alt="YouTube Downloader"></picture>
                 </div>
@@ -223,7 +253,7 @@
                 </div>
             </a>
 
-            <a href="https://github.com/ilan-stack/caption-app" target="_blank" class="project-card reveal" style="--i:7">
+            <a href="https://github.com/ilan-stack/caption-app" target="_blank" class="project-card reveal" style="--i:8">
                 <div class="project-image">
                     <picture><source srcset="images/captionapp-preview.webp" type="image/webp"><img src="images/captionapp-preview.png" alt="Auto-Caption"></picture>
                 </div>
