@@ -11,6 +11,16 @@
     --border: #222;
     --border-hover: #444;
     --radius: 12px;
+    --brand-grad: linear-gradient(120deg, #7c5cfc 0%, #c084fc 35%, #4ade80 70%, #60a5fa 100%);
+}
+
+/* Brand-gradient text helper */
+.grad-text {
+    background: var(--brand-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
 html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -141,8 +151,12 @@ nav .container { display: flex; justify-content: space-between; align-items: cen
 /* SECTIONS */
 section { padding: 100px 0; }
 .section-label {
-    font-size: 13px; font-weight: 600; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    display: inline-block;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 12px;
+    background: var(--brand-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
 }
 .section-title {
     font-size: clamp(28px, 4vw, 40px); font-weight: 700;
@@ -154,7 +168,7 @@ section { padding: 100px 0; }
 .project-card {
     background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden;
-    transition: all 0.3s ease; display: block; cursor: default;
+    transition: all 0.3s ease; display: flex; flex-direction: column; cursor: default;
     transform-style: preserve-3d; will-change: transform;
 }
 a.project-card { cursor: pointer; }
@@ -181,10 +195,12 @@ a.project-card { cursor: pointer; }
     opacity: 0;
 }
 
-.project-body { padding: 24px; }
+.project-body { padding: 24px; flex: 1 1 auto; display: flex; flex-direction: column; }
 .project-title { font-size: 18px; font-weight: 700; color: #fff; margin: 0 0 8px; }
 .project-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
 .project-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+/* Pin the action links to the bottom so every card's row aligns */
+.proj-actions { margin-top: auto; padding-top: 18px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
 .tag {
     font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
     background: rgba(124,92,252,0.1); color: var(--accent-2);
@@ -198,7 +214,13 @@ a.project-card { cursor: pointer; }
     padding: 24px; background: var(--bg-card);
     border: 1px solid var(--border); border-radius: var(--radius);
 }
-.stat-number { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+.stat-number {
+    font-size: 32px; font-weight: 700; letter-spacing: -1px;
+    background: var(--brand-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    width: max-content;
+}
 .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
 /* SKILLS */
@@ -214,7 +236,7 @@ a.project-card { cursor: pointer; }
 }
 .skill-group-title span {
     display: inline-block; width: 8px; height: 8px;
-    border-radius: 50%; background: var(--accent);
+    border-radius: 50%; background: var(--brand-grad);
 }
 .skill-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .skill-tag {
@@ -241,7 +263,7 @@ a.project-card { cursor: pointer; }
     width: 9px; height: 9px; border-radius: 50%;
     background: var(--accent); border: 2px solid var(--bg);
 }
-.timeline-item.current::before { box-shadow: 0 0 0 4px rgba(124,92,252,0.2); }
+.timeline-item.current::before { background: var(--brand-grad); border-color: var(--bg); box-shadow: 0 0 0 4px rgba(124,92,252,0.2); }
 .timeline-role { font-size: 16px; font-weight: 700; color: #fff; }
 .timeline-company { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
 .timeline-dates { font-size: 12px; color: var(--text-dim); margin-top: 2px; }

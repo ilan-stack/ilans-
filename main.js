@@ -8,6 +8,20 @@ window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 50);
 });
 
+/* ── Fade the particle field out below the hero (keep content calm) ── */
+(function() {
+    var canvas = document.getElementById('dotfield');
+    var hero = document.querySelector('.hero');
+    if (!canvas || !hero) return;
+    function fade() {
+        var h = hero.offsetHeight || window.innerHeight;
+        var p = Math.min(window.scrollY / h, 1);   // 0 at top -> 1 past hero
+        canvas.style.opacity = (1 - p * 0.88).toFixed(3); // 1.0 -> ~0.12
+    }
+    fade();
+    window.addEventListener('scroll', fade, { passive: true });
+})();
+
 /* ── Mobile burger menu ── */
 const burger = document.getElementById('navBurger');
 const navLinks = document.getElementById('navLinks');
