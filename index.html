@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,7 +44,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
 <nav id="nav">
     <div class="container">
         <a href="#" class="nav-logo">IL</a>
-        <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
         <div class="nav-links" id="navLinks">
             <a href="#work">Work</a>
             <a href="#about">About</a>
@@ -110,7 +110,7 @@
                     <video src="videos/lens-preview.mp4" muted loop playsinline preload="metadata"></video>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Lens</a></div>
+                    <h3 class="project-title"><a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Lens</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> Accessibility on the web is fragmented - every site, app, and reader-mode tool asks the user to reconfigure font size, contrast, color-blindness filters, and reading aids from scratch. <strong>Built:</strong> A cross-browser extension + Cloudflare Worker backend that carries a single user profile across every page - adaptive reading view, 8 color-blindness filters, low-vision reflow, form simplification, AI alt-text, and a screen-reader companion mode. End-to-end design system, marketing site, privacy policy, and Chrome Web Store submission package shipped.</p>
                     <div class="project-tags">
                         <span class="tag">MV3 Extension</span>
@@ -132,7 +132,7 @@
                     <video src="videos/inkforge-preview.mp4" muted loop playsinline preload="metadata"></video>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:inherit;text-decoration:none">InkForge</a></div>
+                    <h3 class="project-title"><a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:inherit;text-decoration:none">InkForge</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> Artists needed a fast, native tool for concept art that integrates AI editing without leaving their canvas. <strong>Built:</strong> A full macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI, designed in collaboration with the art team to fit real production workflows.</p>
                     <div class="project-tags">
                         <span class="tag">Swift</span>
@@ -152,7 +152,7 @@
                     <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="TaperSafe"></picture>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:inherit;text-decoration:none">TaperSafe</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">LIVE ON APP STORE</span></div>
+                    <h3 class="project-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:inherit;text-decoration:none">TaperSafe</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">LIVE ON APP STORE</span></h3>
                     <p class="project-desc"><strong>Problem:</strong> Patients tapering off medications need a safe, clear way to track gradual dose reductions, while providers need a way to share evidence-based taper plans. <strong>Built:</strong> A native iOS app with separate patient and provider modes, on-device data privacy, daily dose reminders, and QR code plan sharing between clinicians and patients. Shipped end-to-end and live on the App Store.</p>
                     <div class="project-tags">
                         <span class="tag">React Native</span>
@@ -174,7 +174,7 @@
                     <video src="videos/spritestudio-preview.mp4" muted loop playsinline preload="metadata"></video>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://sprite-studio-nine.vercel.app" target="_blank" style="color:inherit;text-decoration:none">Sprite Studio</a></div>
+                    <h3 class="project-title"><a href="https://sprite-studio-nine.vercel.app" target="_blank" style="color:inherit;text-decoration:none">Sprite Studio</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> Converting video sequences to sprite sheets took artists hours of manual work per asset. <strong>Built:</strong> A production pipeline with AI-powered grid detection, chroma key, and multi-format export. Integrated into the team's existing workflow, reducing a multi-hour process to minutes.</p>
                     <div class="project-tags">
                         <span class="tag">JavaScript</span>
@@ -192,7 +192,7 @@
             <div class="project-card reveal" style="--i:4">
                 <a href="https://ae-hub-case.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="After Effects Hub - case study"><picture><source srcset="images/settae-preview.webp" type="image/webp"><img src="images/settae-preview.jpg" alt="After Effects Hub"></picture></a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://ae-hub-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">After Effects Hub</a></div>
+                    <h3 class="project-title"><a href="https://ae-hub-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">After Effects Hub</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> Motion designers constantly context-switched between AE and external AI tools. <strong>Built:</strong> A 10-module AI extension embedded directly in After Effects: image expansion, upscaling, background removal, video generation, audio, and copywriting. Developed with the motion team to eliminate round-trips and keep artists in their native environment.</p>
                     <div class="project-tags">
                         <span class="tag">CEP Extension</span>
@@ -212,7 +212,7 @@
                     <picture><source srcset="images/cubelets-preview.webp" type="image/webp"><img src="images/cubelets-preview.png" alt="Cubelets"></picture>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://cubelets.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Cubelets</a> <span style="font-size:11px; font-weight:600; color:#c084fc; margin-left:6px; vertical-align:middle;">PLAYABLE</span></div>
+                    <h3 class="project-title"><a href="https://cubelets.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Cubelets</a> <span style="font-size:11px; font-weight:600; color:#c084fc; margin-left:6px; vertical-align:middle;">PLAYABLE</span></h3>
                     <p class="project-desc"><strong>Problem:</strong> Casual mobile puzzlers tend to be either mindless tappers or punishingly tight - I wanted a cozy, satisfying merge-and-build loop that rewards spatial thinking without stress. <strong>Built:</strong> A voxel-sculpture merge puzzle as a fully playable PWA - drop blocks to fill ghosted 3D shapes, with daily challenges, a gallery, and a chill "Zen" mode. Designed and built end-to-end: game design, art direction, and code.</p>
                     <div class="project-tags">
                         <span class="tag">React</span>
@@ -234,7 +234,7 @@
                     <video src="videos/aistudio-preview.mp4" muted loop playsinline preload="metadata"></video>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://ai-studio-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">AI Studio</a></div>
+                    <h3 class="project-title"><a href="https://ai-studio-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">AI Studio</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> The creative team needed one unified interface for multiple GenAI capabilities instead of juggling separate tools. <strong>Built:</strong> A modular production platform for image generation, video processing, 3D modeling, and background removal, on Replicate API, deployed for daily use by the creative and production teams.</p>
                     <div class="project-tags">
                         <span class="tag">JavaScript</span>
@@ -254,7 +254,7 @@
                     <picture><source srcset="images/ytdownloader-preview.webp" type="image/webp"><img src="images/ytdownloader-preview.png" alt="YouTube Downloader"></picture>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://yt-downloader-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">YouTube Downloader</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">MAC + WINDOWS</span></div>
+                    <h3 class="project-title"><a href="https://yt-downloader-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">YouTube Downloader</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">MAC + WINDOWS</span></h3>
                     <p class="project-desc"><strong>Problem:</strong> Existing YouTube downloaders are either sketchy ad-laden web services or command-line tools nobody non-technical wants to touch. <strong>Built:</strong> A native desktop app - SwiftUI on macOS, a Flask + Edge --app shell on Windows - wrapping yt-dlp, ffmpeg, and deno into one drop-in installer. Quality picker (up to 4K), trim, multi-language subtitles with auto-translate, "Make compatible" mp4 re-encoder, inline player, self-updating yt-dlp. Shipped as signed .dmg and Inno Setup installer with GitHub Actions auto-builds.</p>
                     <div class="project-tags">
                         <span class="tag">Swift</span>
@@ -278,7 +278,7 @@
                     <picture><source srcset="images/captionapp-preview.webp" type="image/webp"><img src="images/captionapp-preview.png" alt="Auto-Caption"></picture>
                 </a>
                 <div class="project-body">
-                    <div class="project-title"><a href="https://caption-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Auto-Caption</a></div>
+                    <h3 class="project-title"><a href="https://caption-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Auto-Caption</a></h3>
                     <p class="project-desc"><strong>Problem:</strong> Burning styled captions into videos is a slow round-trip through Premiere or paid SaaS, and YouTube's auto-translate is famously out of sync. <strong>Built:</strong> A self-hosted FastAPI app that runs OpenAI Whisper on the audio, optionally polishes the segments with Claude, and burns the result through FFmpeg + libass. In-browser editor with a timeline, drag-to-position overlays, and a live preview that matches the burned output to the pixel. Bundled into the YouTube Downloader's "Caption" tab via an embedded WKWebView.</p>
                     <div class="project-tags">
                         <span class="tag">Python</span>
@@ -314,7 +314,7 @@
                 <picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.png" alt="Ilan Lenzner" class="about-portrait"></picture>
                 <div class="about-bio">
                     <p>20+ years from <span class="highlight">3D animation</span> to <span class="highlight">interactive ads</span> to <span class="highlight">AI product engineering</span>.</p>
-                    <p>Today I architect <span class="highlight">autonomous AI pipelines</span> that generate, animate, and ship creative assets end-to-end, replacing workflows that used to take <strong>days with minutes</strong>.</p>
+                    <p>Today I architect <span class="highlight">autonomous AI pipelines</span> that generate, animate, and ship creative assets end-to-end, turning workflows that once took <strong>days into minutes</strong>.</p>
                     <p>I think in systems, design in Figma, and ship in code.</p>
                 </div>
             </div>
@@ -477,7 +477,7 @@
     </div>
 </footer>
 
-<script src="main.js" defer></script>
+<script src="main.js?v=2" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
