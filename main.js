@@ -2,6 +2,21 @@
 document.documentElement.classList.remove('no-js');
 var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ── Theme toggle (dark is the default; light is opt-in + persisted) ── */
+var themeLight = document.documentElement.getAttribute('data-theme') === 'light';
+(function() {
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', themeLight ? 'true' : 'false');
+    btn.addEventListener('click', function() {
+        themeLight = !themeLight;
+        if (themeLight) document.documentElement.setAttribute('data-theme', 'light');
+        else document.documentElement.removeAttribute('data-theme');
+        btn.setAttribute('aria-pressed', themeLight ? 'true' : 'false');
+        try { localStorage.setItem('theme', themeLight ? 'light' : 'dark'); } catch (e) {}
+    });
+})();
+
 /* ── Nav scroll ── */
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
@@ -519,18 +534,33 @@ document.querySelectorAll('.project-card').forEach(function(card) {
 
             // Determine appearance
             var glow = p.lit;
-            var baseAlpha = (p.col + p.row) % 3 === 0 ? 0.18 : 0.12;
+            var baseAlpha = themeLight
+                ? ((p.col + p.row) % 3 === 0 ? 0.32 : 0.22)
+                : ((p.col + p.row) % 3 === 0 ? 0.18 : 0.12);
             var alpha = baseAlpha + glow * 0.65;
             var r_c, g_c, b_c;
 
             if (pixelColor && currentIsImage && glow > 0.05) {
-                // Image mode: interpolate from grey toward actual pixel color
-                r_c = Math.round(255 * (1 - glow) + pixelColor.r * glow);
-                g_c = Math.round(255 * (1 - glow) + pixelColor.g * glow);
-                b_c = Math.round(255 * (1 - glow) + pixelColor.b * glow);
+                if (themeLight) {
+                    // Light: desaturate photos/videos to cool gray (no pink)
+                    var lum = 0.299 * pixelColor.r + 0.587 * pixelColor.g + 0.114 * pixelColor.b;
+                    r_c = Math.round(60 * (1 - glow) + lum * glow);
+                    g_c = Math.round(60 * (1 - glow) + lum * glow);
+                    b_c = Math.round(70 * (1 - glow) + Math.min(255, lum * 1.04) * glow);
+                } else {
+                    // Dark: interpolate from grey toward actual pixel color
+                    r_c = Math.round(255 * (1 - glow) + pixelColor.r * glow);
+                    g_c = Math.round(255 * (1 - glow) + pixelColor.g * glow);
+                    b_c = Math.round(255 * (1 - glow) + pixelColor.b * glow);
+                }
                 alpha = baseAlpha + glow * 0.82;
+            } else if (themeLight) {
+                // Light text mode: dark-grey base glowing toward blue
+                r_c = Math.round(60 - glow * 23);    // 60 -> 37
+                g_c = Math.round(60 + glow * 39);    // 60 -> 99
+                b_c = Math.round(70 + glow * 165);   // 70 -> 235
             } else {
-                // Text mode: glow purple
+                // Dark text mode: white base glowing toward purple
                 r_c = Math.round(255 - glow * 131);   // 255 -> 124
                 g_c = Math.round(255 - glow * 163);   // 255 -> 92
                 b_c = Math.round(255 - glow * 3);     // 255 -> 252
@@ -544,7 +574,7 @@ document.querySelectorAll('.project-card').forEach(function(card) {
             }
 
             if (shape === 'dot') {
-                var dotR = DOT_R + glow * (pixelColor && currentIsImage ? 1.8 : 1.2);
+                var dotR = (themeLight ? 0.7 : DOT_R) + glow * (pixelColor && currentIsImage ? 1.8 : 1.2);
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, dotR, 0, Math.PI * 2);
                 ctx.fillStyle = color;
