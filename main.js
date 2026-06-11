@@ -853,7 +853,7 @@ function trackEvent(path) {
             if (r.bottom < 0 || r.top > vh) return;
             // -0.5 (entering at bottom) .. +0.5 (leaving at top)
             var p = ((r.top + r.height / 2) - vh / 2) / vh;
-            m.style.setProperty('--py', (p * -30).toFixed(1) + 'px');
+            m.style.setProperty('--py', (p * -22).toFixed(1) + 'px');
         });
     }
     function onScroll() {
