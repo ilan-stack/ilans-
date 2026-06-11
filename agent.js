@@ -319,7 +319,7 @@
             clearTimer = setTimeout(clearNudge, 1100);
         }
         function schedule(first) {
-            var delay = first ? 4500 : (8000 + Math.random() * 9000);
+            var delay = first ? 3000 : (3500 + Math.random() * 3500);
             setTimeout(function() {
                 fire();
                 if (!opened) schedule(false);
