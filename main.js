@@ -336,7 +336,7 @@ function trackEvent(path) {
         { video: 'videos/dnc4.mp4', bgFilter: 147 },
         { text: 'AI + DESIGN', scale: 0.9 },
         { video: 'videos/ilans-talk.mp4', bgFilter: 'grey' },
-        { image: 'images/rhino.png' },
+        { image: 'images/rhino-dots.webp' },
         { video: 'videos/bg_video.mp4', bgFilter: 'grey' },
         { video: 'videos/portrait-anim.mp4' },
         { text: '45+ TOOLS', scale: 0.9 },
@@ -351,9 +351,10 @@ function trackEvent(path) {
     var imageCache = {};
     var videoCache = {};
     var activeVideo = null;
-    var videosReady = false;
 
-    // Images are tiny — load now. Videos wait for idle time.
+    // Images are tiny — load now. Videos load one at a time, just before
+    // their banner message comes up, so visitors who scroll past the hero
+    // never pay for them.
     MESSAGES.forEach(function(msg) {
         if (msg.image && !imageCache[msg.image]) {
             var img = new Image();
@@ -362,26 +363,17 @@ function trackEvent(path) {
         }
     });
 
-    function initVideos() {
-        if (videosReady) return;
-        videosReady = true;
-        MESSAGES.forEach(function(msg) {
-            if (msg.video && !videoCache[msg.video]) {
-                var vid = document.createElement('video');
-                vid.src = msg.video;
-                vid.muted = true;
-                vid.loop = true;
-                vid.playsInline = true;
-                vid.preload = 'auto';
-                vid.load();
-                videoCache[msg.video] = vid;
-            }
-        });
-    }
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(initVideos, { timeout: 2500 });
-    } else {
-        setTimeout(initVideos, 1800);
+    function ensureVideo(src) {
+        if (!src || videoCache[src]) return videoCache[src];
+        var vid = document.createElement('video');
+        vid.src = src;
+        vid.muted = true;
+        vid.loop = true;
+        vid.playsInline = true;
+        vid.preload = 'auto';
+        vid.load();
+        videoCache[src] = vid;
+        return vid;
     }
 
     var W, H, cols, rows, particles;
@@ -444,8 +436,7 @@ function trackEvent(path) {
             currentIsImage = true;
             currentIsVideo = true;
             currentBgFilter = msg.bgFilter || null;
-            initVideos();
-            var vid = videoCache[msg.video];
+            var vid = ensureVideo(msg.video);
             if (vid) {
                 vid.currentTime = 0;
                 vid.play().catch(function() {});
@@ -573,6 +564,10 @@ function trackEvent(path) {
         if (cycleFrame === 0) {
             msgIndex = (msgIndex + 1) % MESSAGES.length;
             sampleMessage(MESSAGES[msgIndex]);
+        } else if (cycleFrame === MSG_DURATION) {
+            // Prefetch the next message's video ~2s before it shows
+            var next = MESSAGES[(msgIndex + 1) % MESSAGES.length];
+            if (next.video) ensureVideo(next.video);
         }
 
         // Re-sample video frame every 3rd frame for live animation

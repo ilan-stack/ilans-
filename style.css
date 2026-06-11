@@ -1187,7 +1187,10 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
 .agent-send:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
 
 @media (max-width: 640px) {
-    .agent-launcher { bottom: 18px; right: 16px; padding: 11px 17px; }
+    /* Avatar-only launcher on phones: no collision with the scroll hint */
+    .agent-launcher { bottom: 18px; right: 16px; padding: 7px; border-radius: 50%; }
+    .agent-launcher .agent-launcher-label { display: none; }
+    .agent-launcher .agent-face { width: 40px; height: 40px; }
     .agent-panel {
         bottom: 0; right: 0; left: 0;
         width: 100vw;

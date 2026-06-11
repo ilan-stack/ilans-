@@ -120,7 +120,7 @@
             '<img src="images/ai-avatar.svg" alt="" class="agent-face-img">' +
             '<span class="agent-online"></span>' +
         '</span>' +
-        'Ask my AI';
+        '<span class="agent-launcher-label">Ask my AI</span>';
 
     var panel = document.createElement('div');
     panel.className = 'agent-panel';
