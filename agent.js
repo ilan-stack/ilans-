@@ -52,8 +52,6 @@
         'skills-eng': '[data-focus="skills-eng"]'
     };
     var focusReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var focusQueue = [];
-    var focusBusy = false;
 
     function stripMarkers(s) {
         // remove complete markers, any trailing partial mid-stream, and
@@ -62,37 +60,9 @@
                 .replace(/\[\[[^\]\]]*$/, '')
                 .replace(/[ \t]{2,}/g, ' ');
     }
-    function processFocusMarkers(full, fired) {
-        var re = /\[\[focus:([a-z0-9-]+)\]\]/g, m, all = [];
-        while ((m = re.exec(full))) all.push(m[1]);
-        for (var i = fired; i < all.length; i++) enqueueFocus(all[i]);
-        return all.length;
-    }
-    function enqueueFocus(key) {
-        if (!FOCUS[key]) return;
-        focusQueue.push(key);
-        runFocus();
-    }
-    function runFocus() {
-        if (focusBusy || !focusQueue.length) return;
-        var key = focusQueue.shift();
-        var el = document.querySelector(FOCUS[key]);
-        if (!el) { runFocus(); return; }
-        focusBusy = true;
-        el.scrollIntoView({ behavior: focusReduced ? 'auto' : 'smooth', block: 'center' });
-        // restart the animation if the element was just spotlighted
-        el.classList.remove('agent-spotlight');
-        void el.offsetWidth;
-        el.classList.add('agent-spotlight');
-        track('agent-point');
-        setTimeout(function() {
-            el.classList.remove('agent-spotlight');
-            focusBusy = false;
-            runFocus();
-        }, 2900);
-    }
 
-    // Immediate scroll+highlight (used by voice sync; speech paces the calls)
+    // Scroll + highlight a target. Only ever called while reading aloud,
+    // paced by the narration (see speakParts).
     function spotlight(key) {
         if (!FOCUS[key]) return;
         var el = document.querySelector(FOCUS[key]);
@@ -505,7 +475,6 @@
             var decoder = new TextDecoder();
             var buf = '';
             var answer = '';
-            var firedMarkers = 0;
 
             function pump() {
                 return reader.read().then(function(step) {
@@ -520,9 +489,8 @@
                             var evt = JSON.parse(payload);
                             if (evt.type === 'content_block_delta' && evt.delta && evt.delta.text) {
                                 answer += evt.delta.text;
-                                // In voice mode, defer pointing so it syncs to the
-                                // narration; otherwise point as the text streams in.
-                                if (!voiceMode) firedMarkers = processFocusMarkers(answer, firedMarkers);
+                                // Pointing happens only while reading aloud (synced to
+                                // the voice). Typed replies just show clean text.
                                 aiEl.textContent = stripMarkers(answer);
                                 msgsEl.scrollTop = msgsEl.scrollHeight;
                             }
