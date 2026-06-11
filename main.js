@@ -792,3 +792,45 @@ function trackEvent(path) {
     }
     requestAnimationFrame(tick);
 })();
+
+/* ── Experience timeline: a glowing dot travels down the line with
+   scroll, leaving a violet trail and lighting roles as it passes ── */
+(function() {
+    var tl = document.querySelector('.timeline');
+    if (!tl || REDUCED) return;
+
+    var trail = document.createElement('div');
+    trail.className = 'timeline-trail';
+    var marker = document.createElement('div');
+    marker.className = 'timeline-marker';
+    tl.appendChild(trail);
+    tl.appendChild(marker);
+
+    var items = tl.querySelectorAll('.timeline-item');
+    var ticking = false;
+
+    function update() {
+        ticking = false;
+        var rect = tl.getBoundingClientRect();
+        var inset = 8;                          // matches the line's top/bottom inset
+        var total = rect.height - inset * 2;
+        if (total <= 0) return;
+        // focal point: 40% down the viewport feels like "where you're reading"
+        var focal = window.innerHeight * 0.4;
+        var p = (focal - rect.top - inset) / total;
+        p = Math.max(0, Math.min(1, p));
+        var pos = inset + p * total;
+        marker.style.transform = 'translate(-50%, ' + pos.toFixed(1) + 'px)';
+        trail.style.height = Math.max(0, pos - inset).toFixed(1) + 'px';
+        items.forEach(function(it) {
+            var dotY = it.getBoundingClientRect().top - rect.top + 11;
+            it.classList.toggle('passed', pos >= dotY);
+        });
+    }
+    function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+})();
