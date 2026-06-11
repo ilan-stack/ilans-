@@ -92,6 +92,36 @@
         }, 2900);
     }
 
+    // Immediate scroll+highlight (used by voice sync; speech paces the calls)
+    function spotlight(key) {
+        if (!FOCUS[key]) return;
+        var el = document.querySelector(FOCUS[key]);
+        if (!el) return;
+        el.scrollIntoView({ behavior: focusReduced ? 'auto' : 'smooth', block: 'center' });
+        el.classList.remove('agent-spotlight');
+        void el.offsetWidth;
+        el.classList.add('agent-spotlight');
+        track('agent-point');
+        setTimeout(function() { el.classList.remove('agent-spotlight'); }, 2900);
+    }
+
+    function cleanSeg(s) {
+        return s.replace(/\[\[[^\]\]]*$/, '').replace(/[ \t]{2,}/g, ' ').trim();
+    }
+    // Split a raw reply into {text, key} parts at each marker, so speech and
+    // page-pointing can be interleaved in narration order.
+    function parseFocusParts(raw) {
+        var parts = [], re = /\[\[focus:([a-z0-9-]+)\]\]/g, last = 0, m, hasKey = false;
+        while ((m = re.exec(raw))) {
+            var key = FOCUS[m[1]] ? m[1] : null;
+            parts.push({ text: cleanSeg(raw.slice(last, m.index)), key: key });
+            if (key) hasKey = true;
+            last = m.index + m[0].length;
+        }
+        parts.push({ text: cleanSeg(raw.slice(last)), key: null });
+        return { parts: parts, hasKey: hasKey };
+    }
+
     /* ── DOM ── */
     var launcher = document.createElement('button');
     launcher.className = 'agent-launcher';
@@ -164,6 +194,7 @@
         supported: ('speechSynthesis' in window) || ('Audio' in window),
         activeBtn: null,
         audio: null,
+        seq: 0,
         unlocked: false,
         unlock: function() {
             // iOS allows audio only after a user-gesture
@@ -181,6 +212,7 @@
             btn.setAttribute('aria-label', on ? 'Stop reading' : 'Read aloud');
         },
         stop: function() {
+            this.seq++; // invalidate any running sequence
             if (this.audio) {
                 try { this.audio.pause(); } catch (e) {}
                 this.audio = null;
@@ -189,36 +221,65 @@
             this.markBtn(this.activeBtn, false);
             this.activeBtn = null;
         },
-        speak: function(text, btn) {
-            if (!text) return;
+        // Play one chunk of text; resolve when it finishes (or at once if empty/stale)
+        playText: function(text, token) {
+            var self = this;
+            return new Promise(function(resolve) {
+                if (!text || token !== self.seq) { resolve(); return; }
+                function browser() {
+                    if (!self.browserSupported) { resolve(); return; }
+                    var u = new SpeechSynthesisUtterance(text);
+                    var v = self.pickVoice(text); if (v) u.voice = v;
+                    u.rate = 1.04;
+                    u.onend = u.onerror = function() { resolve(); };
+                    speechSynthesis.speak(u);
+                }
+                fetch(TTS_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                }).then(function(res) {
+                    var ct = res.headers.get('Content-Type') || '';
+                    if (res.ok && ct.indexOf('audio') === 0) return res.blob();
+                    throw new Error('fallback');
+                }).then(function(blob) {
+                    if (token !== self.seq) { resolve(); return; }
+                    var url = URL.createObjectURL(blob);
+                    var a = new Audio(url);
+                    self.audio = a;
+                    a.onended = a.onerror = function() { URL.revokeObjectURL(url); if (self.audio === a) self.audio = null; resolve(); };
+                    a.play().catch(function() { browser(); });
+                }).catch(function() { browser(); });
+            });
+        },
+        // Speak a sequence of {text, key} parts, firing onKey(key) AFTER each
+        // part finishes - so page scroll/highlight syncs to the narration.
+        speakParts: function(parts, btn, onKey) {
             if (this.activeBtn === btn) { this.stop(); return; }
             this.stop();
             this.activeBtn = btn || null;
             this.markBtn(btn, true);
+            var token = ++this.seq;
             var self = this;
-
-            // Try the Azure neural proxy first - much more natural
-            fetch(TTS_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text })
-            }).then(function(res) {
-                var ct = res.headers.get('Content-Type') || '';
-                if (res.ok && ct.indexOf('audio') === 0) return res.blob();
-                throw new Error('fallback');
-            }).then(function(blob) {
-                if (self.activeBtn !== btn) return; // user stopped/switched
-                var url = URL.createObjectURL(blob);
-                var a = new Audio(url);
-                self.audio = a;
-                a.onended = a.onerror = function() {
-                    URL.revokeObjectURL(url);
-                    if (self.activeBtn === btn) { self.markBtn(btn, false); self.activeBtn = null; self.audio = null; }
-                };
-                a.play().catch(function() { self.browserSpeak(text, btn); });
-            }).catch(function() {
-                self.browserSpeak(text, btn);
-            });
+            var i = 0;
+            (function next() {
+                if (token !== self.seq) return;
+                if (i >= parts.length) {
+                    self.markBtn(btn, false);
+                    if (self.activeBtn === btn) self.activeBtn = null;
+                    return;
+                }
+                var part = parts[i++];
+                self.playText(part.text, token).then(function() {
+                    if (token !== self.seq) return;
+                    if (part.key && onKey) onKey(part.key);
+                    next();
+                });
+            })();
+        },
+        speak: function(text, btn) {
+            if (!text) return;
+            this.speakParts([{ text: text, key: null }], btn, null);
         },
         browserSpeak: function(text, btn) {
             if (!this.browserSupported) { this.markBtn(btn, false); if (this.activeBtn === btn) this.activeBtn = null; return; }
@@ -247,7 +308,7 @@
     };
     if (tts.browserSupported) speechSynthesis.getVoices(); // warm voice list
 
-    function attachSpeaker(msgEl) {
+    function attachSpeaker(msgEl, raw) {
         if (!tts.supported) return null;
         var btn = document.createElement('button');
         btn.className = 'agent-speak';
@@ -256,7 +317,9 @@
         btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
         btn.addEventListener('click', function() {
             tts.unlock();
-            tts.speak(msgEl.textContent, btn);
+            var pp = parseFocusParts(raw != null ? raw : msgEl.textContent);
+            if (pp.hasKey) tts.speakParts(pp.parts, btn, spotlight);
+            else tts.speak(msgEl.textContent, btn);
         });
         var row = document.createElement('div');
         row.className = 'agent-msg-tools';
@@ -352,7 +415,7 @@
         if (!opened) {
             opened = true;
             var g = addMsg('ai', GREETING);
-            attachSpeaker(g);
+            attachSpeaker(g, GREETING);
             track('agent-open');
         }
         inputEl.focus();
@@ -457,7 +520,9 @@
                             var evt = JSON.parse(payload);
                             if (evt.type === 'content_block_delta' && evt.delta && evt.delta.text) {
                                 answer += evt.delta.text;
-                                firedMarkers = processFocusMarkers(answer, firedMarkers);
+                                // In voice mode, defer pointing so it syncs to the
+                                // narration; otherwise point as the text streams in.
+                                if (!voiceMode) firedMarkers = processFocusMarkers(answer, firedMarkers);
                                 aiEl.textContent = stripMarkers(answer);
                                 msgsEl.scrollTop = msgsEl.scrollHeight;
                             }
@@ -471,8 +536,12 @@
                     var clean = stripMarkers(answer);
                     aiEl.textContent = clean;
                     history.push({ role: 'assistant', content: clean });
-                    var speakBtn = attachSpeaker(aiEl);
-                    if (voiceMode && speakBtn) tts.speak(clean, speakBtn);
+                    var speakBtn = attachSpeaker(aiEl, answer);
+                    if (voiceMode && speakBtn) {
+                        var pp = parseFocusParts(answer);
+                        if (pp.hasKey) tts.speakParts(pp.parts, speakBtn, spotlight);
+                        else tts.speak(clean, speakBtn);
+                    }
                 } else {
                     aiEl.textContent = 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.';
                     history.pop();
