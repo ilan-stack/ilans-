@@ -1110,13 +1110,15 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
     border: none;
     background: var(--ink);
     color: #111;
-    font-size: 16px;
     cursor: pointer;
     flex-shrink: 0;
-    transition: transform 0.2s var(--ease-out), background 0.2s;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 0.2s var(--ease-out), background 0.2s, box-shadow 0.2s;
 }
-.agent-send:hover { background: #fff; transform: translateY(-1px); }
-.agent-send:disabled { opacity: 0.4; cursor: default; transform: none; }
+.agent-send svg { display: block; }
+.agent-send:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(237,237,234,0.18); }
+.agent-send:active { transform: translateY(0) scale(0.94); }
+.agent-send:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
 
 @media (max-width: 640px) {
     .agent-launcher { bottom: 18px; right: 16px; padding: 11px 17px; }
