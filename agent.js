@@ -26,7 +26,12 @@
     var launcher = document.createElement('button');
     launcher.className = 'agent-launcher';
     launcher.setAttribute('aria-label', 'Chat with AI Ilan');
-    launcher.innerHTML = '<span class="pulse" aria-hidden="true"></span>Ask my AI';
+    launcher.innerHTML =
+        '<span class="agent-face" aria-hidden="true">' +
+            '<img src="images/ai-avatar.svg" alt="" class="agent-face-img">' +
+            '<span class="agent-online"></span>' +
+        '</span>' +
+        'Ask my AI';
 
     var panel = document.createElement('div');
     panel.className = 'agent-panel';
@@ -35,7 +40,10 @@
     panel.setAttribute('aria-label', 'Chat with AI Ilan');
     panel.innerHTML =
         '<div class="agent-head">' +
-            '<picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.png" alt="" class="agent-avatar"></picture>' +
+            '<span class="agent-face agent-face-lg" aria-hidden="true">' +
+                '<img src="images/ai-avatar.svg" alt="" class="agent-face-img" id="agentAvatar">' +
+                '<span class="agent-online"></span>' +
+            '</span>' +
             '<div class="agent-head-text">' +
                 '<div class="agent-name">AI Ilan</div>' +
                 '<div class="agent-sub">AI twin · can be wrong · <a href="mailto:ilan@ilans.net">email the real one</a></div>' +
@@ -78,6 +86,8 @@
             }
         },
         markBtn: function(btn, on) {
+            var face = document.getElementById('agentAvatar');
+            if (face) face.classList.toggle('talking', on);
             if (!btn) return;
             btn.classList.toggle('speaking', on);
             btn.setAttribute('aria-label', on ? 'Stop reading' : 'Read aloud');
@@ -243,6 +253,8 @@
         busy = b;
         sendEl.disabled = b;
         inputEl.disabled = b;
+        var face = document.getElementById('agentAvatar');
+        if (face) face.classList.toggle('thinking', b);
     }
 
     var opened = false;
