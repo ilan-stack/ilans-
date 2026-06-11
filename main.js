@@ -217,23 +217,88 @@ document.querySelectorAll('.case, .mini').forEach(function(card) {
 })();
 
 /* ── Engagement tracking: count contact-intent clicks in GoatCounter ── */
-(function() {
-    function track(path) {
-        if (window.goatcounter && window.goatcounter.count) {
-            window.goatcounter.count({ path: path, event: true });
-        }
+function trackEvent(path) {
+    if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: path, event: true });
     }
-    document.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
-        a.addEventListener('click', function() { track('email-click'); });
-    });
+}
+(function() {
     document.querySelectorAll('a[href*="t.me/"]').forEach(function(a) {
-        a.addEventListener('click', function() { track('telegram-click'); });
+        a.addEventListener('click', function() { trackEvent('telegram-click'); });
     });
     document.querySelectorAll('a[href$=".pdf"]').forEach(function(a) {
-        a.addEventListener('click', function() { track('resume-click'); });
+        a.addEventListener('click', function() { trackEvent('resume-click'); });
     });
     document.querySelectorAll('a[href*="linkedin.com"]').forEach(function(a) {
-        a.addEventListener('click', function() { track('linkedin-click'); });
+        a.addEventListener('click', function() { trackEvent('linkedin-click'); });
+    });
+})();
+
+/* ── Email contact sheet: mailto links open a no-dead-end dialog ──
+   Raw mailto silently fails on machines with no mail client; the
+   sheet offers copy / web Gmail / mail app instead. ── */
+(function() {
+    var modal = document.getElementById('emailModal');
+    if (!modal) return;
+    var copyBtn = document.getElementById('copyEmailBtn');
+    var EMAIL = 'ilan@ilans.net';
+    var lastFocus = null;
+
+    function openModal() {
+        lastFocus = document.activeElement;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        copyBtn.focus();
+        trackEvent('email-click');
+    }
+    function closeModal() {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        copyBtn.textContent = 'Copy address';
+        if (lastFocus) lastFocus.focus();
+    }
+
+    // Intercept every mailto link except the sheet's own "Mail app" option
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
+        if (modal.contains(a)) return;
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal();
+        });
+    });
+
+    modal.querySelectorAll('[data-close]').forEach(function(el) {
+        el.addEventListener('click', closeModal);
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    copyBtn.addEventListener('click', function() {
+        function done() {
+            copyBtn.textContent = 'Copied ✓';
+            trackEvent('email-copy');
+            setTimeout(function() { copyBtn.textContent = 'Copy address'; }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(EMAIL).then(done).catch(fallback);
+        } else {
+            fallback();
+        }
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = EMAIL;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); done(); } catch (err) {}
+            document.body.removeChild(ta);
+        }
+    });
+
+    document.getElementById('gmailBtn').addEventListener('click', function() {
+        trackEvent('gmail-compose');
     });
 })();
 
