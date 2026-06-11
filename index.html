@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>(function(){try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
     <title>Ilan Lenzner | Senior Product Designer & Design Engineer</title>
-    <meta name="description" content="Senior Product Designer & Design Engineer who designs and ships AI-powered products end-to-end. I think in systems, design in Figma, and ship in code.">
+    <meta name="description" content="Ilan Lenzner - Senior Product Designer & Design Engineer in Tel Aviv. I design and ship AI-powered products end-to-end, used daily by 100+ creatives.">
+    <meta name="author" content="Ilan Lenzner">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="keywords" content="Ilan Lenzner, product designer, design engineer, AI tools, Tel Aviv, UX, design systems, creative technologist">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Ilan Lenzner | Senior Product Designer & Design Engineer">
@@ -34,15 +37,50 @@
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Ilan Lenzner",
-        "jobTitle": "Senior Product Designer & Design Engineer",
-        "url": "https://ilans.net",
-        "sameAs": [
-            "https://github.com/ilan-stack",
-            "https://www.linkedin.com/in/ilan-lenzner-395ba64/"
-        ],
-        "knowsAbout": ["AI", "GenAI", "Creative Automation", "Product Design", "Design Engineering", "LLM Integration"]
+        "@graph": [
+            {
+                "@type": "Person",
+                "@id": "https://ilans.net/#ilan",
+                "name": "Ilan Lenzner",
+                "givenName": "Ilan",
+                "familyName": "Lenzner",
+                "url": "https://ilans.net/",
+                "image": "https://ilans.net/images/portrait.jpg",
+                "jobTitle": "Senior Product Designer & Design Engineer",
+                "description": "Senior Product Designer and Design Engineer based in Tel Aviv who designs and ships AI-powered products end-to-end - from autonomous ad pipelines to AI tools used daily by 100+ creatives.",
+                "email": "ilan@ilans.net",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Tel Aviv",
+                    "addressCountry": "IL"
+                },
+                "knowsLanguage": ["English", "Hebrew"],
+                "knowsAbout": ["AI", "GenAI", "Creative Automation", "Product Design", "Design Engineering", "Design Systems", "UX Design", "Prompt Engineering", "LLM Integration", "Motion Design", "3D"],
+                "sameAs": [
+                    "https://github.com/ilan-stack",
+                    "https://www.linkedin.com/in/ilan-lenzner-395ba64/",
+                    "https://t.me/ilanzner"
+                ]
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://ilans.net/#website",
+                "url": "https://ilans.net/",
+                "name": "Ilan Lenzner",
+                "description": "Portfolio of Ilan Lenzner - Senior Product Designer & Design Engineer.",
+                "inLanguage": "en",
+                "publisher": { "@id": "https://ilans.net/#ilan" }
+            },
+            {
+                "@type": "ProfilePage",
+                "@id": "https://ilans.net/#profile",
+                "url": "https://ilans.net/",
+                "name": "Ilan Lenzner | Senior Product Designer & Design Engineer",
+                "isPartOf": { "@id": "https://ilans.net/#website" },
+                "about": { "@id": "https://ilans.net/#ilan" },
+                "inLanguage": "en"
+            }
+        ]
     }
     </script>
 
