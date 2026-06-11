@@ -516,8 +516,10 @@ section { padding: 130px 0; }
     display: flex; gap: 14px;
     font-size: 12.5px; font-weight: 600;
 }
-.mini-links a { color: var(--ink-dim); }
+.mini-links a { color: var(--ink-muted); }
 .mini-links a:hover { color: var(--accent-ink); }
+.mini-links a.case-link { color: var(--ink-dim); font-weight: 500; }
+.mini-links a.case-link:hover { color: var(--ink-muted); }
 
 .more-gh {
     text-align: center;
