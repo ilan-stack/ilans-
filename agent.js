@@ -44,6 +44,9 @@
         '<div class="agent-msgs" aria-live="polite"></div>' +
         '<div class="agent-starters"></div>' +
         '<form class="agent-form">' +
+            '<button class="agent-mic" type="button" aria-label="Speak your question" aria-pressed="false" hidden>' +
+                '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>' +
+            '</button>' +
             '<input class="agent-input" type="text" maxlength="1200" placeholder="Ask about Ilan or his work…" aria-label="Your question">' +
             '<button class="agent-send" type="submit" aria-label="Send">&#8593;</button>' +
         '</form>';
@@ -56,6 +59,139 @@
     var formEl = panel.querySelector('.agent-form');
     var inputEl = panel.querySelector('.agent-input');
     var sendEl = panel.querySelector('.agent-send');
+    var micEl = panel.querySelector('.agent-mic');
+
+    /* ── Text-to-speech: read AI replies aloud ── */
+    var tts = {
+        supported: 'speechSynthesis' in window,
+        activeBtn: null,
+        unlocked: false,
+        unlock: function() {
+            // iOS allows speech only after a user-gesture utterance
+            if (this.unlocked || !this.supported) return;
+            this.unlocked = true;
+            try { speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
+        },
+        pickVoice: function(text) {
+            var voices = speechSynthesis.getVoices();
+            var hebrew = /[֐-׿]/.test(text);
+            var lang = hebrew ? 'he' : 'en';
+            var preferred = hebrew
+                ? ['Carmit']
+                : ['Samantha', 'Google US English', 'Daniel', 'Alex'];
+            for (var i = 0; i < preferred.length; i++) {
+                var v = voices.find(function(x) { return x.name.indexOf(preferred[i]) === 0; });
+                if (v) return v;
+            }
+            return voices.find(function(x) { return x.lang.indexOf(lang) === 0; }) || null;
+        },
+        stop: function() {
+            if (!this.supported) return;
+            speechSynthesis.cancel();
+            if (this.activeBtn) {
+                this.activeBtn.classList.remove('speaking');
+                this.activeBtn.setAttribute('aria-label', 'Read aloud');
+                this.activeBtn = null;
+            }
+        },
+        speak: function(text, btn) {
+            if (!this.supported || !text) return;
+            if (this.activeBtn === btn) { this.stop(); return; }
+            this.stop();
+            var u = new SpeechSynthesisUtterance(text);
+            var voice = this.pickVoice(text);
+            if (voice) u.voice = voice;
+            u.rate = 1.04;
+            u.pitch = 1;
+            var self = this;
+            u.onend = u.onerror = function() {
+                if (self.activeBtn === btn) {
+                    btn && btn.classList.remove('speaking');
+                    btn && btn.setAttribute('aria-label', 'Read aloud');
+                    self.activeBtn = null;
+                }
+            };
+            if (btn) {
+                btn.classList.add('speaking');
+                btn.setAttribute('aria-label', 'Stop reading');
+            }
+            this.activeBtn = btn || null;
+            speechSynthesis.speak(u);
+        }
+    };
+    if (tts.supported) speechSynthesis.getVoices(); // trigger async voice load
+
+    function attachSpeaker(msgEl) {
+        if (!tts.supported) return null;
+        var btn = document.createElement('button');
+        btn.className = 'agent-speak';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Read aloud');
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+        btn.addEventListener('click', function() {
+            tts.unlock();
+            tts.speak(msgEl.textContent, btn);
+        });
+        var row = document.createElement('div');
+        row.className = 'agent-msg-tools';
+        row.appendChild(btn);
+        msgEl.insertAdjacentElement('afterend', row);
+        return btn;
+    }
+
+    /* ── Speech-to-text: talk to the agent ── */
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recognition = null;
+    var listening = false;
+    var voiceMode = false; // last question was spoken -> speak the answer
+
+    if (SR && micEl) {
+        micEl.hidden = false;
+        micEl.addEventListener('click', function() {
+            tts.unlock();
+            if (listening) { stopListening(); return; }
+            tts.stop();
+            try {
+                recognition = new SR();
+            } catch (e) { micEl.hidden = true; return; }
+            recognition.lang = (navigator.language && navigator.language.indexOf('he') === 0) ? 'he-IL' : 'en-US';
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(e) {
+                var interim = '', final = '';
+                for (var i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) final += e.results[i][0].transcript;
+                    else interim += e.results[i][0].transcript;
+                }
+                if (interim) inputEl.value = interim;
+                if (final) {
+                    inputEl.value = '';
+                    stopListening();
+                    send(final.trim(), true);
+                }
+            };
+            recognition.onerror = function() { stopListening(); };
+            recognition.onend = function() { stopListening(); };
+
+            listening = true;
+            micEl.classList.add('listening');
+            micEl.setAttribute('aria-pressed', 'true');
+            inputEl.placeholder = 'Listening…';
+            try { recognition.start(); } catch (e) { stopListening(); }
+            track('agent-voice');
+        });
+    }
+
+    function stopListening() {
+        listening = false;
+        micEl.classList.remove('listening');
+        micEl.setAttribute('aria-pressed', 'false');
+        inputEl.placeholder = 'Ask about Ilan or his work…';
+        if (recognition) {
+            try { recognition.stop(); } catch (e) {}
+        }
+    }
 
     STARTERS.forEach(function(q) {
         var chip = document.createElement('button');
@@ -87,7 +223,8 @@
         launcher.classList.add('panel-open');
         if (!opened) {
             opened = true;
-            addMsg('ai', GREETING);
+            var g = addMsg('ai', GREETING);
+            attachSpeaker(g);
             track('agent-open');
         }
         inputEl.focus();
@@ -112,8 +249,9 @@
         if (q) send(q);
     });
 
-    function send(text) {
+    function send(text, spoken) {
         if (busy) return;
+        voiceMode = !!spoken;
         startersEl.style.display = 'none';
         inputEl.value = '';
         addMsg('user', text);
@@ -167,8 +305,14 @@
                 });
             }
             return pump().then(function() {
-                if (answer) history.push({ role: 'assistant', content: answer });
-                else { aiEl.textContent = 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.'; history.pop(); }
+                if (answer) {
+                    history.push({ role: 'assistant', content: answer });
+                    var speakBtn = attachSpeaker(aiEl);
+                    if (voiceMode && speakBtn) tts.speak(answer, speakBtn);
+                } else {
+                    aiEl.textContent = 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.';
+                    history.pop();
+                }
             });
         }).catch(function(err) {
             aiEl.classList.remove('thinking');

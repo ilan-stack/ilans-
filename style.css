@@ -950,11 +950,59 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
 }
 .agent-chip:hover { border-color: var(--ink-dim); color: var(--ink); }
 
+/* Speaker button under each AI reply */
+.agent-msg-tools {
+    align-self: flex-start;
+    margin-top: -4px;
+}
+.agent-speak {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.agent-speak:hover { color: var(--ink); border-color: var(--ink-dim); }
+.agent-speak.speaking {
+    color: var(--ok);
+    border-color: rgba(74,222,128,0.5);
+    animation: speakPulse 1.4s ease-in-out infinite;
+}
+@keyframes speakPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.25); }
+    50% { box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+}
+
 .agent-form {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 14px;
     border-top: 1px solid var(--line);
     flex-shrink: 0;
+}
+.agent-mic {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.agent-mic:hover { color: var(--ink); border-color: var(--ink-dim); }
+.agent-mic.listening {
+    color: #fff;
+    background: #e5484d;
+    border-color: #e5484d;
+    animation: micPulse 1.2s ease-in-out infinite;
+}
+@keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(229,72,77,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(229,72,77,0); }
 }
 .agent-input {
     flex: 1;
