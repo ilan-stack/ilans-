@@ -1149,6 +1149,30 @@ html[data-theme="light"] .agent-msg.from-user { background: var(--ink); color: #
 html[data-theme="light"] .agent-send { background: var(--ink); color: #faf9f7; }
 html[data-theme="light"] .agent-send:hover { background: #000; }
 
+/* ── AI Ilan spotlight: when the agent points at an element ── */
+.agent-spotlight {
+    position: relative;
+    border-radius: 14px;
+    animation: agentSpotlight 2.8s ease-out;
+    scroll-margin: 120px;
+}
+@keyframes agentSpotlight {
+    0% { box-shadow: 0 0 0 0 rgba(138,123,255,0); }
+    12% { box-shadow: 0 0 0 3px rgba(138,123,255,0.9), 0 0 34px 6px rgba(138,123,255,0.45); }
+    55% { box-shadow: 0 0 0 3px rgba(138,123,255,0.55), 0 0 26px 4px rgba(138,123,255,0.3); }
+    100% { box-shadow: 0 0 0 0 rgba(138,123,255,0); }
+}
+html[data-theme="light"] .agent-spotlight { animation: agentSpotlightLight 2.8s ease-out; }
+@keyframes agentSpotlightLight {
+    0% { box-shadow: 0 0 0 0 rgba(91,77,224,0); }
+    12% { box-shadow: 0 0 0 3px rgba(91,77,224,0.8), 0 0 30px 5px rgba(91,77,224,0.35); }
+    55% { box-shadow: 0 0 0 3px rgba(91,77,224,0.5), 0 0 22px 3px rgba(91,77,224,0.22); }
+    100% { box-shadow: 0 0 0 0 rgba(91,77,224,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .agent-spotlight { animation: none; box-shadow: 0 0 0 3px rgba(138,123,255,0.7); }
+}
+
 /* ── Reveal animations ── */
 .reveal {
     opacity: 0; transform: translateY(18px);

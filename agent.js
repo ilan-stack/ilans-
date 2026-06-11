@@ -22,6 +22,66 @@
         }
     }
 
+    /* ── Page-pointing: the agent emits [[focus:KEY]] markers; the
+       widget strips them from the text and scrolls + spotlights the
+       matching element so AI Ilan can give a guided tour. ── */
+    var FOCUS = {
+        work: '#work .section-title',
+        about: '#about .section-title',
+        skills: '#skills .section-title',
+        experience: '#experience .section-title',
+        contact: '#contact .contact-title',
+        lens: '[data-focus="lens"]',
+        tapersafe: '[data-focus="tapersafe"]',
+        'ae-hub': '[data-focus="ae-hub"]',
+        inkforge: '[data-focus="inkforge"]',
+        'sprite-studio': '[data-focus="sprite-studio"]',
+        cubelets: '[data-focus="cubelets"]',
+        'ai-studio': '[data-focus="ai-studio"]',
+        'yt-downloader': '[data-focus="yt-downloader"]',
+        'auto-caption': '[data-focus="auto-caption"]'
+    };
+    var focusReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var focusQueue = [];
+    var focusBusy = false;
+
+    function stripMarkers(s) {
+        // remove complete markers, any trailing partial mid-stream, and
+        // collapse the double space left where a marker was
+        return s.replace(/\[\[focus:[a-z0-9-]+\]\]/g, '')
+                .replace(/\[\[[^\]\]]*$/, '')
+                .replace(/[ \t]{2,}/g, ' ');
+    }
+    function processFocusMarkers(full, fired) {
+        var re = /\[\[focus:([a-z0-9-]+)\]\]/g, m, all = [];
+        while ((m = re.exec(full))) all.push(m[1]);
+        for (var i = fired; i < all.length; i++) enqueueFocus(all[i]);
+        return all.length;
+    }
+    function enqueueFocus(key) {
+        if (!FOCUS[key]) return;
+        focusQueue.push(key);
+        runFocus();
+    }
+    function runFocus() {
+        if (focusBusy || !focusQueue.length) return;
+        var key = focusQueue.shift();
+        var el = document.querySelector(FOCUS[key]);
+        if (!el) { runFocus(); return; }
+        focusBusy = true;
+        el.scrollIntoView({ behavior: focusReduced ? 'auto' : 'smooth', block: 'center' });
+        // restart the animation if the element was just spotlighted
+        el.classList.remove('agent-spotlight');
+        void el.offsetWidth;
+        el.classList.add('agent-spotlight');
+        track('agent-point');
+        setTimeout(function() {
+            el.classList.remove('agent-spotlight');
+            focusBusy = false;
+            runFocus();
+        }, 2900);
+    }
+
     /* ── DOM ── */
     var launcher = document.createElement('button');
     launcher.className = 'agent-launcher';
@@ -372,6 +432,7 @@
             var decoder = new TextDecoder();
             var buf = '';
             var answer = '';
+            var firedMarkers = 0;
 
             function pump() {
                 return reader.read().then(function(step) {
@@ -386,7 +447,8 @@
                             var evt = JSON.parse(payload);
                             if (evt.type === 'content_block_delta' && evt.delta && evt.delta.text) {
                                 answer += evt.delta.text;
-                                aiEl.textContent = answer;
+                                firedMarkers = processFocusMarkers(answer, firedMarkers);
+                                aiEl.textContent = stripMarkers(answer);
                                 msgsEl.scrollTop = msgsEl.scrollHeight;
                             }
                         } catch (err) {}
@@ -396,9 +458,11 @@
             }
             return pump().then(function() {
                 if (answer) {
-                    history.push({ role: 'assistant', content: answer });
+                    var clean = stripMarkers(answer);
+                    aiEl.textContent = clean;
+                    history.push({ role: 'assistant', content: clean });
                     var speakBtn = attachSpeaker(aiEl);
-                    if (voiceMode && speakBtn) tts.speak(answer, speakBtn);
+                    if (voiceMode && speakBtn) tts.speak(clean, speakBtn);
                 } else {
                     aiEl.textContent = 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.';
                     history.pop();
