@@ -70,6 +70,87 @@ document.querySelectorAll('.case, .mini').forEach(function(card) {
     });
 });
 
+/* ── Skills: terminal decode-scramble cascade ──
+   Each term resolves from random glyphs left-to-right, staggered
+   down the row; hovering a term re-scrambles it briefly. ── */
+(function() {
+    var rows = document.querySelectorAll('.skill-row');
+    if (!rows.length) return;
+
+    // ASCII-only pool: identical advance width in the mono font, no tofu
+    var GLYPHS = '!<>-_\\/[]{}=+*^?#@$%&;:~01';
+
+    function randGlyph() {
+        return GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    }
+
+    function decode(el, duration) {
+        if (el._decoding) return;
+        el._decoding = true;
+        var finalText = el.dataset.text;
+        var L = finalText.length;
+        el.classList.add('decoding');
+        var start = performance.now();
+        var shown = new Array(L);
+
+        function tick(now) {
+            var t = Math.min((now - start) / duration, 1);
+            var out = '';
+            for (var i = 0; i < L; i++) {
+                // Each char locks in sequence across the first 85% of the run
+                var lockAt = 0.12 + (i / L) * 0.73;
+                if (t >= lockAt || finalText[i] === ' ') {
+                    out += finalText[i];
+                } else {
+                    // Re-roll a glyph every ~3rd frame so it shimmers, not strobes
+                    if (!shown[i] || Math.random() < 0.35) shown[i] = randGlyph();
+                    out += shown[i];
+                }
+            }
+            el.textContent = out;
+            if (t < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                el.textContent = finalText;
+                el.classList.remove('decoding');
+                el._decoding = false;
+            }
+        }
+        requestAnimationFrame(tick);
+    }
+
+    rows.forEach(function(row) {
+        var title = row.querySelector('.skill-row-title');
+        var skills = row.querySelectorAll('.skill');
+        if (title) title.dataset.text = title.textContent;
+        skills.forEach(function(s) { s.dataset.text = s.textContent; });
+
+        if (REDUCED) return;
+
+        // Re-scramble a single term on hover
+        skills.forEach(function(s) {
+            s.addEventListener('mouseenter', function() { decode(s, 320); });
+        });
+    });
+
+    if (REDUCED || !('IntersectionObserver' in window)) return;
+
+    var rowObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            rowObserver.unobserve(entry.target);
+            var row = entry.target;
+            var title = row.querySelector('.skill-row-title');
+            if (title) decode(title, 500);
+            row.querySelectorAll('.skill').forEach(function(s, i) {
+                setTimeout(function() { decode(s, 520); }, 180 + i * 55);
+            });
+        });
+    }, { threshold: 0.3 });
+
+    rows.forEach(function(row) { rowObserver.observe(row); });
+})();
+
 /* ── Animated stat counters (serif numerals) ── */
 (function() {
     var statEls = document.querySelectorAll('.stat-number');

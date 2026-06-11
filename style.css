@@ -528,11 +528,19 @@ section { padding: 130px 0; }
     color: var(--accent-ink);
 }
 .skill-row-list {
-    font-size: 14.5px;
+    font-family: var(--mono);
+    font-size: 13px;
     color: var(--ink-muted);
-    line-height: 2;
+    line-height: 2.3;
+    letter-spacing: 0.01em;
 }
-.skill-row-list .sep { color: var(--line-strong); margin: 0 7px; }
+.skill-row-list .sep { color: var(--line-strong); margin: 0 6px; }
+.skill {
+    transition: color 0.25s ease;
+    cursor: default;
+}
+.skill.decoding { color: var(--accent-ink); }
+.skill:hover { color: var(--ink); }
 
 /* ── EXPERIENCE ── */
 .timeline { position: relative; padding-left: 34px; }
