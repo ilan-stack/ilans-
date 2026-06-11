@@ -11,7 +11,7 @@
     --bg-card: #131318;
     --ink: #ededea;
     --ink-muted: #a0a0a8;
-    --ink-dim: #71717a;
+    --ink-dim: #80808a;
     --accent: #8a7bff;
     --accent-ink: #b9afff;
     --ok: #4ade80;
@@ -539,6 +539,9 @@ section { padding: 130px 0; }
     font-size: 13.5px;
     color: var(--ink-dim);
 }
+/* Inline link in a muted paragraph: underline so it's distinguishable
+   without relying on color (WCAG 1.4.1) */
+.more-gh a { text-decoration: underline; text-underline-offset: 2px; }
 
 /* Mid-page CTA band: catch interest right after the work */
 .cta-band {

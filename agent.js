@@ -382,6 +382,10 @@
     function openPanel() {
         panel.hidden = false;
         launcher.classList.add('panel-open');
+        // launcher is visually hidden behind the panel - keep it out of the
+        // tab order and the a11y tree while it is
+        launcher.setAttribute('tabindex', '-1');
+        launcher.setAttribute('aria-hidden', 'true');
         if (!opened) {
             opened = true;
             var g = addMsg('ai', GREETING);
@@ -393,6 +397,8 @@
     function closePanel() {
         panel.hidden = true;
         launcher.classList.remove('panel-open');
+        launcher.removeAttribute('tabindex');
+        launcher.removeAttribute('aria-hidden');
         launcher.focus();
     }
 
