@@ -834,3 +834,32 @@ function trackEvent(path) {
     window.addEventListener('resize', onScroll);
     update();
 })();
+
+/* ── Featured cases: inner-image parallax. The media is slightly
+   oversized inside its masked frame and drifts as you scroll past -
+   depth without moving any text or layout. ── */
+(function() {
+    if (REDUCED) return;
+    var medias = document.querySelectorAll('.case-media');
+    if (!medias.length) return;
+    medias.forEach(function(m) { m.classList.add('parallax'); });
+
+    var ticking = false;
+    function update() {
+        ticking = false;
+        var vh = window.innerHeight;
+        medias.forEach(function(m) {
+            var r = m.getBoundingClientRect();
+            if (r.bottom < 0 || r.top > vh) return;
+            // -0.5 (entering at bottom) .. +0.5 (leaving at top)
+            var p = ((r.top + r.height / 2) - vh / 2) / vh;
+            m.style.setProperty('--py', (p * -30).toFixed(1) + 'px');
+        });
+    }
+    function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+})();

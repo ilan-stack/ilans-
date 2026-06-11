@@ -396,7 +396,14 @@ section { padding: 130px 0; }
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
+    transform: translateY(var(--py, 0px));
     transition: transform 0.8s var(--ease-out), opacity 0.5s ease;
+}
+/* Inner parallax (JS adds .parallax + drives --py): the image is slightly
+   oversized inside the masked frame and drifts as you scroll past */
+.case-media.parallax img, .case-media.parallax video {
+    top: -7%;
+    height: 114%;
 }
 .case-media video { opacity: 0; }
 .case-media::after {
@@ -406,8 +413,8 @@ section { padding: 130px 0; }
     border-radius: 18px;
     pointer-events: none;
 }
-.case:hover .case-media img { transform: scale(1.025); }
-.case:hover .case-media video { opacity: 1; transform: scale(1.025); }
+.case:hover .case-media img { transform: translateY(var(--py, 0px)) scale(1.025); }
+.case:hover .case-media video { opacity: 1; transform: translateY(var(--py, 0px)) scale(1.025); }
 .case:hover .case-media img.has-video { opacity: 0; }
 
 .case-kicker {
