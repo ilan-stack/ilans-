@@ -18,238 +18,128 @@ var themeLight = document.documentElement.getAttribute('data-theme') === 'light'
 })();
 
 /* ── Nav scroll ── */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
+var nav = document.getElementById('nav');
+window.addEventListener('scroll', function() {
     nav.classList.toggle('scrolled', window.scrollY > 50);
-});
-
-/* ── Fade the particle field out below the hero (keep content calm) ── */
-(function() {
-    var canvas = document.getElementById('dotfield');
-    var hero = document.querySelector('.hero');
-    if (!canvas || !hero) return;
-    function fade() {
-        var h = hero.offsetHeight || window.innerHeight;
-        var p = Math.min(window.scrollY / h, 1);   // 0 at top -> 1 past hero
-        canvas.style.opacity = (1 - p * 0.88).toFixed(3); // 1.0 -> ~0.12
-    }
-    fade();
-    window.addEventListener('scroll', fade, { passive: true });
-})();
+}, { passive: true });
 
 /* ── Mobile burger menu ── */
-const burger = document.getElementById('navBurger');
-const navLinks = document.getElementById('navLinks');
+var burger = document.getElementById('navBurger');
+var navLinks = document.getElementById('navLinks');
 function setBurger(open) {
     burger.classList.toggle('open', open);
     navLinks.classList.toggle('open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
 }
-burger.addEventListener('click', () => {
+burger.addEventListener('click', function() {
     setBurger(!burger.classList.contains('open'));
 });
-navLinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => setBurger(false));
+navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { setBurger(false); });
 });
-document.addEventListener('click', (e) => {
+document.addEventListener('click', function(e) {
     if (navLinks.classList.contains('open') && !nav.contains(e.target)) setBurger(false);
 });
 
 /* ── Reveal on scroll ── */
 if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
 } else {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
 }
 
-/* ── Parallax: content recedes, scatters & fades on scroll ── */
-(function() {
-    if (REDUCED) return;
-    const readyEls = new Map();
-    const heroContent = document.querySelector('.hero-content');
-    const SCATTER_AT = 0.3; // scatter begins at 30% of parallax progress
-
-    // Pre-compute random scatter directions for each child
-    function initScatter(el) {
-        if (el._scatter) return;
-        el._scatter = [];
-        var n = el.children.length;
-        for (var i = 0; i < n; i++) {
-            var angle = (Math.PI * 2 / n) * i + (Math.random() - 0.5) * 1.2;
-            var dist = 400 + Math.random() * 600;
-            el._scatter.push({
-                tx: Math.cos(angle) * dist,
-                ty: Math.sin(angle) * dist - 150,
-                rot: (Math.random() - 0.5) * 80
-            });
-        }
-    }
-
-    // Apply parallax + scatter to an element based on progress (0 to 1)
-    function applyEffect(el, progress) {
-        initScatter(el);
-        var children = el.children;
-
-        // Parent: only transform (no opacity — children handle visibility)
-        el.style.overflow = 'visible';
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(' + (-progress * 250) + 'px)';
-
-        if (progress < SCATTER_AT) {
-            // Pre-scatter: children fade slightly together
-            var fade = progress / SCATTER_AT; // 0 to 1
-            for (var i = 0; i < children.length; i++) {
-                children[i].style.transform = 'scale(' + (1 - fade * 0.15) + ')';
-                children[i].style.opacity = String(1 - fade * 0.3);
-                children[i].style.filter = '';
-            }
-        } else {
-            // Scatter: each child flies in its own direction
-            var raw = (progress - SCATTER_AT) / (1 - SCATTER_AT); // 0 to 1
-            var ep = raw * raw;
-            for (var i = 0; i < children.length; i++) {
-                var d = el._scatter[i % el._scatter.length];
-                children[i].style.transform = 'translate(' + (d.tx * ep) + 'px,' + (d.ty * ep) + 'px) rotate(' + (d.rot * ep) + 'deg) scale(' + (0.85 - ep * 0.4) + ')';
-                children[i].style.opacity = String(Math.max(0, 0.7 - ep * 0.9));
-                children[i].style.filter = 'blur(' + (ep * 8) + 'px)';
-            }
-        }
-    }
-
-    // Reset element and its children
-    function resetEffect(el) {
-        el.style.opacity = '';
-        el.style.transform = el.dataset.tilt || '';
-        el.style.overflow = '';
-        var children = el.children;
-        for (var i = 0; i < children.length; i++) {
-            children[i].style.transform = '';
-            children[i].style.opacity = '';
-            children[i].style.filter = '';
-        }
-    }
-
-    function tick() {
-        var vh = window.innerHeight;
-        var now = performance.now();
-
-        // Hero parallax + scatter
-        if (heroContent) {
-            var scrollT = Math.min(1, Math.max(0, window.scrollY / (vh * 0.35)));
-            if (scrollT > 0.01) {
-                applyEffect(heroContent, scrollT);
-            } else {
-                resetEffect(heroContent);
-            }
-        }
-
-        // Section content parallax + scatter
-        document.querySelectorAll('.reveal.visible').forEach(function(el) {
-            if (!readyEls.has(el)) {
-                readyEls.set(el, now);
-                return;
-            }
-            if (now - readyEls.get(el) < 700) return;
-            el.style.transition = 'none';
-
-            var rect = el.getBoundingClientRect();
-            var center = rect.top + rect.height / 2;
-
-            if (center < vh * 0.35) {
-                var t = Math.min(1, (vh * 0.35 - center) / (vh * 0.4));
-                applyEffect(el, t * t);
-            } else {
-                resetEffect(el);
-            }
-        });
-
-        requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
-})();
-
-/* ── Video hover on project cards ── */
-document.querySelectorAll('.project-card').forEach(function(card) {
+/* ── Hover videos: lazy-load src on first hover, play/pause on enter/leave ── */
+document.querySelectorAll('.case, .mini').forEach(function(card) {
     var video = card.querySelector('video');
     if (!video) return;
     card.addEventListener('mouseenter', function() {
+        if (!video.src && video.dataset.src) video.src = video.dataset.src;
         video.currentTime = 0;
         video.play().catch(function() {});
     });
     card.addEventListener('mouseleave', function() {
         video.pause();
-        video.currentTime = 0;
     });
 });
 
-/* ── Hero typing effect ── */
+/* ── Animated stat counters (serif numerals) ── */
 (function() {
-    var phrases = [
-        'autonomous pipelines that ship playable ads end-to-end',
-        'AI tools used daily by production teams',
-        'GenAI workflows that replaced 3-day manual processes',
-        'After Effects extensions with 10 AI modules',
-        'production systems processing thousands of creative assets',
-        'cross-functional tools built with artists, devs & PMs',
-    ];
-    var el = document.getElementById('heroTyped');
-    if (!el) return;
-    if (REDUCED) { el.textContent = phrases[0]; return; }
-    var cursor = el.querySelector('.cursor');
-    var idx = 0, charIdx = 0, deleting = false;
-    var typeSpeed = 45, deleteSpeed = 25, holdTime = 2200, pauseTime = 400;
+    var statEls = document.querySelectorAll('.stat-number');
+    statEls.forEach(function(el) {
+        var text = el.textContent.trim();
+        var match = text.match(/^(\d+)(.*)$/);
+        if (!match) return;
+        el._countTarget = parseInt(match[1]);
+        el._countSuffix = match[2];
+    });
 
-    function tick() {
-        var phrase = phrases[idx];
-        if (!deleting) {
-            charIdx++;
-            el.textContent = phrase.substring(0, charIdx);
-            el.appendChild(cursor);
-            if (charIdx >= phrase.length) {
-                setTimeout(function() { deleting = true; tick(); }, holdTime);
-                return;
-            }
-            setTimeout(tick, typeSpeed);
-        } else {
-            charIdx--;
-            el.textContent = phrase.substring(0, charIdx);
-            el.appendChild(cursor);
-            if (charIdx <= 0) {
-                deleting = false;
-                idx = (idx + 1) % phrases.length;
-                setTimeout(tick, pauseTime);
-                return;
-            }
-            setTimeout(tick, deleteSpeed);
-        }
+    function animateCounter(el) {
+        var target = el._countTarget;
+        var suffix = el._countSuffix;
+        if (REDUCED) { el.textContent = target + suffix; return; }
+        var duration = 1400;
+        var start = performance.now();
+        requestAnimationFrame(function step(now) {
+            var t = Math.min((now - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.round(eased * target) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+        });
     }
-    setTimeout(tick, 800);
+
+    if (!('IntersectionObserver' in window)) return;
+    var statObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                statObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    statEls.forEach(function(el) {
+        if (el._countTarget !== undefined) statObserver.observe(el);
+    });
 })();
 
-/* ── Force-field dot grid with dot-matrix banner ── */
+/* ── Scroll progress bar ── */
 (function() {
-    const canvas = document.getElementById('dotfield');
-    if (REDUCED) { canvas.style.display = 'none'; return; }
-    const ctx = canvas.getContext('2d');
-    const SPACING = 8;
-    const DOT_R = 0.5;
-    const PLUS_SIZE = 1.0;
-    const EFFECT_RADIUS = 150;
-    const REPEL_FORCE = 5;
-    const HEAL_FACTOR = 0.04;
-    const DAMPING = 0.92;
+    var bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    window.addEventListener('scroll', function() {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (scrollTop / docHeight * 100) + '%';
+    }, { passive: true });
+})();
 
-    // Banner messages — text, images, and videos with real colors
-    const MESSAGES = [
+/* ── Force-field dot grid with dot-matrix banner ──
+   The signature. Optimized: capped DPR, lazy video init, paused when
+   hidden or scrolled past the hero, lit-map updates every 2nd frame. ── */
+(function() {
+    var canvas = document.getElementById('dotfield');
+    if (REDUCED) { canvas.style.display = 'none'; return; }
+    var ctx = canvas.getContext('2d');
+    var IS_MOBILE = window.innerWidth < 700;
+    var SPACING = IS_MOBILE ? 11 : 9;
+    var DOT_R = 0.5;
+    var PLUS_SIZE = 1.0;
+    var EFFECT_RADIUS = 150;
+    var REPEL_FORCE = 5;
+    var HEAL_FACTOR = 0.04;
+    var DAMPING = 0.92;
+
+    // Banner messages — text, images, and videos with real colors.
+    // Mobile skips the video messages (CPU + bandwidth).
+    var MESSAGES = [
         { text: 'ILAN LENZNER', scale: 0.9 },
         { video: 'videos/dnc4.mp4', bgFilter: 147 },
         { text: 'AI + DESIGN', scale: 0.9 },
@@ -260,42 +150,59 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         { text: '45+ TOOLS', scale: 0.9 },
         { text: 'CREATIVE TECH', scale: 0.9 },
     ];
-    const MSG_DURATION = 200;   // frames to hold each message
-    const FADE_FRAMES = 50;     // frames for fade in/out
+    if (IS_MOBILE) {
+        MESSAGES = MESSAGES.filter(function(m) { return !m.video; });
+    }
+    var MSG_DURATION = 200;
+    var FADE_FRAMES = 50;
 
-    // Preload images
     var imageCache = {};
-    // Preload videos
     var videoCache = {};
-    var activeVideo = null;     // currently playing video element
+    var activeVideo = null;
+    var videosReady = false;
 
+    // Images are tiny — load now. Videos wait for idle time.
     MESSAGES.forEach(function(msg) {
         if (msg.image && !imageCache[msg.image]) {
             var img = new Image();
             img.src = msg.image;
             imageCache[msg.image] = img;
         }
-        if (msg.video && !videoCache[msg.video]) {
-            var vid = document.createElement('video');
-            vid.src = msg.video;
-            vid.muted = true;
-            vid.loop = true;
-            vid.playsInline = true;
-            vid.preload = 'auto';
-            vid.load();
-            videoCache[msg.video] = vid;
-        }
     });
 
-    let W, H, cols, rows, particles;
-    let mouseX = -9999, mouseY = -9999;
-    let frame = 0;
-    let msgIndex = 0;
-    let litMap = null;           // Set of "col,row" strings that are lit
-    let offCanvas, offCtx;       // offscreen canvas for text sampling
+    function initVideos() {
+        if (videosReady) return;
+        videosReady = true;
+        MESSAGES.forEach(function(msg) {
+            if (msg.video && !videoCache[msg.video]) {
+                var vid = document.createElement('video');
+                vid.src = msg.video;
+                vid.muted = true;
+                vid.loop = true;
+                vid.playsInline = true;
+                vid.preload = 'auto';
+                vid.load();
+                videoCache[msg.video] = vid;
+            }
+        });
+    }
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(initVideos, { timeout: 2500 });
+    } else {
+        setTimeout(initVideos, 1800);
+    }
+
+    var W, H, cols, rows, particles;
+    var mouseX = -9999, mouseY = -9999;
+    var frame = 0;
+    var msgIndex = 0;
+    var litMap = null;
+    var offCanvas, offCtx;
+    var running = false;
+    var rafId = null;
 
     function init() {
-        const dpr = window.devicePixelRatio || 1;
+        var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         W = window.innerWidth;
         H = window.innerHeight;
         canvas.width = W * dpr;
@@ -307,39 +214,35 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         cols = Math.ceil(W / SPACING) + 2;
         rows = Math.ceil(H / SPACING) + 2;
         particles = [];
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                const hx = c * SPACING;
-                const hy = r * SPACING;
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var hx = c * SPACING;
+                var hy = r * SPACING;
                 particles.push({
                     hx: hx, hy: hy,
                     x: hx, y: hy,
                     vx: 0, vy: 0,
                     col: c, row: r,
                     baseShape: (r + c) % 2 === 0 ? 'dot' : 'plus',
-                    lit: 0          // 0-1 glow intensity
+                    lit: 0
                 });
             }
         }
 
-        // Create offscreen canvas for text sampling
         offCanvas = document.createElement('canvas');
         offCanvas.width = cols;
         offCanvas.height = rows;
         offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
 
-        // Sample first message
         sampleMessage(MESSAGES[0]);
     }
 
-    // Store lit pixels as relative offsets from center, with optional color
-    var litPixels = [];   // [{dc, dr, r, g, b}, ...]
+    var litPixels = [];
     var currentIsImage = false;
     var currentIsVideo = false;
     var currentBgFilter = null;
 
     function sampleMessage(msg) {
-        // Stop any previously playing video
         if (activeVideo) {
             activeVideo.pause();
             activeVideo = null;
@@ -349,12 +252,12 @@ document.querySelectorAll('.project-card').forEach(function(card) {
             currentIsImage = true;
             currentIsVideo = true;
             currentBgFilter = msg.bgFilter || null;
+            initVideos();
             var vid = videoCache[msg.video];
             if (vid) {
                 vid.currentTime = 0;
                 vid.play().catch(function() {});
                 activeVideo = vid;
-                // Sample first frame immediately
                 sampleVideoFrame(vid);
             }
             return;
@@ -434,12 +337,10 @@ document.querySelectorAll('.project-card').forEach(function(card) {
                     if (lum > 235) continue;
                     // Chromakey: skip green-dominant pixels
                     if (G > 80 && G > R * 1.3 && G > B * 1.3) continue;
-                    // Background removal per video type
                     if (msg.bgFilter === 'grey') {
                         var maxC = Math.max(R, G, B), minC = Math.min(R, G, B);
                         if (maxC - minC < 35) continue;
                     } else if (typeof msg.bgFilter === 'number') {
-                        // Remove pixels near a specific luminance (uniform bg)
                         if (Math.abs(lum - msg.bgFilter) < 18) continue;
                     }
                 }
@@ -449,7 +350,7 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         updateLitMap();
     }
 
-    var litColorMap = {};  // "col,row" -> {r,g,b}
+    var litColorMap = {};
 
     function updateLitMap() {
         var fx = Math.floor(cols / 2 + Math.sin(frame / 180) * cols * 0.3);
@@ -471,11 +372,11 @@ document.querySelectorAll('.project-card').forEach(function(card) {
     }
 
     function animate() {
+        if (!running) { rafId = null; return; }
         ctx.clearRect(0, 0, W, H);
 
         frame++;
 
-        // Cycle messages
         var cycleFrame = frame % (MSG_DURATION + FADE_FRAMES * 2);
         if (cycleFrame === 0) {
             msgIndex = (msgIndex + 1) % MESSAGES.length;
@@ -487,15 +388,14 @@ document.querySelectorAll('.project-card').forEach(function(card) {
             sampleVideoFrame(activeVideo);
         }
 
-        // Update floating position every frame
-        updateLitMap();
+        // Float the banner — every 2nd frame is plenty
+        if (frame % 2 === 0) updateLitMap();
 
-        // Calculate banner fade (0 to 1)
         var bannerAlpha = 1;
         if (cycleFrame < FADE_FRAMES) {
-            bannerAlpha = cycleFrame / FADE_FRAMES;           // fade in
+            bannerAlpha = cycleFrame / FADE_FRAMES;
         } else if (cycleFrame > MSG_DURATION + FADE_FRAMES) {
-            bannerAlpha = 1 - (cycleFrame - MSG_DURATION - FADE_FRAMES) / FADE_FRAMES;  // fade out
+            bannerAlpha = 1 - (cycleFrame - MSG_DURATION - FADE_FRAMES) / FADE_FRAMES;
         }
 
         var radius = EFFECT_RADIUS + Math.sin(frame / 15) * 30;
@@ -504,16 +404,13 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         for (var i = 0; i < particles.length; i++) {
             var p = particles[i];
 
-            // Is this particle part of the text/image?
             var key = p.col + ',' + p.row;
             var isLit = litMap && litMap.has(key);
             var pixelColor = litColorMap[key] || null;
 
-            // Smooth glow transition
             var targetLit = isLit ? bannerAlpha : 0;
             p.lit += (targetLit - p.lit) * 0.12;
 
-            // Mouse repulsion
             var dx = p.x - mouseX;
             var dy = p.y - mouseY;
             var distSq = dx * dx + dy * dy;
@@ -524,7 +421,6 @@ document.querySelectorAll('.project-card').forEach(function(card) {
                 p.vy += (dy / dist) * strength;
             }
 
-            // Spring back
             p.vx += (p.hx - p.x) * HEAL_FACTOR;
             p.vy += (p.hy - p.y) * HEAL_FACTOR;
             p.vx *= DAMPING;
@@ -532,7 +428,6 @@ document.querySelectorAll('.project-card').forEach(function(card) {
             p.x += p.vx;
             p.y += p.vy;
 
-            // Determine appearance
             var glow = p.lit;
             var baseAlpha = themeLight
                 ? ((p.col + p.row) % 3 === 0 ? 0.32 : 0.22)
@@ -542,32 +437,29 @@ document.querySelectorAll('.project-card').forEach(function(card) {
 
             if (pixelColor && currentIsImage && glow > 0.05) {
                 if (themeLight) {
-                    // Light: desaturate photos/videos to cool gray (no pink)
-                    var lum = 0.299 * pixelColor.r + 0.587 * pixelColor.g + 0.114 * pixelColor.b;
-                    r_c = Math.round(60 * (1 - glow) + lum * glow);
-                    g_c = Math.round(60 * (1 - glow) + lum * glow);
-                    b_c = Math.round(70 * (1 - glow) + Math.min(255, lum * 1.04) * glow);
+                    var lum2 = 0.299 * pixelColor.r + 0.587 * pixelColor.g + 0.114 * pixelColor.b;
+                    r_c = Math.round(60 * (1 - glow) + lum2 * glow);
+                    g_c = Math.round(60 * (1 - glow) + lum2 * glow);
+                    b_c = Math.round(70 * (1 - glow) + Math.min(255, lum2 * 1.04) * glow);
                 } else {
-                    // Dark: interpolate from grey toward actual pixel color
                     r_c = Math.round(255 * (1 - glow) + pixelColor.r * glow);
                     g_c = Math.round(255 * (1 - glow) + pixelColor.g * glow);
                     b_c = Math.round(255 * (1 - glow) + pixelColor.b * glow);
                 }
                 alpha = baseAlpha + glow * 0.82;
             } else if (themeLight) {
-                // Light text mode: dark-grey base glowing toward blue
-                r_c = Math.round(60 - glow * 23);    // 60 -> 37
-                g_c = Math.round(60 + glow * 39);    // 60 -> 99
-                b_c = Math.round(70 + glow * 165);   // 70 -> 235
+                // Light theme: warm-grey base glowing toward indigo
+                r_c = Math.round(70 + glow * 21);     // 70 -> 91
+                g_c = Math.round(70 + glow * 7);      // 70 -> 77
+                b_c = Math.round(80 + glow * 144);    // 80 -> 224
             } else {
-                // Dark text mode: white base glowing toward purple
-                r_c = Math.round(255 - glow * 131);   // 255 -> 124
-                g_c = Math.round(255 - glow * 163);   // 255 -> 92
-                b_c = Math.round(255 - glow * 3);     // 255 -> 252
+                // Dark theme: ivory base glowing toward violet
+                r_c = Math.round(237 - glow * 99);    // 237 -> 138
+                g_c = Math.round(237 - glow * 114);   // 237 -> 123
+                b_c = Math.round(234 + glow * 21);    // 234 -> 255
             }
             var color = 'rgba(' + r_c + ',' + g_c + ',' + b_c + ',' + alpha + ')';
 
-            // Lit particles flip shape: dots become +, pluses become dots
             var shape = p.baseShape;
             if (glow > 0.3) {
                 shape = shape === 'dot' ? 'plus' : 'dot';
@@ -592,10 +484,36 @@ document.querySelectorAll('.project-card').forEach(function(card) {
             }
         }
 
-        requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
     }
 
-    // Pointer events
+    function start() {
+        if (running) return;
+        running = true;
+        if (activeVideo) activeVideo.play().catch(function() {});
+        if (!rafId) rafId = requestAnimationFrame(animate);
+    }
+    function stop() {
+        running = false;
+        if (activeVideo) activeVideo.pause();
+    }
+
+    /* Fade with scroll and stop the loop entirely once past the hero */
+    function onScroll() {
+        var h = window.innerHeight;
+        var p = Math.min(window.scrollY / h, 1);
+        canvas.style.opacity = (1 - p).toFixed(3);
+        if (p >= 0.99) stop();
+        else start();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    /* Pause when the tab is hidden */
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) stop();
+        else if (window.scrollY < window.innerHeight) start();
+    });
+
     document.addEventListener('mousemove', function(e) {
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -613,169 +531,12 @@ document.querySelectorAll('.project-card').forEach(function(card) {
         mouseY = -9999;
     });
 
-    window.addEventListener('resize', init);
+    var resizeT;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeT);
+        resizeT = setTimeout(init, 150);
+    });
     init();
-    animate();
+    onScroll();
+    start();
 })();
-
-/* ── Wavy-line + pen: JS-driven so pen & stroke share exact arc-length sync ── */
-(function(){
-    var thin  = document.getElementById('heroWaveThin');
-    var thick = document.getElementById('heroWaveThick');
-    var pen   = document.getElementById('heroWavePen');
-    if (!thin) return;
-
-    var L = thin.getTotalLength();
-    thin.style.strokeDasharray  = L;
-    thin.style.strokeDashoffset = L;
-    thick.style.strokeDasharray  = L;
-    thick.style.strokeDashoffset = L;
-
-    var DUR = 6300;            // total cycle ms
-    var DRAW_END  = 0.24;      // draw: 1.5s
-    var HOLD_END  = 0.71;      // hold: 3s
-    var FADE_END  = 0.84;      // fade: 0.8s, then pause until restart
-    var start = null;
-
-    /* ease-in-out (matches cubic-bezier 0.42,0,0.58,1) */
-    function ease(t){ return 0.5 - 0.5 * Math.cos(Math.PI * t); }
-
-    function tick(ts){
-        if (!start) start = ts;
-        var t = ((ts - start) % DUR) / DUR;
-
-        var draw, lineOp, penOp;
-
-        if (t < DRAW_END) {
-            draw   = ease(t / DRAW_END);
-            lineOp = 1;
-            penOp  = t < 0.01 ? 0 : 0.9;
-        } else if (t < HOLD_END) {
-            draw   = 1;
-            lineOp = 1;
-            penOp  = Math.max(0, 0.9 * (1 - (t - DRAW_END) / 0.05));
-        } else if (t < FADE_END) {
-            draw   = 1;
-            lineOp = 1 - (t - HOLD_END) / (FADE_END - HOLD_END);
-            penOp  = 0;
-        } else {
-            draw   = 0;
-            lineOp = 0;
-            penOp  = 0;
-        }
-
-        var off = L * (1 - draw);
-        thin.style.strokeDashoffset  = off;
-        thick.style.strokeDashoffset = off;
-        thin.style.opacity  = lineOp;
-        thick.style.opacity = lineOp;
-
-        /* pen sits exactly where the stroke has been drawn to */
-        var pt = thin.getPointAtLength(draw * L);
-        pen.setAttribute('transform', 'translate(' + pt.x + ',' + pt.y + ')');
-        pen.style.opacity = penOp;
-
-        requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-})();
-
-/* ── 3D tilt on project cards ── */
-document.querySelectorAll('.project-card').forEach(function(card) {
-    var tiltX = 0, tiltY = 0, targetX = 0, targetY = 0, rafId = null;
-
-    function lerp() {
-        tiltX += (targetX - tiltX) * 0.08;
-        tiltY += (targetY - tiltY) * 0.08;
-        var tilt = 'perspective(800px) rotateY(' + tiltX + 'deg) rotateX(' + tiltY + 'deg) translateY(-4px)';
-        card.dataset.tilt = tilt;
-        card.style.transform = tilt;
-        if (Math.abs(targetX - tiltX) > 0.01 || Math.abs(targetY - tiltY) > 0.01) {
-            rafId = requestAnimationFrame(lerp);
-        } else {
-            // Snap to target
-            if (targetX === 0 && targetY === 0) {
-                delete card.dataset.tilt;
-                card.style.transform = '';
-                rafId = null;
-            }
-        }
-    }
-
-    card.addEventListener('mousemove', function(e) {
-        var rect = card.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-        targetX = x * 6;
-        targetY = -y * 6;
-        if (!rafId) rafId = requestAnimationFrame(lerp);
-    });
-    card.addEventListener('mouseleave', function() {
-        targetX = 0;
-        targetY = 0;
-        if (!rafId) rafId = requestAnimationFrame(lerp);
-    });
-});
-
-/* ── Animated stat counters ── */
-(function() {
-    var statEls = document.querySelectorAll('.stat-number');
-    statEls.forEach(function(el) {
-        var text = el.textContent.trim();
-        var match = text.match(/^(\d+)(.*)$/);
-        if (!match) return;
-        el._countTarget = parseInt(match[1]);
-        el._countSuffix = match[2];
-    });
-
-    function animateCounter(el) {
-        var target = el._countTarget;
-        var suffix = el._countSuffix;
-        if (REDUCED) { el.textContent = target + suffix; return; }
-        var duration = 1500;
-        var start = performance.now();
-        requestAnimationFrame(function step(now) {
-            var t = Math.min((now - start) / duration, 1);
-            var eased = 1 - Math.pow(1 - t, 3);
-            el.textContent = Math.round(eased * target) + suffix;
-            if (t < 1) requestAnimationFrame(step);
-        });
-    }
-
-    var statObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-                statObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.3 });
-
-    statEls.forEach(function(el) {
-        if (el._countTarget !== undefined) statObserver.observe(el);
-    });
-})();
-
-/* ── Scroll progress bar ── */
-(function() {
-    var bar = document.getElementById('scrollProgress');
-    if (!bar) return;
-    window.addEventListener('scroll', function() {
-        var scrollTop = window.scrollY;
-        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        bar.style.width = (scrollTop / docHeight * 100) + '%';
-    }, { passive: true });
-})();
-
-/* ── Magnetic buttons ── */
-document.querySelectorAll('.btn').forEach(function(btn) {
-    btn.addEventListener('mousemove', function(e) {
-        var rect = btn.getBoundingClientRect();
-        var x = e.clientX - rect.left - rect.width / 2;
-        var y = e.clientY - rect.top - rect.height / 2;
-        btn.style.transform = 'translate(' + (x * 0.15) + 'px,' + (y * 0.15) + 'px)';
-    });
-    btn.addEventListener('mouseleave', function() {
-        btn.style.transform = '';
-    });
-});

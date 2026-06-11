@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>(function(){try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
-    <title>Ilan Lenzner | Senior Product Designer & Creative Technologist</title>
-    <meta name="description" content="Senior Product Designer who designs and ships AI-powered digital products. I bridge design, engineering, and AI into systems that actually work.">
+    <title>Ilan Lenzner | Senior Product Designer & Design Engineer</title>
+    <meta name="description" content="Senior Product Designer & Design Engineer who designs and ships AI-powered products end-to-end. I think in systems, design in Figma, and ship in code.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Ilan Lenzner | Senior Product Designer & Creative Technologist">
-    <meta property="og:description" content="Senior Product Designer who designs and ships AI-powered digital products. I bridge design, engineering, and AI into systems that actually work.">
+    <meta property="og:title" content="Ilan Lenzner | Senior Product Designer & Design Engineer">
+    <meta property="og:description" content="Senior Product Designer & Design Engineer who designs and ships AI-powered products end-to-end. I think in systems, design in Figma, and ship in code.">
     <meta property="og:image" content="https://ilans.net/images/portrait.jpg">
     <meta property="og:url" content="https://ilans.net">
     <meta property="og:type" content="website">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Ilan Lenzner | Senior Product Designer">
-    <meta name="twitter:description" content="Senior Product Designer who designs and ships AI-powered digital products. I bridge design, engineering, and AI into systems that actually work.">
+    <meta name="twitter:title" content="Ilan Lenzner | Senior Product Designer & Design Engineer">
+    <meta name="twitter:description" content="Senior Product Designer & Design Engineer who designs and ships AI-powered products end-to-end.">
     <meta name="twitter:image" content="https://ilans.net/images/portrait.jpg">
 
     <!-- Canonical -->
@@ -32,40 +32,42 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Ilan Lenzner",
-        "jobTitle": "Senior Product Designer & Creative Technologist",
+        "jobTitle": "Senior Product Designer & Design Engineer",
         "url": "https://ilans.net",
         "sameAs": [
             "https://github.com/ilan-stack",
             "https://www.linkedin.com/in/ilan-lenzner-395ba64/"
         ],
-        "knowsAbout": ["AI", "GenAI", "Creative Automation", "Product Design", "LLM Integration"]
+        "knowsAbout": ["AI", "GenAI", "Creative Automation", "Product Design", "Design Engineering", "LLM Integration"]
     }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
+
+<a class="skip" href="#work">Skip to work</a>
 
 <canvas id="dotfield"></canvas>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <nav id="nav">
     <div class="container">
-        <a href="#" class="nav-logo">IL</a>
+        <a href="#" class="nav-logo">ILAN LENZNER<span>.</span></a>
         <div class="nav-right">
             <div class="nav-links" id="navLinks">
                 <a href="#work">Work</a>
                 <a href="#about">About</a>
                 <a href="#experience">Experience</a>
                 <a href="#contact">Contact</a>
-                <a href="https://ilan-3d-medical.vercel.app/" target="_blank" class="old-days-nav">3D Medical</a>
+                <a href="https://ilan-3d-medical.vercel.app/" target="_blank" rel="noopener" class="old-days-nav">3D Medical</a>
             </div>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
-                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
             <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
         </div>
@@ -73,238 +75,184 @@
 </nav>
 
 <!-- HERO -->
-<section class="hero">
+<header class="hero">
     <div class="hero-bg"></div>
     <div class="container">
         <div class="hero-content">
-            <div class="hero-label">Senior Product Designer · Creative Technologist</div>
-            <h1>I design AI systems that&nbsp;power<span class="hero-wavy-wrap"><svg id="heroWaveSvg" width="90" height="32" viewBox="0 0 120 40" fill="none"><path id="heroWaveThin" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGrad)" stroke-width="3" stroke-linecap="round" fill="none"/><path id="heroWaveThick" d="M2 30 Q15 10, 30 25 Q45 40, 60 20 Q75 0, 90 20 Q105 40, 118 15" stroke="url(#heroWaveGradThick)" stroke-width="7" stroke-linecap="round" fill="none"/><g id="heroWavePen" opacity="0"><g transform="scale(2) translate(-7,-14.3) rotate(-30,8,8)"><path d="M12 3l1.2-1.2a1.5 1.5 0 012.1 2.1L7.5 11.7a3 3 0 01-1.3.8L4 13l.5-2.2a3 3 0 01.8-1.3L12 3z" stroke="url(#heroWaveGrad)" stroke-width="0.8" stroke-linecap="round" fill="none"/></g></g><defs><linearGradient id="heroWaveGrad" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc"/><stop offset="33%" stop-color="#c084fc"/><stop offset="66%" stop-color="#4ade80"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient><linearGradient id="heroWaveGradThick" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7c5cfc" stop-opacity="0"/><stop offset="35%" stop-color="#c084fc" stop-opacity="0.3"/><stop offset="65%" stop-color="#4ade80" stop-opacity="0.7"/><stop offset="100%" stop-color="#60a5fa" stop-opacity="1"/></linearGradient></defs></svg></span> creative&nbsp;production.</h1>
-            <span class="hero-typed" id="heroTyped"><span class="cursor"></span></span>
-            <p class="hero-desc" style="margin-top: 20px;">From autonomous ad pipelines to AI tools used daily by 100+ production team members - I design and build systems that replace manual workflows with scalable automation. Currently leading AI creative tooling at Sett.</p>
+            <p class="hero-label">Senior Product Designer <span class="dot">·</span> Design Engineer <span class="dot">·</span> <span class="loc">Tel Aviv</span></p>
+            <h1>I design AI systems that power <em>creative production</em><span class="accent-dot">.</span></h1>
+            <p class="hero-desc">From autonomous ad pipelines to AI tools used daily by <strong>100+ production team members</strong> — I design and build systems that replace manual workflows with scalable automation. Currently leading AI creative tooling at Sett.</p>
             <div class="hero-links">
-                <a href="https://github.com/ilan-stack" class="btn btn-primary" target="_blank">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                    GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank">LinkedIn</a>
-                <a href="mailto:ilan@ilans.net" class="btn btn-outline">Email Me</a>
-                <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <a href="mailto:ilan@ilans.net" class="btn btn-primary">Email me</a>
+                <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank" rel="noopener">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Resume
                 </a>
+                <a href="https://github.com/ilan-stack" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank" rel="noopener">LinkedIn</a>
             </div>
         </div>
     </div>
     <a href="#work" class="scroll-hint">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        <span>See Projects</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        <span>Selected work</span>
     </a>
-</section>
+</header>
 
-<!-- WORK -->
+<main>
+
+<!-- FEATURED WORK -->
 <section id="work">
     <div class="container">
         <div class="reveal">
-            <div class="section-label">Featured Work</div>
-            <h2 class="section-title">Things I've built.</h2>
+            <p class="section-label"><span class="idx">01</span> Selected work</p>
+            <h2 class="section-title">Things I've <em>built</em>.</h2>
         </div>
-        <div class="projects-grid stagger">
 
-            <div class="project-card reveal" style="--i:0">
-                <a href="https://site-steel-alpha.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="Lens - open live site">
-                    <picture><source srcset="images/lens-preview.webp" type="image/webp"><img src="images/lens-preview.jpg" alt="Lens" class="has-video"></picture>
-                    <video src="videos/lens-preview.mp4" muted loop playsinline preload="metadata"></video>
+        <article class="case reveal">
+            <a href="https://lens-case.vercel.app/" target="_blank" rel="noopener" class="case-media" aria-label="Lens — case study">
+                <picture><source srcset="images/lens-preview.webp" type="image/webp"><img src="images/lens-preview.jpg" alt="Lens — your web, adapted to you" class="has-video" loading="eager" decoding="async"></picture>
+                <video data-src="videos/lens-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+            </a>
+            <div class="case-body">
+                <p class="case-kicker">Browser extension · AI accessibility</p>
+                <h3 class="case-title"><a href="https://lens-case.vercel.app/" target="_blank" rel="noopener">Lens</a></h3>
+                <p class="case-line">One accessibility profile that follows you across the whole web — adaptive reading view, 8 color-vision filters, low-vision reflow, AI alt-text, and a screen-reader companion. Cross-browser MV3 extension with a Cloudflare Workers backend.</p>
+                <p class="case-meta">MV3 Extension · Cloudflare Workers · Anthropic API · Full design system · Chrome Web Store package</p>
+                <div class="case-links">
+                    <a href="https://lens-case.vercel.app/" target="_blank" rel="noopener" class="link-pill">Case study →</a>
+                    <a href="https://site-steel-alpha.vercel.app/" target="_blank" rel="noopener" class="link-plain">Live site →</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="case flip reveal">
+            <a href="https://tapersafe-case.vercel.app/" target="_blank" rel="noopener" class="case-media" aria-label="TaperSafe — case study">
+                <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="TaperSafe iOS app screens" loading="lazy" decoding="async"></picture>
+            </a>
+            <div class="case-body">
+                <p class="case-kicker">iOS app · Digital health <span class="badge">● Live on App Store</span></p>
+                <h3 class="case-title"><a href="https://tapersafe-case.vercel.app/" target="_blank" rel="noopener">TaperSafe</a></h3>
+                <p class="case-line">Safe, guided medication tapering. Separate patient and provider modes, on-device data privacy, daily dose reminders, and QR plan sharing between clinicians and patients. Designed, built, and shipped end-to-end.</p>
+                <p class="case-meta">React Native · Expo · Supabase · Healthcare UX</p>
+                <div class="case-links">
+                    <a href="https://tapersafe-case.vercel.app/" target="_blank" rel="noopener" class="link-pill">Case study →</a>
+                    <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener" class="link-plain">App Store →</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="case reveal">
+            <a href="https://ae-hub-case.vercel.app/" target="_blank" rel="noopener" class="case-media" aria-label="After Effects Hub — case study">
+                <picture><source srcset="images/settae-preview.webp" type="image/webp"><img src="images/settae-preview.jpg" alt="After Effects Hub extension panels" loading="lazy" decoding="async"></picture>
+            </a>
+            <div class="case-body">
+                <p class="case-kicker">After Effects extension · Production AI</p>
+                <h3 class="case-title"><a href="https://ae-hub-case.vercel.app/" target="_blank" rel="noopener">After Effects Hub</a></h3>
+                <p class="case-line">Ten AI modules embedded directly inside After Effects — image expansion, upscaling, background removal, video generation, audio, and copywriting. Built with the motion team to eliminate round-trips and keep artists in their native environment.</p>
+                <p class="case-meta">CEP Extension · Kling · ElevenLabs · Used daily by a 100+ person creative team</p>
+                <div class="case-links">
+                    <a href="https://ae-hub-case.vercel.app/" target="_blank" rel="noopener" class="link-pill">Case study →</a>
+                    <a href="https://github.com/ilan-stack/after-effects-hub" target="_blank" rel="noopener" class="link-plain">GitHub →</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- MORE PROJECTS -->
+        <div class="reveal more-head">
+            <p class="section-label"><span class="idx">02</span> More projects</p>
+        </div>
+        <div class="mini-grid stagger">
+
+            <div class="mini reveal" style="--i:0">
+                <a href="https://inkforge-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="InkForge — case study">
+                    <picture><source srcset="images/inkforge-preview.webp" type="image/webp"><img src="images/inkforge-preview.jpg" alt="InkForge" class="has-video" loading="lazy" decoding="async"></picture>
+                    <video data-src="videos/inkforge-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
                 </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Lens</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Accessibility on the web is fragmented - every site, app, and reader-mode tool asks the user to reconfigure font size, contrast, color-blindness filters, and reading aids from scratch. <strong>Built:</strong> A cross-browser extension + Cloudflare Worker backend that carries a single user profile across every page - adaptive reading view, 8 color-blindness filters, low-vision reflow, form simplification, AI alt-text, and a screen-reader companion mode. End-to-end design system, marketing site, privacy policy, and Chrome Web Store submission package shipped.</p>
-                    <div class="project-tags">
-                        <span class="tag">MV3 Extension</span>
-                        <span class="tag">Cloudflare Workers</span>
-                        <span class="tag">Anthropic API</span>
-                        <span class="tag">Accessibility</span>
-                        <span class="tag">Design System</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://lens-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://site-steel-alpha.vercel.app/" target="_blank" style="color:var(--accent-2); text-decoration:none;">Live site →</a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://inkforge-case.vercel.app/" target="_blank" rel="noopener">InkForge</a></h3>
+                    <p class="mini-desc">Native macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI.</p>
+                    <div class="mini-links">
+                        <a href="https://inkforge-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://github.com/ilan-stack/InkForge" target="_blank" rel="noopener">GitHub →</a>
                     </div>
                 </div>
             </div>
 
-            <div class="project-card reveal" style="--i:1">
-                <a href="https://github.com/ilan-stack/InkForge" target="_blank" class="project-image" style="display:block;" aria-label="InkForge - GitHub">
-                    <picture><source srcset="images/inkforge-preview.webp" type="image/webp"><img src="images/inkforge-preview.jpg" alt="InkForge" class="has-video"></picture>
-                    <video src="videos/inkforge-preview.mp4" muted loop playsinline preload="metadata"></video>
+            <div class="mini reveal" style="--i:1">
+                <a href="https://sprite-studio-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="Sprite Studio — case study">
+                    <picture><source srcset="images/spritestudio-preview.webp" type="image/webp"><img src="images/spritestudio-preview.jpg" alt="Sprite Studio" class="has-video" loading="lazy" decoding="async"></picture>
+                    <video data-src="videos/spritestudio-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
                 </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:inherit;text-decoration:none">InkForge</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Artists needed a fast, native tool for concept art that integrates AI editing without leaving their canvas. <strong>Built:</strong> A full macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI, designed in collaboration with the art team to fit real production workflows.</p>
-                    <div class="project-tags">
-                        <span class="tag">Swift</span>
-                        <span class="tag">macOS</span>
-                        <span class="tag">AI Editing</span>
-                        <span class="tag">CoreGraphics</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://inkforge-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://github.com/ilan-stack/InkForge" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://sprite-studio-case.vercel.app/" target="_blank" rel="noopener">Sprite Studio</a></h3>
+                    <p class="mini-desc">Video-to-spritesheet pipeline with AI grid detection and chroma key — hours of manual work down to minutes.</p>
+                    <div class="mini-links">
+                        <a href="https://sprite-studio-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://sprite-studio-nine.vercel.app" target="_blank" rel="noopener">Live tool →</a>
                     </div>
                 </div>
             </div>
 
-<div class="project-card reveal" style="--i:2">
-                <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" class="project-image" style="display:block;" aria-label="TaperSafe - App Store">
-                    <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="TaperSafe"></picture>
+            <div class="mini reveal" style="--i:2">
+                <a href="https://cubelets-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="Cubelets — case study">
+                    <picture><source srcset="images/cubelets-preview.webp" type="image/webp"><img src="images/cubelets-preview.png" alt="Cubelets" loading="lazy" decoding="async"></picture>
                 </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:inherit;text-decoration:none">TaperSafe</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">LIVE ON APP STORE</span></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Patients tapering off medications need a safe, clear way to track gradual dose reductions, while providers need a way to share evidence-based taper plans. <strong>Built:</strong> A native iOS app with separate patient and provider modes, on-device data privacy, daily dose reminders, and QR code plan sharing between clinicians and patients. Shipped end-to-end and live on the App Store.</p>
-                    <div class="project-tags">
-                        <span class="tag">React Native</span>
-                        <span class="tag">Expo</span>
-                        <span class="tag">Supabase</span>
-                        <span class="tag">iOS</span>
-                        <span class="tag">Healthcare</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://tapersafe-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" style="color:var(--accent-2); text-decoration:none;">App Store →</a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://cubelets-case.vercel.app/" target="_blank" rel="noopener">Cubelets</a> <span class="chip violet">Playable</span></h3>
+                    <p class="mini-desc">A cozy voxel merge-puzzle PWA — game design, art direction, and code, end-to-end.</p>
+                    <div class="mini-links">
+                        <a href="https://cubelets-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://cubelets.vercel.app/" target="_blank" rel="noopener">Play →</a>
                     </div>
                 </div>
             </div>
 
-            <div class="project-card reveal" style="--i:3">
-                <a href="https://sprite-studio-nine.vercel.app" target="_blank" class="project-image" style="display:block;" aria-label="Sprite Studio - open live tool">
-                    <picture><source srcset="images/spritestudio-preview.webp" type="image/webp"><img src="images/spritestudio-preview.jpg" alt="Sprite Studio" class="has-video"></picture>
-                    <video src="videos/spritestudio-preview.mp4" muted loop playsinline preload="metadata"></video>
+            <div class="mini reveal" style="--i:3">
+                <a href="https://ai-studio-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="AI Studio — case study">
+                    <picture><source srcset="images/aistudio-preview.webp" type="image/webp"><img src="images/aistudio-preview.jpg" alt="AI Studio" class="has-video" loading="lazy" decoding="async"></picture>
+                    <video data-src="videos/aistudio-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
                 </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://sprite-studio-nine.vercel.app" target="_blank" style="color:inherit;text-decoration:none">Sprite Studio</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Converting video sequences to sprite sheets took artists hours of manual work per asset. <strong>Built:</strong> A production pipeline with AI-powered grid detection, chroma key, and multi-format export. Integrated into the team's existing workflow, reducing a multi-hour process to minutes.</p>
-                    <div class="project-tags">
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">Canvas</span>
-                        <span class="tag">Gemini AI</span>
-                        <span class="tag">Replicate</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://sprite-studio-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://sprite-studio-nine.vercel.app" target="_blank" style="color:var(--accent-2); text-decoration:none;">Live tool →</a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://ai-studio-case.vercel.app/" target="_blank" rel="noopener">AI Studio</a></h3>
+                    <p class="mini-desc">One production interface for image generation, video, 3D, and background removal — used daily by creative teams.</p>
+                    <div class="mini-links">
+                        <a href="https://ai-studio-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://github.com/ilan-stack/ai-studio" target="_blank" rel="noopener">GitHub →</a>
                     </div>
                 </div>
             </div>
 
-            <div class="project-card reveal" style="--i:4">
-                <a href="https://ae-hub-case.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="After Effects Hub - case study"><picture><source srcset="images/settae-preview.webp" type="image/webp"><img src="images/settae-preview.jpg" alt="After Effects Hub"></picture></a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://ae-hub-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">After Effects Hub</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Motion designers constantly context-switched between AE and external AI tools. <strong>Built:</strong> A 10-module AI extension embedded directly in After Effects: image expansion, upscaling, background removal, video generation, audio, and copywriting. Developed with the motion team to eliminate round-trips and keep artists in their native environment.</p>
-                    <div class="project-tags">
-                        <span class="tag">CEP Extension</span>
-                        <span class="tag">After Effects</span>
-                        <span class="tag">Kling</span>
-                        <span class="tag">ElevenLabs</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://ae-hub-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://github.com/ilan-stack/after-effects-hub" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
+            <div class="mini reveal" style="--i:4">
+                <a href="https://yt-downloader-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="YouTube Downloader — case study">
+                    <picture><source srcset="images/ytdownloader-preview.webp" type="image/webp"><img src="images/ytdownloader-preview.png" alt="YouTube Downloader" loading="lazy" decoding="async"></picture>
+                </a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://yt-downloader-case.vercel.app/" target="_blank" rel="noopener">YouTube Downloader</a> <span class="chip">Mac + Win</span></h3>
+                    <p class="mini-desc">Native desktop downloader wrapping yt-dlp and FFmpeg into one signed, self-updating installer.</p>
+                    <div class="mini-links">
+                        <a href="https://yt-downloader-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" rel="noopener">GitHub →</a>
                     </div>
                 </div>
             </div>
 
-            <div class="project-card reveal" style="--i:5">
-                <a href="https://cubelets.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="Cubelets - play">
-                    <picture><source srcset="images/cubelets-preview.webp" type="image/webp"><img src="images/cubelets-preview.png" alt="Cubelets"></picture>
+            <div class="mini reveal" style="--i:5">
+                <a href="https://caption-case.vercel.app/" target="_blank" rel="noopener" class="mini-media" aria-label="Auto-Caption — case study">
+                    <picture><source srcset="images/captionapp-preview.webp" type="image/webp"><img src="images/captionapp-preview.png" alt="Auto-Caption" loading="lazy" decoding="async"></picture>
                 </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://cubelets.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Cubelets</a> <span style="font-size:11px; font-weight:600; color:#c084fc; margin-left:6px; vertical-align:middle;">PLAYABLE</span></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Casual mobile puzzlers tend to be either mindless tappers or punishingly tight - I wanted a cozy, satisfying merge-and-build loop that rewards spatial thinking without stress. <strong>Built:</strong> A voxel-sculpture merge puzzle as a fully playable PWA - drop blocks to fill ghosted 3D shapes, with daily challenges, a gallery, and a chill "Zen" mode. Designed and built end-to-end: game design, art direction, and code.</p>
-                    <div class="project-tags">
-                        <span class="tag">React</span>
-                        <span class="tag">Vite</span>
-                        <span class="tag">PWA</span>
-                        <span class="tag">Game Design</span>
-                        <span class="tag">3D Voxel</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://cubelets-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://cubelets.vercel.app/" target="_blank" style="color:var(--accent-2); text-decoration:none;">Play →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="project-card reveal" style="--i:6">
-                <a href="https://ai-studio-case.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="AI Studio - case study">
-                    <picture><source srcset="images/aistudio-preview.webp" type="image/webp"><img src="images/aistudio-preview.jpg" alt="AI Studio" class="has-video"></picture>
-                    <video src="videos/aistudio-preview.mp4" muted loop playsinline preload="metadata"></video>
-                </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://ai-studio-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">AI Studio</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> The creative team needed one unified interface for multiple GenAI capabilities instead of juggling separate tools. <strong>Built:</strong> A modular production platform for image generation, video processing, 3D modeling, and background removal, on Replicate API, deployed for daily use by the creative and production teams.</p>
-                    <div class="project-tags">
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">Replicate</span>
-                        <span class="tag">Node.js</span>
-                        <span class="tag">AI Platform</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://ai-studio-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://github.com/ilan-stack/ai-studio" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="project-card reveal" style="--i:7">
-                <a href="https://yt-downloader-case.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="YouTube Downloader - case study">
-                    <picture><source srcset="images/ytdownloader-preview.webp" type="image/webp"><img src="images/ytdownloader-preview.png" alt="YouTube Downloader"></picture>
-                </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://yt-downloader-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">YouTube Downloader</a> <span style="font-size:11px; font-weight:600; color:#4ade80; margin-left:6px; vertical-align:middle;">MAC + WINDOWS</span></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Existing YouTube downloaders are either sketchy ad-laden web services or command-line tools nobody non-technical wants to touch. <strong>Built:</strong> A native desktop app - SwiftUI on macOS, a Flask + Edge --app shell on Windows - wrapping yt-dlp, ffmpeg, and deno into one drop-in installer. Quality picker (up to 4K), trim, multi-language subtitles with auto-translate, "Make compatible" mp4 re-encoder, inline player, self-updating yt-dlp. Shipped as signed .dmg and Inno Setup installer with GitHub Actions auto-builds.</p>
-                    <div class="project-tags">
-                        <span class="tag">Swift</span>
-                        <span class="tag">SwiftUI</span>
-                        <span class="tag">Python</span>
-                        <span class="tag">Flask</span>
-                        <span class="tag">PyInstaller</span>
-                        <span class="tag">FFmpeg</span>
-                        <span class="tag">yt-dlp</span>
-                        <span class="tag">Inno Setup</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://yt-downloader-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="project-card reveal" style="--i:8">
-                <a href="https://caption-case.vercel.app/" target="_blank" class="project-image" style="display:block;" aria-label="Auto-Caption - case study">
-                    <picture><source srcset="images/captionapp-preview.webp" type="image/webp"><img src="images/captionapp-preview.png" alt="Auto-Caption"></picture>
-                </a>
-                <div class="project-body">
-                    <h3 class="project-title"><a href="https://caption-case.vercel.app/" target="_blank" style="color:inherit;text-decoration:none">Auto-Caption</a></h3>
-                    <p class="project-desc"><strong>Problem:</strong> Burning styled captions into videos is a slow round-trip through Premiere or paid SaaS, and YouTube's auto-translate is famously out of sync. <strong>Built:</strong> A self-hosted FastAPI app that runs OpenAI Whisper on the audio, optionally polishes the segments with Claude, and burns the result through FFmpeg + libass. In-browser editor with a timeline, drag-to-position overlays, and a live preview that matches the burned output to the pixel. Bundled into the YouTube Downloader's "Caption" tab via an embedded WKWebView.</p>
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">FastAPI</span>
-                        <span class="tag">Whisper</span>
-                        <span class="tag">Claude</span>
-                        <span class="tag">FFmpeg</span>
-                        <span class="tag">libass</span>
-                    </div>
-                    <div class="proj-actions">
-                        <a href="https://caption-case.vercel.app/" target="_blank" style="display:inline-flex; align-items:center; color:#fff; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:5px 13px; border-radius:999px; text-decoration:none; box-shadow:0 2px 10px rgba(124,92,252,.38);">Case study →</a>
-                        <a href="https://github.com/ilan-stack/caption-app" target="_blank" style="color:var(--accent-2); text-decoration:none;">GitHub →</a>
+                <div class="mini-body">
+                    <h3 class="mini-title"><a href="https://caption-case.vercel.app/" target="_blank" rel="noopener">Auto-Caption</a></h3>
+                    <p class="mini-desc">Whisper + Claude + FFmpeg captioning with a pixel-accurate in-browser timeline editor.</p>
+                    <div class="mini-links">
+                        <a href="https://caption-case.vercel.app/" target="_blank" rel="noopener">Case study →</a>
+                        <a href="https://github.com/ilan-stack/caption-app" target="_blank" rel="noopener">GitHub →</a>
                     </div>
                 </div>
             </div>
 
         </div>
-        <p style="text-align:center; margin-top:40px; color:var(--text-dim); font-size:14px;">
-            See more on <a href="https://github.com/ilan-stack?tab=repositories" target="_blank">GitHub</a>
-        </p>
+        <p class="more-gh">See more on <a href="https://github.com/ilan-stack?tab=repositories" target="_blank" rel="noopener">GitHub</a></p>
     </div>
 </section>
 
@@ -312,15 +260,15 @@
 <section id="about">
     <div class="container">
         <div class="reveal">
-            <div class="section-label">About</div>
-            <h2 class="section-title">Design meets AI engineering.</h2>
+            <p class="section-label"><span class="idx">03</span> About</p>
+            <h2 class="section-title">Design meets <em>AI engineering</em>.</h2>
         </div>
         <div class="about-content">
             <div class="about-photo-grid reveal">
-                <picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.png" alt="Ilan Lenzner" class="about-portrait"></picture>
+                <picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.png" alt="Ilan Lenzner" class="about-portrait" loading="lazy" decoding="async"></picture>
                 <div class="about-bio">
-                    <p>From <span class="highlight">3D animation</span> to <span class="highlight">interactive ads</span> to <span class="highlight">AI product engineering</span>.</p>
-                    <p>Today I architect <span class="highlight">autonomous AI pipelines</span> that generate, animate, and ship creative assets end-to-end, turning workflows that once took <strong>days into minutes</strong>.</p>
+                    <p>From <em>3D animation</em> to <em>interactive ads</em> to <em>AI product engineering</em>.</p>
+                    <p>Today I architect <strong>autonomous AI pipelines</strong> that generate, animate, and ship creative assets end-to-end — turning workflows that once took <strong>days into minutes</strong>.</p>
                     <p>I think in systems, design in Figma, and ship in code.</p>
                 </div>
             </div>
@@ -335,62 +283,24 @@
 </section>
 
 <!-- SKILLS -->
-<section id="skills">
+<section id="skills" aria-label="Skills">
     <div class="container">
         <div class="reveal">
-            <div class="section-label">Skills</div>
+            <p class="section-label"><span class="idx">04</span> Skills</p>
             <h2 class="section-title">What I work with.</h2>
         </div>
-        <div class="skills-grid">
-            <div class="skill-group reveal">
-                <div class="skill-group-title"><span></span> Design</div>
-                <div class="skill-list">
-                    <span class="skill-tag">Figma</span>
-                    <span class="skill-tag">UX/UI Design</span>
-                    <span class="skill-tag">Design Systems</span>
-                    <span class="skill-tag">User Research</span>
-                    <span class="skill-tag">Prototyping</span>
-                    <span class="skill-tag">Motion Graphics</span>
-                    <span class="skill-tag">3D Modeling</span>
-                    <span class="skill-tag">Blender</span>
-                    <span class="skill-tag">After Effects</span>
-                    <span class="skill-tag">Photoshop</span>
-                    <span class="skill-tag">Illustrator</span>
-                </div>
+        <div class="skills-rows reveal">
+            <div class="skill-row">
+                <div class="skill-row-title">Design</div>
+                <p class="skill-row-list">Figma <span class="sep">/</span> UX &amp; UI Design <span class="sep">/</span> Design Systems <span class="sep">/</span> User Research <span class="sep">/</span> Prototyping <span class="sep">/</span> Motion Graphics <span class="sep">/</span> 3D &amp; Blender <span class="sep">/</span> After Effects <span class="sep">/</span> Photoshop <span class="sep">/</span> Illustrator</p>
             </div>
-            <div class="skill-group reveal">
-                <div class="skill-group-title"><span></span> AI & Creative Tech</div>
-                <div class="skill-list">
-                    <span class="skill-tag">AI Agents</span>
-                    <span class="skill-tag">LLM Integration</span>
-                    <span class="skill-tag">Claude</span>
-                    <span class="skill-tag">GPT-4</span>
-                    <span class="skill-tag">Prompt Engineering</span>
-                    <span class="skill-tag">Replicate</span>
-                    <span class="skill-tag">Midjourney</span>
-                    <span class="skill-tag">Kling</span>
-                    <span class="skill-tag">MiniMax</span>
-                    <span class="skill-tag">ElevenLabs</span>
-                    <span class="skill-tag">SAM3</span>
-                    <span class="skill-tag">MCP Servers</span>
-                </div>
+            <div class="skill-row">
+                <div class="skill-row-title">AI &amp; Creative Tech</div>
+                <p class="skill-row-list">AI Agents <span class="sep">/</span> LLM Integration <span class="sep">/</span> Claude <span class="sep">/</span> GPT-4 <span class="sep">/</span> Prompt Engineering <span class="sep">/</span> Replicate <span class="sep">/</span> Midjourney <span class="sep">/</span> Kling <span class="sep">/</span> MiniMax <span class="sep">/</span> ElevenLabs <span class="sep">/</span> SAM3 <span class="sep">/</span> MCP Servers</p>
             </div>
-            <div class="skill-group reveal">
-                <div class="skill-group-title"><span></span> Engineering</div>
-                <div class="skill-list">
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">TypeScript</span>
-                    <span class="skill-tag">JavaScript</span>
-                    <span class="skill-tag">Swift</span>
-                    <span class="skill-tag">React</span>
-                    <span class="skill-tag">Node.js</span>
-                    <span class="skill-tag">PixiJS</span>
-                    <span class="skill-tag">Three.js</span>
-                    <span class="skill-tag">FFmpeg</span>
-                    <span class="skill-tag">AWS</span>
-                    <span class="skill-tag">n8n</span>
-                    <span class="skill-tag">Webpack</span>
-                </div>
+            <div class="skill-row">
+                <div class="skill-row-title">Engineering</div>
+                <p class="skill-row-list">Python <span class="sep">/</span> TypeScript <span class="sep">/</span> JavaScript <span class="sep">/</span> Swift <span class="sep">/</span> React <span class="sep">/</span> Node.js <span class="sep">/</span> PixiJS <span class="sep">/</span> Three.js <span class="sep">/</span> FFmpeg <span class="sep">/</span> AWS <span class="sep">/</span> n8n <span class="sep">/</span> Webpack</p>
             </div>
         </div>
     </div>
@@ -400,50 +310,64 @@
 <section id="experience">
     <div class="container">
         <div class="reveal">
-            <div class="section-label">Experience</div>
+            <p class="section-label"><span class="idx">05</span> Experience</p>
             <h2 class="section-title">Where I've worked.</h2>
         </div>
         <div class="timeline reveal">
             <div class="timeline-item current">
-                <div class="timeline-role">Senior Product Designer, AI Tools</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Senior Product Designer, AI Tools</h3>
+                    <span class="timeline-dates">2025 — Present</span>
+                </div>
                 <div class="timeline-company">Sett</div>
-                <div class="timeline-dates">2025 - Present</div>
-                <p class="timeline-impact">Designed 45+ AI production tools for playable ad teams - owned end-to-end UX from research through shipped interfaces, adopted as daily tools by a 100+ person creative team. Led UX for an AI character animation system that reduced asset creation from 4 hours to 15 minutes. Designed 5 After Effects extensions and a native macOS drawing app with Procreate-inspired UI.</p>
+                <p class="timeline-impact">Designed 45+ AI production tools for playable ad teams — owned end-to-end UX from research through shipped interfaces, adopted as daily tools by a 100+ person creative team. Led UX for an AI character animation system that reduced asset creation from 4 hours to 15 minutes. Designed 5 After Effects extensions and a native macOS drawing app with Procreate-inspired UI.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">Design Lead, Digital Health</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Design Lead, Digital Health</h3>
+                    <span class="timeline-dates">2023 — 2025</span>
+                </div>
                 <div class="timeline-company">Rabin Medical Center (Clalit Health Services)</div>
-                <div class="timeline-dates">2023 - 2025</div>
-                <p class="timeline-impact">Designed clinical dashboards and patient-facing interfaces used across 4 hospital departments. Led UX for AI-powered patient engagement systems - user interviews with physicians and nurses, translating clinical needs into intuitive interfaces. Created 3D surgical planning visualizations with surgeons.</p>
+                <p class="timeline-impact">Designed clinical dashboards and patient-facing interfaces used across 4 hospital departments. Led UX for AI-powered patient engagement systems — user interviews with physicians and nurses, translating clinical needs into intuitive interfaces. Created 3D surgical planning visualizations with surgeons.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">Product Designer</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Product Designer</h3>
+                    <span class="timeline-dates">2022 — 2023</span>
+                </div>
                 <div class="timeline-company">PlayBatch, Tel Aviv</div>
-                <div class="timeline-dates">2022 - 2023</div>
                 <p class="timeline-impact">Led UX/UI design for AI-powered creative tools as sole designer on an 8-person product team. Designed automation interfaces that replaced manual creative workflows.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">Product Designer</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Product Designer</h3>
+                    <span class="timeline-dates">2020 — 2022</span>
+                </div>
                 <div class="timeline-company">Bites</div>
-                <div class="timeline-dates">2020 - 2022</div>
                 <p class="timeline-impact">Designed B2B SaaS platform for employee engagement and training serving 10,000+ users. Built a comprehensive design system that reduced developer handoff friction by 40%.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">Creative Director</div>
-                <div class="timeline-company">justAd (2013-2017) / Market Group (2017-2020)</div>
-                <div class="timeline-dates">2013 - 2020</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Creative Director</h3>
+                    <span class="timeline-dates">2013 — 2020</span>
+                </div>
+                <div class="timeline-company">justAd (2013–2017) / Market Group (2017–2020)</div>
                 <p class="timeline-impact">Directed a team of 12+ designers, copywriters, and developers across interactive mobile ad campaigns for Fortune 500 clients. Created modular ad template systems that cut production time by 60%.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">Rich Media Design Specialist</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">Rich Media Design Specialist</h3>
+                    <span class="timeline-dates">2007 — 2013</span>
+                </div>
                 <div class="timeline-company">eyeblaster (MediaMind / Sizmek)</div>
-                <div class="timeline-dates">2007 - 2013</div>
                 <p class="timeline-impact">Designed and launched 500+ rich media campaigns for global agencies including WPP, Publicis, and Omnicom.</p>
             </div>
             <div class="timeline-item">
-                <div class="timeline-role">3D & Motion Designer</div>
+                <div class="timeline-head">
+                    <h3 class="timeline-role">3D &amp; Motion Designer</h3>
+                    <span class="timeline-dates">2000 — 2007</span>
+                </div>
                 <div class="timeline-company">Gorni Digital, DPSI, ScanMaster</div>
-                <div class="timeline-dates">2000 - 2007</div>
                 <p class="timeline-impact">Created 3D animations, product visualizations, and motion graphics for broadcast and industrial clients.</p>
             </div>
         </div>
@@ -454,36 +378,33 @@
 <section id="contact" class="contact-section">
     <div class="container">
         <div class="reveal">
-            <div class="section-label">Contact</div>
-            <h2 class="section-title">Let's build something that ships.</h2>
-            <div class="cta-box">
-                <h3>Looking for someone who builds AI tools, not just talks about them?</h3>
-                <p class="cta-tagline">I bring deep, hands-on experience shipping creative products, real GenAI production experience, and the rare ability to bridge design, engineering, and AI into systems that actually work.</p>
-                <div class="contact-links">
-                    <a href="mailto:ilan@ilans.net" class="btn btn-primary">ilan@ilans.net</a>
-                    <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank">LinkedIn</a>
-                    <a href="https://github.com/ilan-stack" class="btn btn-outline" target="_blank">GitHub</a>
-                    <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Resume
-                    </a>
-                </div>
-                <a href="https://t.me/ilanzner" target="_blank" class="cta-availability" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#4ade80"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                    @ilanzner
-                </a>
+            <p class="section-label"><span class="idx">06</span> Contact</p>
+            <h2 class="contact-title">Let's build something that <em>ships</em>.</h2>
+            <p class="cta-tagline">Looking for someone who builds AI tools, not just talks about them? I bring deep, hands-on experience shipping creative products and the rare ability to bridge design, engineering, and AI into systems that actually work.</p>
+            <div class="contact-links">
+                <a href="mailto:ilan@ilans.net" class="btn btn-primary">ilan@ilans.net</a>
+                <a href="https://www.linkedin.com/in/ilan-lenzner-395ba64/" class="btn btn-outline" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://github.com/ilan-stack" class="btn btn-outline" target="_blank" rel="noopener">GitHub</a>
+                <a href="ilan-lenzner-cv.pdf" class="btn btn-outline" target="_blank" rel="noopener">Resume</a>
             </div>
+            <a href="https://t.me/ilanzner" target="_blank" rel="noopener" class="cta-availability">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                @ilanzner — fastest way to reach me
+            </a>
         </div>
     </div>
 </section>
 
+</main>
+
 <footer>
     <div class="container">
-        <p>Ilan Lenzner | Tel Aviv, Israel</p>
+        <p>© 2026 Ilan Lenzner — Tel Aviv</p>
+        <p>Designed in Figma, shipped in code.</p>
     </div>
 </footer>
 
-<script src="main.js?v=5" defer></script>
+<script src="main.js?v=6" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
