@@ -41,7 +41,7 @@
     panel.innerHTML =
         '<div class="agent-head">' +
             '<span class="agent-face agent-face-lg" aria-hidden="true">' +
-                '<img src="images/ai-avatar.svg" alt="" class="agent-face-img" id="agentAvatar">' +
+                '<span class="agent-svg-slot"><img src="images/ai-avatar.svg" alt="" class="agent-face-img" id="agentAvatar"></span>' +
                 '<span class="agent-online"></span>' +
             '</span>' +
             '<div class="agent-head-text">' +
@@ -62,6 +62,22 @@
 
     document.body.appendChild(launcher);
     document.body.appendChild(panel);
+
+    /* Inline the avatar SVG in the header so the .talking class can
+       drive the mouth animation embedded inside the artwork */
+    fetch('images/ai-avatar.svg').then(function(r) { return r.ok ? r.text() : null; }).then(function(text) {
+        if (!text) return;
+        var slot = panel.querySelector('.agent-svg-slot');
+        var tmp = document.createElement('div');
+        tmp.innerHTML = text;
+        var svg = tmp.querySelector('svg');
+        if (!svg || !slot) return;
+        svg.setAttribute('id', 'agentAvatar');
+        svg.setAttribute('class', 'agent-face-img');
+        svg.removeAttribute('width');
+        svg.removeAttribute('height');
+        slot.replaceChildren(svg);
+    }).catch(function() {});
 
     var msgsEl = panel.querySelector('.agent-msgs');
     var startersEl = panel.querySelector('.agent-starters');
