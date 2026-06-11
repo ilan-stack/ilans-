@@ -5,6 +5,7 @@
     'use strict';
 
     var API = 'https://ilans-agent.vercel.app/api/chat';
+    var TTS_API = 'https://ilans-agent.vercel.app/api/tts';
     var GREETING = "Hey - I'm AI Ilan, the AI twin of the real one. Ask me anything about his work, his projects, or whether he's the person you're looking for. I only know true things about him - for everything else there's ilan@ilans.net.";
     var STARTERS = [
         "What's the most impressive thing he's shipped?",
@@ -61,65 +62,92 @@
     var sendEl = panel.querySelector('.agent-send');
     var micEl = panel.querySelector('.agent-mic');
 
-    /* ── Text-to-speech: read AI replies aloud ── */
+    /* ── Text-to-speech: Azure Neural voice with browser fallback ── */
     var tts = {
-        supported: 'speechSynthesis' in window,
+        browserSupported: 'speechSynthesis' in window,
+        supported: ('speechSynthesis' in window) || ('Audio' in window),
         activeBtn: null,
+        audio: null,
         unlocked: false,
         unlock: function() {
-            // iOS allows speech only after a user-gesture utterance
-            if (this.unlocked || !this.supported) return;
+            // iOS allows audio only after a user-gesture
+            if (this.unlocked) return;
             this.unlocked = true;
-            try { speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
+            if (this.browserSupported) {
+                try { speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) {}
+            }
+        },
+        markBtn: function(btn, on) {
+            if (!btn) return;
+            btn.classList.toggle('speaking', on);
+            btn.setAttribute('aria-label', on ? 'Stop reading' : 'Read aloud');
+        },
+        stop: function() {
+            if (this.audio) {
+                try { this.audio.pause(); } catch (e) {}
+                this.audio = null;
+            }
+            if (this.browserSupported) speechSynthesis.cancel();
+            this.markBtn(this.activeBtn, false);
+            this.activeBtn = null;
+        },
+        speak: function(text, btn) {
+            if (!text) return;
+            if (this.activeBtn === btn) { this.stop(); return; }
+            this.stop();
+            this.activeBtn = btn || null;
+            this.markBtn(btn, true);
+            var self = this;
+
+            // Try the Azure neural proxy first - much more natural
+            fetch(TTS_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            }).then(function(res) {
+                var ct = res.headers.get('Content-Type') || '';
+                if (res.ok && ct.indexOf('audio') === 0) return res.blob();
+                throw new Error('fallback');
+            }).then(function(blob) {
+                if (self.activeBtn !== btn) return; // user stopped/switched
+                var url = URL.createObjectURL(blob);
+                var a = new Audio(url);
+                self.audio = a;
+                a.onended = a.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    if (self.activeBtn === btn) { self.markBtn(btn, false); self.activeBtn = null; self.audio = null; }
+                };
+                a.play().catch(function() { self.browserSpeak(text, btn); });
+            }).catch(function() {
+                self.browserSpeak(text, btn);
+            });
+        },
+        browserSpeak: function(text, btn) {
+            if (!this.browserSupported) { this.markBtn(btn, false); if (this.activeBtn === btn) this.activeBtn = null; return; }
+            if (this.activeBtn !== btn) return;
+            var u = new SpeechSynthesisUtterance(text);
+            var voice = this.pickVoice(text);
+            if (voice) u.voice = voice;
+            u.rate = 1.04;
+            var self = this;
+            u.onend = u.onerror = function() {
+                if (self.activeBtn === btn) { self.markBtn(btn, false); self.activeBtn = null; }
+            };
+            speechSynthesis.speak(u);
         },
         pickVoice: function(text) {
             var voices = speechSynthesis.getVoices();
             var hebrew = /[֐-׿]/.test(text);
             var lang = hebrew ? 'he' : 'en';
-            var preferred = hebrew
-                ? ['Carmit']
-                : ['Samantha', 'Google US English', 'Daniel', 'Alex'];
+            var preferred = hebrew ? ['Carmit'] : ['Samantha', 'Google US English', 'Daniel', 'Alex'];
             for (var i = 0; i < preferred.length; i++) {
                 var v = voices.find(function(x) { return x.name.indexOf(preferred[i]) === 0; });
                 if (v) return v;
             }
             return voices.find(function(x) { return x.lang.indexOf(lang) === 0; }) || null;
-        },
-        stop: function() {
-            if (!this.supported) return;
-            speechSynthesis.cancel();
-            if (this.activeBtn) {
-                this.activeBtn.classList.remove('speaking');
-                this.activeBtn.setAttribute('aria-label', 'Read aloud');
-                this.activeBtn = null;
-            }
-        },
-        speak: function(text, btn) {
-            if (!this.supported || !text) return;
-            if (this.activeBtn === btn) { this.stop(); return; }
-            this.stop();
-            var u = new SpeechSynthesisUtterance(text);
-            var voice = this.pickVoice(text);
-            if (voice) u.voice = voice;
-            u.rate = 1.04;
-            u.pitch = 1;
-            var self = this;
-            u.onend = u.onerror = function() {
-                if (self.activeBtn === btn) {
-                    btn && btn.classList.remove('speaking');
-                    btn && btn.setAttribute('aria-label', 'Read aloud');
-                    self.activeBtn = null;
-                }
-            };
-            if (btn) {
-                btn.classList.add('speaking');
-                btn.setAttribute('aria-label', 'Stop reading');
-            }
-            this.activeBtn = btn || null;
-            speechSynthesis.speak(u);
         }
     };
-    if (tts.supported) speechSynthesis.getVoices(); // trigger async voice load
+    if (tts.browserSupported) speechSynthesis.getVoices(); // warm voice list
 
     function attachSpeaker(msgEl) {
         if (!tts.supported) return null;
