@@ -216,6 +216,27 @@ document.querySelectorAll('.case, .mini').forEach(function(card) {
     });
 })();
 
+/* ── Engagement tracking: count contact-intent clicks in GoatCounter ── */
+(function() {
+    function track(path) {
+        if (window.goatcounter && window.goatcounter.count) {
+            window.goatcounter.count({ path: path, event: true });
+        }
+    }
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
+        a.addEventListener('click', function() { track('email-click'); });
+    });
+    document.querySelectorAll('a[href*="t.me/"]').forEach(function(a) {
+        a.addEventListener('click', function() { track('telegram-click'); });
+    });
+    document.querySelectorAll('a[href$=".pdf"]').forEach(function(a) {
+        a.addEventListener('click', function() { track('resume-click'); });
+    });
+    document.querySelectorAll('a[href*="linkedin.com"]').forEach(function(a) {
+        a.addEventListener('click', function() { track('linkedin-click'); });
+    });
+})();
+
 /* ── Scroll progress bar ── */
 (function() {
     var bar = document.getElementById('scrollProgress');
