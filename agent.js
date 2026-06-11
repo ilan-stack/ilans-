@@ -39,7 +39,17 @@
         cubelets: '[data-focus="cubelets"]',
         'ai-studio': '[data-focus="ai-studio"]',
         'yt-downloader': '[data-focus="yt-downloader"]',
-        'auto-caption': '[data-focus="auto-caption"]'
+        'auto-caption': '[data-focus="auto-caption"]',
+        sett: '[data-focus="sett"]',
+        rabin: '[data-focus="rabin"]',
+        playbatch: '[data-focus="playbatch"]',
+        bites: '[data-focus="bites"]',
+        justad: '[data-focus="justad"]',
+        eyeblaster: '[data-focus="eyeblaster"]',
+        gorni: '[data-focus="gorni"]',
+        'skills-design': '[data-focus="skills-design"]',
+        'skills-ai': '[data-focus="skills-ai"]',
+        'skills-eng': '[data-focus="skills-eng"]'
     };
     var focusReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var focusQueue = [];
