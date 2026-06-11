@@ -6,12 +6,30 @@
 
     var API = 'https://ilans-agent.vercel.app/api/chat';
     var TTS_API = 'https://ilans-agent.vercel.app/api/tts';
-    var GREETING = "Hey - I'm AI Ilan, the AI twin of the real one. Ask me anything about his work, his projects, or whether he's the person you're looking for. I only know true things about him - for everything else there's ilan@ilans.net.";
-    var STARTERS = [
-        "What's the most impressive thing he's shipped?",
-        'Is he available for new roles?',
-        'What does he actually do day to day?'
-    ];
+
+    // Bilingual copy. The agent itself mirrors whatever language it's asked
+    // in; these strings just localize the widget chrome + canned bits.
+    var COPY = {
+        en: {
+            greeting: "Hey - I'm AI Ilan, the AI twin of the real one. Ask me anything about his work, his projects, or whether he's the person you're looking for. I only know true things about him - for everything else there's ilan@ilans.net.",
+            starters: ["What's the most impressive thing he's shipped?", 'Is he available for new roles?', 'What does he actually do day to day?'],
+            placeholder: 'Ask about Ilan or his work…',
+            sub: 'AI twin · can be wrong · ',
+            emailReal: 'email the real one',
+            error: 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.'
+        },
+        he: {
+            greeting: "היי - אני AI אילן, התאום הדיגיטלי של אילן האמיתי. שאלו אותי כל דבר על העבודה שלו, הפרויקטים, או אם הוא האדם שאתם מחפשים. אני יודע רק דברים אמיתיים עליו - לכל השאר יש ilan@ilans.net.",
+            starters: ['מה הדבר הכי מרשים שהוא בנה?', 'הוא פנוי למשרה חדשה?', 'מה הוא עושה ביום-יום?'],
+            placeholder: '…שאלו על אילן או העבודה שלו',
+            sub: 'תאום AI · יכול לטעות · ',
+            emailReal: 'כתבו לאמיתי',
+            error: 'משהו השתבש - נסו שוב, או כתבו לאמיתי: ilan@ilans.net.'
+        }
+    };
+    // Default to Hebrew only if the visitor's browser is Hebrew; the toggle
+    // lets anyone switch (and is what makes the mic listen in Hebrew).
+    var uiLang = (navigator.language || '').toLowerCase().indexOf('he') === 0 ? 'he' : 'en';
 
     var history = [];   // {role, content} - excludes the canned greeting
     var busy = false;
@@ -116,8 +134,9 @@
             '</span>' +
             '<div class="agent-head-text">' +
                 '<div class="agent-name">AI Ilan</div>' +
-                '<div class="agent-sub">AI twin · can be wrong · <a href="mailto:ilan@ilans.net">email the real one</a></div>' +
+                '<div class="agent-sub">' + COPY[uiLang].sub + '<a href="mailto:ilan@ilans.net">' + COPY[uiLang].emailReal + '</a></div>' +
             '</div>' +
+            '<button class="agent-lang" type="button">' + (uiLang === 'he' ? 'EN' : 'עב') + '</button>' +
             '<button class="agent-close" aria-label="Close chat">&times;</button>' +
         '</div>' +
         '<div class="agent-msgs" aria-live="polite"></div>' +
@@ -126,7 +145,7 @@
             '<button class="agent-mic" type="button" aria-label="Speak your question" aria-pressed="false" hidden>' +
                 '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>' +
             '</button>' +
-            '<input class="agent-input" type="text" maxlength="1200" placeholder="Ask about Ilan or his work…" aria-label="Your question">' +
+            '<input class="agent-input" type="text" maxlength="1200" placeholder="' + COPY[uiLang].placeholder + '" aria-label="Your question">' +
             '<button class="agent-send" type="submit" aria-label="Send message">' +
                 '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>' +
             '</button>' +
@@ -157,6 +176,36 @@
     var inputEl = panel.querySelector('.agent-input');
     var sendEl = panel.querySelector('.agent-send');
     var micEl = panel.querySelector('.agent-mic');
+    var subEl = panel.querySelector('.agent-sub');
+    var langBtn = panel.querySelector('.agent-lang');
+
+    // Re-localize the widget chrome and re-language the mic when toggled
+    function applyLang() {
+        inputEl.placeholder = COPY[uiLang].placeholder;
+        inputEl.dir = uiLang === 'he' ? 'rtl' : 'ltr';
+        subEl.innerHTML = COPY[uiLang].sub + '<a href="mailto:ilan@ilans.net">' + COPY[uiLang].emailReal + '</a>';
+        langBtn.textContent = uiLang === 'he' ? 'EN' : 'עב';
+        langBtn.setAttribute('aria-label', uiLang === 'he' ? 'Switch to English' : 'עבור לעברית / Switch to Hebrew');
+        renderStarters();
+    }
+    langBtn.addEventListener('click', function() {
+        uiLang = uiLang === 'he' ? 'en' : 'he';
+        applyLang();
+        inputEl.focus();
+    });
+
+    function renderStarters() {
+        startersEl.replaceChildren();
+        COPY[uiLang].starters.forEach(function(q) {
+            var chip = document.createElement('button');
+            chip.className = 'agent-chip';
+            chip.type = 'button';
+            chip.dir = 'auto';
+            chip.textContent = q;
+            chip.addEventListener('click', function() { send(q); });
+            startersEl.appendChild(chip);
+        });
+    }
 
     /* ── Text-to-speech: Azure Neural voice with browser fallback ── */
     var tts = {
@@ -313,7 +362,7 @@
             try {
                 recognition = new SR();
             } catch (e) { micEl.hidden = true; return; }
-            recognition.lang = (navigator.language && navigator.language.indexOf('he') === 0) ? 'he-IL' : 'en-US';
+            recognition.lang = uiLang === 'he' ? 'he-IL' : 'en-US';
             recognition.interimResults = true;
             recognition.maxAlternatives = 1;
 
@@ -336,7 +385,7 @@
             listening = true;
             micEl.classList.add('listening');
             micEl.setAttribute('aria-pressed', 'true');
-            inputEl.placeholder = 'Listening…';
+            inputEl.placeholder = uiLang === 'he' ? '…מקשיב' : 'Listening…';
             try { recognition.start(); } catch (e) { stopListening(); }
             track('agent-voice');
         });
@@ -346,24 +395,18 @@
         listening = false;
         micEl.classList.remove('listening');
         micEl.setAttribute('aria-pressed', 'false');
-        inputEl.placeholder = 'Ask about Ilan or his work…';
+        inputEl.placeholder = COPY[uiLang].placeholder;
         if (recognition) {
             try { recognition.stop(); } catch (e) {}
         }
     }
 
-    STARTERS.forEach(function(q) {
-        var chip = document.createElement('button');
-        chip.className = 'agent-chip';
-        chip.type = 'button';
-        chip.textContent = q;
-        chip.addEventListener('click', function() { send(q); });
-        startersEl.appendChild(chip);
-    });
+    applyLang();   // localize chrome + render starters in the current language
 
     function addMsg(role, text) {
         var el = document.createElement('div');
         el.className = 'agent-msg ' + (role === 'user' ? 'from-user' : 'from-ai');
+        el.dir = 'auto';   // Hebrew renders RTL, English LTR - per message
         el.textContent = text;
         msgsEl.appendChild(el);
         msgsEl.scrollTop = msgsEl.scrollHeight;
@@ -388,8 +431,8 @@
         launcher.setAttribute('aria-hidden', 'true');
         if (!opened) {
             opened = true;
-            var g = addMsg('ai', GREETING);
-            attachSpeaker(g, GREETING);
+            var g = addMsg('ai', COPY[uiLang].greeting);
+            attachSpeaker(g, COPY[uiLang].greeting);
             track('agent-open');
         }
         inputEl.focus();
@@ -472,7 +515,7 @@
         }).then(function(res) {
             if (!res.ok) {
                 return res.json().catch(function() { return {}; }).then(function(data) {
-                    throw new Error(data.error || 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.');
+                    throw new Error(data.error || COPY[uiLang].error);
                 });
             }
             aiEl.classList.remove('thinking');
@@ -517,7 +560,7 @@
                         else tts.speak(clean, speakBtn);
                     }
                 } else {
-                    aiEl.textContent = 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.';
+                    aiEl.textContent = COPY[uiLang].error;
                     history.pop();
                 }
             });

@@ -1001,6 +1001,19 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
 }
 .agent-sub a { color: var(--ink-muted); }
 .agent-sub a:hover { color: var(--accent-ink); }
+.agent-lang {
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s, border-color 0.2s;
+}
+.agent-lang:hover { color: var(--ink); border-color: var(--ink-dim); }
 .agent-close {
     background: none; border: none;
     font-size: 24px; line-height: 1;
