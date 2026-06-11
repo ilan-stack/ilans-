@@ -149,6 +149,31 @@ document.querySelectorAll('.case, .mini').forEach(function(card) {
     }, { threshold: 0.3 });
 
     rows.forEach(function(row) { rowObserver.observe(row); });
+
+    /* Ambient loop: while the section is on screen, a random term
+       re-decodes every couple of seconds so the list stays alive */
+    var allSkills = Array.prototype.slice.call(document.querySelectorAll('.skill'));
+    var skillsSection = document.getElementById('skills');
+    var sectionVisible = false;
+    var lastIdx = -1;
+    if (skillsSection && allSkills.length) {
+        new IntersectionObserver(function(entries) {
+            sectionVisible = entries[0].isIntersecting;
+        }, { threshold: 0.15 }).observe(skillsSection);
+
+        (function ambient() {
+            setTimeout(function() {
+                if (sectionVisible && !document.hidden) {
+                    var idx;
+                    do { idx = (Math.random() * allSkills.length) | 0; }
+                    while (idx === lastIdx && allSkills.length > 1);
+                    lastIdx = idx;
+                    decode(allSkills[idx], 650);
+                }
+                ambient();
+            }, 1800 + Math.random() * 1700);
+        })();
+    }
 })();
 
 /* ── Animated stat counters (serif numerals) ── */
