@@ -6,6 +6,7 @@
 
     var API = 'https://ilans-agent.vercel.app/api/chat';
     var TTS_API = 'https://ilans-agent.vercel.app/api/tts';
+    var LEAD_API = 'https://ilans-agent.vercel.app/api/lead';
 
     // Bilingual copy. The agent itself mirrors whatever language it's asked
     // in; these strings just localize the widget chrome + canned bits.
@@ -16,7 +17,13 @@
             placeholder: 'Ask about Ilan or his work…',
             sub: 'AI twin · can be wrong · ',
             emailReal: 'email the real one',
-            error: 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.'
+            error: 'AI Ilan glitched - try again, or email the real one: ilan@ilans.net.',
+            leadName: 'Your name',
+            leadEmail: 'Your email',
+            leadNote: 'Anything he should know? (optional)',
+            leadSend: 'Send to Ilan',
+            leadSent: 'Got it - passed straight to the real Ilan. He usually replies fast.',
+            leadError: "That didn't go through - try again or just email ilan@ilans.net."
         },
         he: {
             greeting: "היי - אני AI אילן, התאום הדיגיטלי של אילן האמיתי. שאלו אותי כל דבר על העבודה שלו, הפרויקטים, או אם הוא האדם שאתם מחפשים. אני יודע רק דברים אמיתיים עליו - לכל השאר יש ilan@ilans.net.",
@@ -24,7 +31,13 @@
             placeholder: '…שאלו על אילן או העבודה שלו',
             sub: 'תאום AI · יכול לטעות · ',
             emailReal: 'כתבו לאמיתי',
-            error: 'משהו השתבש - נסו שוב, או כתבו לאמיתי: ilan@ilans.net.'
+            error: 'משהו השתבש - נסו שוב, או כתבו לאמיתי: ilan@ilans.net.',
+            leadName: 'השם שלכם',
+            leadEmail: 'האימייל שלכם',
+            leadNote: '(משהו שכדאי שידע? (לא חובה',
+            leadSend: 'שלחו לאילן',
+            leadSent: 'נשלח לאילן האמיתי - הוא בדרך כלל עונה מהר.',
+            leadError: 'משהו השתבש - נסו שוב או כתבו ל-ilan@ilans.net.'
         }
     };
     // Default to Hebrew only if the visitor's browser is Hebrew; the toggle
@@ -76,6 +89,7 @@
         // remove complete markers, any trailing partial mid-stream, and
         // collapse the double space left where a marker was
         return s.replace(/\[\[focus:[a-z0-9-]+\]\]/g, '')
+                .replace(/\[\[lead\]\]/g, '')
                 .replace(/\[\[[^\]\]]*$/, '')
                 .replace(/[ \t]{2,}/g, ' ');
     }
@@ -95,7 +109,7 @@
     }
 
     function cleanSeg(s) {
-        return s.replace(/\[\[[^\]\]]*$/, '').replace(/[ \t]{2,}/g, ' ').trim();
+        return s.replace(/\[\[lead\]\]/g, '').replace(/\[\[[^\]\]]*$/, '').replace(/[ \t]{2,}/g, ' ').trim();
     }
     // Split a raw reply into {text, key} parts at each marker, so speech and
     // page-pointing can be interleaved in narration order.
@@ -361,6 +375,61 @@
         return btn;
     }
 
+    /* ── Lead capture: the agent emits [[lead]] and this inline form
+       appears; details go straight to the real Ilan. ── */
+    function showLeadForm() {
+        if (msgsEl.querySelector('.agent-lead')) return; // one at a time
+        var c = COPY[uiLang];
+        var form = document.createElement('form');
+        form.className = 'agent-lead';
+        form.dir = uiLang === 'he' ? 'rtl' : 'ltr';
+        form.innerHTML =
+            '<input type="text" name="name" maxlength="120" placeholder="' + c.leadName + '" required>' +
+            '<input type="email" name="email" maxlength="200" placeholder="' + c.leadEmail + '" required>' +
+            '<input type="text" name="note" maxlength="600" placeholder="' + c.leadNote + '">' +
+            '<button type="submit" class="agent-lead-send">' + c.leadSend + '</button>';
+        msgsEl.appendChild(form);
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+        track('lead-shown');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var btn = form.querySelector('.agent-lead-send');
+            btn.disabled = true;
+            fetch(LEAD_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: form.name.value.trim(),
+                    email: form.email.value.trim(),
+                    note: form.note.value.trim()
+                })
+            }).then(function(res) {
+                if (res.ok) {
+                    form.remove();
+                    addMsg('ai', c.leadSent);
+                    track('lead-sent');
+                    return;
+                }
+                return res.json().catch(function() { return {}; }).then(function(d) {
+                    if (d.fallback) {
+                        // channel not configured - no dead end: open the email sheet
+                        form.remove();
+                        var mailBtn = document.querySelector('a[href^="mailto:"]');
+                        if (mailBtn) mailBtn.click();
+                    } else {
+                        btn.disabled = false;
+                        addMsg('ai', d.error || c.leadError);
+                    }
+                });
+            }).catch(function() {
+                btn.disabled = false;
+                addMsg('ai', c.leadError);
+            });
+        });
+        form.querySelector('input').focus();
+    }
+
     /* ── Speech-to-text: talk to the agent ── */
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     var recognition = null;
@@ -573,6 +642,7 @@
                     aiEl.textContent = clean;
                     maybeSwitchLang(clean);   // confirm the conversation language from the reply
                     history.push({ role: 'assistant', content: clean });
+                    if (/\[\[lead\]\]/.test(answer)) showLeadForm();
                     var speakBtn = attachSpeaker(aiEl, answer);
                     if (voiceMode && speakBtn) {
                         var pp = parseFocusParts(answer);
