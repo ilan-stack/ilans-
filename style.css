@@ -261,6 +261,25 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: inline; }
     color: var(--ink);
 }
 .hero h1 .accent-dot { color: var(--accent); }
+/* Hand-drawn pen squiggle in the headline */
+.hero-wavy-wrap {
+    display: inline-block;
+    -webkit-text-fill-color: initial;
+    vertical-align: middle;
+    margin: 0 6px;
+    position: relative;
+    width: 92px; height: 34px;
+    overflow: visible;
+}
+.hero-wavy-wrap svg {
+    position: absolute; top: 50%; left: 0;
+    transform: translateY(-50%);
+    overflow: visible;
+    filter: drop-shadow(0 0 8px rgba(138,123,255,0.45));
+}
+@media (max-width: 600px) {
+    .hero-wavy-wrap { width: 58px; height: 22px; margin: 0 4px; }
+}
 
 .hero-desc {
     font-size: 18px; color: var(--ink-muted); line-height: 1.75;
@@ -1244,3 +1263,8 @@ html[data-theme="light"] body::after { opacity: 0.018; }
 @media (max-width: 980px) {
     html[data-theme="light"] .nav-links { background: var(--bg); }
 }
+/* Light theme: violet squiggle tuned to the indigo accent */
+html[data-theme="light"] #heroWaveGrad stop:nth-child(1) { stop-color: #5b4de0; }
+html[data-theme="light"] #heroWaveGrad stop:nth-child(2) { stop-color: #8a7bff; }
+html[data-theme="light"] #heroWaveGrad stop:nth-child(3) { stop-color: #5b4de0; }
+html[data-theme="light"] .hero-wavy-wrap svg { filter: drop-shadow(0 0 7px rgba(91,77,224,0.38)); }

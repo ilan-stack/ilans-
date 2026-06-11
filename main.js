@@ -732,3 +732,68 @@ function trackEvent(path) {
     onScroll();
     start();
 })();
+
+/* ── Hero pen-squiggle: a pen draws a wavy line, holds, fades, loops.
+   JS-driven so the pen stays glued to the stroke's drawn tip. ── */
+(function() {
+    var thin = document.getElementById('heroWaveThin');
+    var thick = document.getElementById('heroWaveThick');
+    var pen = document.getElementById('heroWavePen');
+    if (!thin || !thick || !pen) return;
+
+    var L = thin.getTotalLength();
+    thin.style.strokeDasharray = L;
+    thick.style.strokeDasharray = L;
+
+    // Reduced motion: show the line fully drawn, no pen, no loop
+    if (REDUCED) {
+        thin.style.strokeDashoffset = 0;
+        thick.style.strokeDashoffset = 0;
+        return;
+    }
+
+    thin.style.strokeDashoffset = L;
+    thick.style.strokeDashoffset = L;
+
+    var DUR = 6300;       // full cycle ms
+    var DRAW_END = 0.24;  // drawing phase
+    var HOLD_END = 0.71;  // hold drawn
+    var FADE_END = 0.84;  // fade out, then pause before restart
+    var start = null;
+
+    function ease(t) { return 0.5 - 0.5 * Math.cos(Math.PI * t); }
+
+    function tick(ts) {
+        if (!start) start = ts;
+        var t = ((ts - start) % DUR) / DUR;
+        var draw, lineOp, penOp;
+
+        if (t < DRAW_END) {
+            draw = ease(t / DRAW_END);
+            lineOp = 1;
+            penOp = t < 0.01 ? 0 : 0.9;
+        } else if (t < HOLD_END) {
+            draw = 1; lineOp = 1;
+            penOp = Math.max(0, 0.9 * (1 - (t - DRAW_END) / 0.05));
+        } else if (t < FADE_END) {
+            draw = 1;
+            lineOp = 1 - (t - HOLD_END) / (FADE_END - HOLD_END);
+            penOp = 0;
+        } else {
+            draw = 0; lineOp = 0; penOp = 0;
+        }
+
+        var off = L * (1 - draw);
+        thin.style.strokeDashoffset = off;
+        thick.style.strokeDashoffset = off;
+        thin.style.opacity = lineOp;
+        thick.style.opacity = lineOp;
+
+        var pt = thin.getPointAtLength(draw * L);
+        pen.setAttribute('transform', 'translate(' + pt.x + ',' + pt.y + ')');
+        pen.style.opacity = penOp;
+
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+})();
