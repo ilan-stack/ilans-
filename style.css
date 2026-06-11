@@ -853,6 +853,51 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
 }
 .agent-launcher.panel-open { opacity: 0; pointer-events: none; }
 
+/* Periodic attention nudges (random one fires while idle) */
+.agent-launcher.nudge-bounce { animation: lnBounce 1s var(--ease-out); }
+@keyframes lnBounce {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-11px); }
+    45% { transform: translateY(0); }
+    62% { transform: translateY(-5px); }
+    80% { transform: translateY(0); }
+}
+.agent-launcher.nudge-wiggle { animation: lnWiggle 0.85s ease-in-out; }
+@keyframes lnWiggle {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-6deg); }
+    40% { transform: rotate(5deg); }
+    60% { transform: rotate(-4deg); }
+    80% { transform: rotate(3deg); }
+}
+.agent-launcher.nudge-pop { animation: lnPop 0.7s var(--ease-out); }
+@keyframes lnPop {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.13); }
+    70% { transform: scale(0.97); }
+}
+.agent-launcher.nudge-swing { animation: lnSwing 1s ease-in-out; transform-origin: bottom right; }
+@keyframes lnSwing {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(7deg); }
+    55% { transform: rotate(-5deg); }
+    80% { transform: rotate(3deg); }
+}
+/* A quick attention ring that radiates out with the nudge */
+.agent-launcher::after {
+    content: '';
+    position: absolute; inset: -3px;
+    border-radius: 999px;
+    border: 1.5px solid var(--ok);
+    opacity: 0;
+    pointer-events: none;
+}
+.agent-launcher.nudging::after { animation: lnRing 1s var(--ease-out); }
+@keyframes lnRing {
+    0% { opacity: 0.55; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.18); }
+}
+
 .agent-panel {
     position: fixed;
     bottom: 24px; right: 24px;

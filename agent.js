@@ -295,6 +295,38 @@
         if (panel.hidden) openPanel(); else closePanel();
     });
     panel.querySelector('.agent-close').addEventListener('click', closePanel);
+
+    /* ── Attention nudges: while the chat has never been opened, the
+       launcher plays a random playful animation every few seconds so
+       it pulls the eye. Stops once engaged; respects reduced-motion,
+       hover, and hidden tabs. ── */
+    (function() {
+        var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) return;
+        var NUDGES = ['nudge-bounce', 'nudge-wiggle', 'nudge-pop', 'nudge-swing'];
+        var clearTimer;
+        function clearNudge() {
+            launcher.classList.remove('nudging');
+            NUDGES.forEach(function(n) { launcher.classList.remove(n); });
+        }
+        launcher.addEventListener('mouseenter', clearNudge);
+        function fire() {
+            if (opened || !panel.hidden || document.hidden || launcher.matches(':hover')) return;
+            clearNudge();
+            void launcher.offsetWidth; // restart any in-flight animation
+            launcher.classList.add('nudging', NUDGES[(Math.random() * NUDGES.length) | 0]);
+            clearTimeout(clearTimer);
+            clearTimer = setTimeout(clearNudge, 1100);
+        }
+        function schedule(first) {
+            var delay = first ? 4500 : (8000 + Math.random() * 9000);
+            setTimeout(function() {
+                fire();
+                if (!opened) schedule(false);
+            }, delay);
+        }
+        schedule(true);
+    })();
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !panel.hidden) closePanel();
     });
