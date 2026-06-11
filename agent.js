@@ -67,7 +67,8 @@
         gorni: '[data-focus="gorni"]',
         'skills-design': '[data-focus="skills-design"]',
         'skills-ai': '[data-focus="skills-ai"]',
-        'skills-eng': '[data-focus="skills-eng"]'
+        'skills-eng': '[data-focus="skills-eng"]',
+        'this-site': '[data-focus="this-site"]'
     };
     var focusReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -462,6 +463,10 @@
         if (panel.hidden) openPanel(); else closePanel();
     });
     panel.querySelector('.agent-close').addEventListener('click', closePanel);
+    // "Ask my AI" button on the meta project card opens the chat
+    document.querySelectorAll('.mini-ask-ai').forEach(function(b) {
+        b.addEventListener('click', openPanel);
+    });
 
     /* ── Attention nudges: while the chat has never been opened, the
        launcher plays a random playful animation every few seconds so

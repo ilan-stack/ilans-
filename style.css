@@ -533,6 +533,44 @@ section { padding: 130px 0; }
 .mini-links a.case-link { color: var(--ink-dim); font-weight: 500; }
 .mini-links a.case-link:hover { color: var(--ink-muted); }
 
+/* Meta card: the site itself as a project */
+.mini-wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 26px;
+    border-color: rgba(138,123,255,0.22);
+}
+.mini-wide:hover { border-color: rgba(138,123,255,0.45); }
+.mini-wide-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: #d6d6d6;
+    flex-shrink: 0;
+}
+.mini-wide-body { flex: 1; min-width: 0; }
+.mini-wide .mini-desc { margin-bottom: 0; }
+.mini-wide-links { margin-top: 0; flex-shrink: 0; align-items: center; }
+.mini-ask-ai {
+    background: var(--ink);
+    color: #111;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-family: var(--sans);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-out), background 0.2s;
+}
+.mini-ask-ai:hover { background: #fff; transform: translateY(-1px); }
+html[data-theme="light"] .mini-ask-ai { background: var(--ink); color: #faf9f7; }
+html[data-theme="light"] .mini-ask-ai:hover { background: #000; }
+@media (max-width: 640px) {
+    .mini-wide { flex-direction: column; align-items: flex-start; }
+}
+
 .more-gh {
     text-align: center;
     margin-top: 44px;
