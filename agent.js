@@ -194,6 +194,19 @@
         inputEl.focus();
     });
 
+    // Smart default: the mic + chrome follow the conversation language.
+    // Once any Hebrew appears (typed, spoken, or in a reply) the widget
+    // switches to Hebrew on its own; clear English switches it back.
+    function detectLang(text) {
+        if (/[֐-׿]/.test(text)) return 'he';
+        if (/[A-Za-z]/.test(text)) return 'en';
+        return null; // numbers/emoji/punctuation only - leave as-is
+    }
+    function maybeSwitchLang(text) {
+        var d = detectLang(text);
+        if (d && d !== uiLang) { uiLang = d; applyLang(); }
+    }
+
     function renderStarters() {
         startersEl.replaceChildren();
         COPY[uiLang].starters.forEach(function(q) {
@@ -494,6 +507,7 @@
     function send(text, spoken) {
         if (busy) return;
         voiceMode = !!spoken;
+        maybeSwitchLang(text);   // adapt the widget + mic to this message's language
         startersEl.style.display = 'none';
         inputEl.value = '';
         addMsg('user', text);
@@ -552,6 +566,7 @@
                 if (answer) {
                     var clean = stripMarkers(answer);
                     aiEl.textContent = clean;
+                    maybeSwitchLang(clean);   // confirm the conversation language from the reply
                     history.push({ role: 'assistant', content: clean });
                     var speakBtn = attachSpeaker(aiEl, answer);
                     if (voiceMode && speakBtn) {
