@@ -200,25 +200,18 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: inline; }
     pointer-events: none;
 }
 
-/* Availability pill: face + live dot near the first impression */
+/* Availability pill: a quiet live-dot chip near the first impression */
 .status-pill {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 7px 16px 7px 8px;
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 6px 15px;
     border-radius: 999px;
-    border: 1px solid var(--line-strong);
-    background: rgba(18,18,21,0.6);
+    border: 1px solid var(--line);
+    background: rgba(18,18,21,0.5);
     font-family: var(--mono);
     font-size: 11.5px; font-weight: 500;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--ok);
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
     margin-bottom: 22px;
-}
-.status-avatar {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    border: 1px solid var(--line-strong);
 }
 .pulse {
     width: 7px; height: 7px; border-radius: 50%;
