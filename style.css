@@ -265,7 +265,7 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: inline; }
 .hero-wavy-wrap {
     display: inline-block;
     -webkit-text-fill-color: initial;
-    vertical-align: middle;
+    vertical-align: -0.34em;
     margin: 0 6px;
     position: relative;
     width: 92px; height: 34px;
