@@ -1332,6 +1332,9 @@ html[data-theme="light"] .agent-spotlight { animation: agentSpotlightLight 2.8s 
     .container { padding: 0 20px; }
     .hero h1 { letter-spacing: -0.02em; }
     .hero-desc { font-size: 15.5px; }
+    /* Reserve room below the hero content so the absolutely-positioned
+       scroll hint never collides with the proof strip on tall content */
+    .hero-content { padding-bottom: 130px; }
     .mini-grid { grid-template-columns: 1fr; }
     .about-photo-grid { grid-template-columns: 1fr; }
     .about-portrait { max-width: 220px; }
