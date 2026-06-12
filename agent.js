@@ -81,7 +81,8 @@
         'skills-design': '[data-focus="skills-design"]',
         'skills-ai': '[data-focus="skills-ai"]',
         'skills-eng': '[data-focus="skills-eng"]',
-        'this-site': '[data-focus="this-site"]'
+        'this-site': '[data-focus="this-site"]',
+        'medical-3d': '[data-focus="medical-3d"]'
     };
     var focusReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
