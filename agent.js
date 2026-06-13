@@ -13,7 +13,7 @@
     var COPY = {
         en: {
             greeting: "Hey - I'm AI Ilan, the AI twin of the real one. Ask me anything about his work, his projects, or whether he's the person you're looking for. I only know true things about him - for everything else there's ilan@ilans.net.",
-            starters: ["What's the most impressive thing he's shipped?", 'Is he available for new roles?', 'What does he actually do day to day?'],
+            starters: ['Would he fit my open role?', "What's the most impressive thing he's shipped?", 'Is he available for new roles?'],
             placeholder: 'Ask about Ilan or his work…',
             sub: 'AI twin · can be wrong · ',
             emailReal: 'email the real one',
@@ -27,7 +27,7 @@
         },
         he: {
             greeting: "היי - אני AI אילן, התאום הדיגיטלי של אילן האמיתי. שאלו אותי כל דבר על העבודה שלו, הפרויקטים, או אם הוא האדם שאתם מחפשים. אני יודע רק דברים אמיתיים עליו - לכל השאר יש ilan@ilans.net.",
-            starters: ['מה הדבר הכי מרשים שהוא בנה?', 'הוא פנוי למשרה חדשה?', 'מה הוא עושה ביום-יום?'],
+            starters: ['הוא יתאים למשרה שלי?', 'מה הדבר הכי מרשים שהוא בנה?', 'הוא פנוי למשרה חדשה?'],
             placeholder: '…שאלו על אילן או העבודה שלו',
             sub: 'תאום AI · יכול לטעות · ',
             emailReal: 'כתבו לאמיתי',
