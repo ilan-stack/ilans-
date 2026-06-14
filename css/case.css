@@ -210,27 +210,49 @@ img, video { display: block; max-width: 100%; }
     .cs-kahu__badge { width: 76px; top: -34px; }
 }
 
-/* ============ MAGICAL CAST STAGE - characters on a world backdrop ============ */
-.cs-cast { position: relative; overflow: hidden; border-radius: 20px;
-    border: 1px solid var(--line);
-    background: radial-gradient(135% 115% at 50% -12%, #2d1d54 0%, #1a1733 42%, #0e0e1a 100%);
-    min-height: clamp(320px, 44vw, 480px);
-    display: flex; align-items: flex-end; justify-content: center;
-    padding-top: 44px; }
-.cs-cast__scenery { position: absolute; bottom: 0; z-index: 0; pointer-events: none;
-    object-fit: contain; }
-.cs-cast__scenery--tree { left: 1%; height: 82%; opacity: 0.55; }
-.cs-cast__scenery--castle { right: 0; height: 60%; opacity: 0.38; }
-.cs-cast__row { position: relative; z-index: 2; display: flex;
-    align-items: flex-end; justify-content: center; width: 100%; }
-.cs-cast__char { height: clamp(200px, 31vw, 410px); width: auto; object-fit: contain;
-    filter: drop-shadow(0 20px 34px rgba(0,0,0,0.55));
-    transition: transform 0.35s var(--ease-out); margin: 0 -2.5%; }
-.cs-cast__char:hover { transform: translateY(-10px); }
-.cs-cast__char--witch { height: clamp(220px, 35vw, 450px); z-index: 3; }
-.cs-cast__char--imp { height: clamp(120px, 17vw, 220px); z-index: 1;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6)); }
-@media (max-width: 600px) { .cs-cast__scenery--castle { display: none; } }
+/* ============ BLOCK C - gameplay + cinematic, characters peeking ============ */
+.cs-c { position: relative; margin-top: 78px; }   /* room for characters to overlap up */
+.cs-c__grid { display: grid; grid-template-columns: 36.5% 1fr; gap: 16px;
+    aspect-ratio: 980 / 332; }
+.cs-c__vid { position: relative; border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--line); background: var(--bg-card); }
+.cs-c__vid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cs-c__char { position: absolute; z-index: 5; pointer-events: none;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
+.cs-c__char img { width: 100%; height: auto; display: block; }
+.cs-c__char--witch { width: clamp(120px, 18vw, 248px); top: -86px; left: -16px; }
+.cs-c__char--girl  { width: clamp(108px, 15vw, 208px); top: -104px; right: -8px; }
+.cs-c__char--bee   { width: clamp(60px, 8vw, 112px); bottom: -30px; left: 31%; transform: rotate(-6deg); }
+
+/* ============ BLOCK E - cinematics masonry, characters overlapping bottom ====== */
+.cs-e { position: relative; padding-bottom: clamp(20px, 4vw, 56px); }
+.cs-e__grid { display: grid; grid-template-columns: 1.96fr 1fr; gap: 16px; align-items: start; }
+.cs-e__col { display: flex; flex-direction: column; gap: 16px; }
+.cs-e__tile { border-radius: 16px; overflow: hidden; border: 1px solid var(--line);
+    background: var(--bg-card); }
+.cs-e__col--wide .cs-e__tile { aspect-ratio: 16 / 9; }
+.cs-e__col--tall .cs-e__tile { aspect-ratio: 3 / 4; }
+.cs-e__tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cs-e__char { position: absolute; z-index: 5; pointer-events: none;
+    filter: drop-shadow(0 18px 28px rgba(0,0,0,0.6)); }
+.cs-e__char img { width: 100%; height: auto; display: block; }
+/* big characters overlapping up from the bottom of the left column */
+.cs-e__char--tree    { width: clamp(220px, 46vw, 560px); bottom: 30px; left: -4%; z-index: 4; }
+.cs-e__char--monster { width: clamp(150px, 27vw, 320px); bottom: 24px; left: 20%; }
+.cs-e__char--imp     { width: clamp(96px, 16vw, 200px); bottom: 60px; left: 46%; }
+
+@media (max-width: 760px) {
+    .cs-c { margin-top: 54px; }
+    .cs-c__grid { grid-template-columns: 1fr; aspect-ratio: auto; }
+    .cs-c__vid { aspect-ratio: 16 / 10; }
+    .cs-c__char--witch { width: 92px; top: -52px; left: -6px; }
+    .cs-c__char--girl  { width: 84px; top: -60px; right: -2px; }
+    .cs-c__char--bee   { width: 52px; bottom: auto; top: 38%; left: auto; right: 6px; }
+    .cs-e__grid { grid-template-columns: 1fr; }
+    .cs-e__char--tree { width: 150px; }
+    .cs-e__char--monster { width: 104px; left: 30%; }
+    .cs-e__char--imp { width: 68px; left: 60%; }
+}
 
 /* TOOLS */
 .cs-tools { display: flex; flex-wrap: wrap; gap: 8px; }
