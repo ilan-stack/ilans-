@@ -210,6 +210,28 @@ img, video { display: block; max-width: 100%; }
     .cs-kahu__badge { width: 76px; top: -34px; }
 }
 
+/* ============ MAGICAL CAST STAGE - characters on a world backdrop ============ */
+.cs-cast { position: relative; overflow: hidden; border-radius: 20px;
+    border: 1px solid var(--line);
+    background: radial-gradient(135% 115% at 50% -12%, #2d1d54 0%, #1a1733 42%, #0e0e1a 100%);
+    min-height: clamp(320px, 44vw, 480px);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-top: 44px; }
+.cs-cast__scenery { position: absolute; bottom: 0; z-index: 0; pointer-events: none;
+    object-fit: contain; }
+.cs-cast__scenery--tree { left: 1%; height: 82%; opacity: 0.55; }
+.cs-cast__scenery--castle { right: 0; height: 60%; opacity: 0.38; }
+.cs-cast__row { position: relative; z-index: 2; display: flex;
+    align-items: flex-end; justify-content: center; width: 100%; }
+.cs-cast__char { height: clamp(200px, 31vw, 410px); width: auto; object-fit: contain;
+    filter: drop-shadow(0 20px 34px rgba(0,0,0,0.55));
+    transition: transform 0.35s var(--ease-out); margin: 0 -2.5%; }
+.cs-cast__char:hover { transform: translateY(-10px); }
+.cs-cast__char--witch { height: clamp(220px, 35vw, 450px); z-index: 3; }
+.cs-cast__char--imp { height: clamp(120px, 17vw, 220px); z-index: 1;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6)); }
+@media (max-width: 600px) { .cs-cast__scenery--castle { display: none; } }
+
 /* TOOLS */
 .cs-tools { display: flex; flex-wrap: wrap; gap: 8px; }
 .cs-tool {
