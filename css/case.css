@@ -95,8 +95,8 @@ img, video { display: block; max-width: 100%; }
     color: #fff; margin-bottom: 22px;
 }
 .cs-hero__mascot {
-    display: inline-block; vertical-align: -0.14em;
-    height: 0.86em; width: auto; margin-left: 0.08em;
+    display: inline-block; vertical-align: -0.16em;
+    height: 1.04em; width: auto; margin-left: -0.04em;
     filter: drop-shadow(0 12px 22px rgba(0,0,0,0.5));
     animation: mascotFloat 4.5s ease-in-out infinite;
     transform-origin: bottom center;
