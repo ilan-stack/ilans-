@@ -94,6 +94,24 @@ img, video { display: block; max-width: 100%; }
     font-weight: 600; letter-spacing: -0.03em; line-height: 1.02;
     color: #fff; margin-bottom: 22px;
 }
+.cs-hero__mascot {
+    position: absolute; z-index: 3;
+    right: 1%; top: clamp(0px, 3vw, 40px);
+    width: clamp(116px, 16vw, 210px);
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.55));
+    animation: mascotFloat 4.5s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes mascotFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-12px) rotate(2deg); }
+}
+@media (max-width: 600px) {
+    .cs-hero__mascot { width: 92px; right: 0; top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cs-hero__mascot { animation: none; }
+}
 .cs-hero__subtitle {
     font-size: clamp(17px, 2.4vw, 21px);
     color: var(--ink-muted); line-height: 1.7;
