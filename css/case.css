@@ -85,10 +85,12 @@ img, video { display: block; max-width: 100%; }
 .cs-nav__logo span { color: var(--accent-ink); }
 .cs-nav__back {
     display: inline-flex; align-items: center; gap: 8px;
-    font-size: 13.5px; font-weight: 500; color: var(--ink-muted);
+    font-size: 13.5px; font-weight: 500; color: var(--accent-ink);
     transition: color 0.2s;
 }
-.cs-nav__back:hover { color: var(--ink); }
+.cs-nav__back svg { transition: transform 0.2s var(--ease-out); }
+.cs-nav__back:hover { color: var(--accent); }
+.cs-nav__back:hover svg { transform: translateX(-3px); }
 
 /* HERO */
 .cs-hero {
