@@ -13,6 +13,8 @@ var themeLight = document.documentElement.getAttribute('data-theme') === 'light'
         if (themeLight) document.documentElement.setAttribute('data-theme', 'light');
         else document.documentElement.removeAttribute('data-theme');
         btn.setAttribute('aria-pressed', themeLight ? 'true' : 'false');
+        var tc = document.getElementById('themeColorMeta');
+        if (tc) tc.setAttribute('content', themeLight ? '#faf9f7' : '#0b0b0d');
         try { localStorage.setItem('theme', themeLight ? 'light' : 'dark'); } catch (e) {}
     });
 })();

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>(function(){try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+    <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+    <script>(function(){try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
     <title>Ilan Lenzner | Senior Product Designer & Design Engineer</title>
     <meta name="description" content="Ilan Lenzner - Senior Product Designer & Design Engineer in Tel Aviv. I design and ship AI-powered products end-to-end, used daily by 100+ creatives.">
     <meta name="author" content="Ilan Lenzner">
@@ -343,7 +344,7 @@
         </div>
         <div class="about-content">
             <div class="about-photo-grid reveal">
-                <picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.png" alt="Ilan Lenzner" class="about-portrait" loading="lazy" decoding="async"></picture>
+                <picture><source srcset="images/portrait-new.webp" type="image/webp"><img src="images/portrait-new.jpg" alt="Ilan Lenzner" class="about-portrait" loading="lazy" decoding="async"></picture>
                 <div class="about-bio">
                     <p>From <em>3D animation</em> to <em>interactive ads</em> to <em>AI product engineering</em>.</p>
                     <p>Today I architect <strong>autonomous AI pipelines</strong> that generate, animate, and ship creative assets end-to-end, turning workflows that once took <strong>days into minutes</strong>.</p>
@@ -508,7 +509,7 @@
     </div>
 </div>
 
-<script src="main.js?v=15" defer></script>
+<script src="main.js?v=16" defer></script>
 <script src="agent.js?v=20" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>

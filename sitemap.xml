@@ -2,8 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ilans.net/</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://ilans.net/work/playbatch.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ilans.net/work/bites.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ilans.net/work/justad.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
