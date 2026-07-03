@@ -1055,8 +1055,10 @@ function trackEvent(path) {
     var els = SECTIONS.map(function(s) { return document.getElementById(s[0]); });
     if (els.some(function(e) { return !e; })) return;
 
-    var rail = document.createElement('nav');
+    // div, not <nav>: the site styles bare <nav> as the fixed blurred top bar
+    var rail = document.createElement('div');
     rail.className = 'rail';
+    rail.setAttribute('role', 'navigation');
     rail.setAttribute('aria-label', 'Section index');
     rail.innerHTML = SECTIONS.map(function(s) {
         return '<a href="#' + s[0] + '" data-sec="' + s[0] + '"><span class="rail-label">' + s[2] + '</span><span class="rail-idx">' + s[1] + '</span></a>';

@@ -1592,7 +1592,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
 
 /* ── Section rail (scrollspy, wide screens) ── */
 .rail {
-    position: fixed; right: 26px; top: 50%;
+    position: fixed; right: 26px; left: auto; top: 50%;
+    width: auto; padding: 0;
+    background: none; border: none;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
     transform: translateY(-50%);
     z-index: 90;
     display: flex; flex-direction: column; gap: 16px;
