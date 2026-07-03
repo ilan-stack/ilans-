@@ -189,7 +189,9 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: inline; }
     position: absolute; inset: 0;
     background: radial-gradient(ellipse 75% 55% at 50% -15%, rgba(138,123,255,0.10) 0%, transparent 62%);
 }
-.hero-content { position: relative; z-index: 1; max-width: 840px; padding-bottom: 48px; }
+/* padding-bottom reserves the scroll-hint's zone (pill ~36px + bottom 30px + air) */
+.hero-content { position: relative; z-index: 1; max-width: 840px; padding-bottom: 130px; }
+@media (max-height: 740px) { .scroll-hint { display: none; } }
 /* Soft scrim so hero copy stays legible over the particle field */
 .hero-content::before {
     content: '';
