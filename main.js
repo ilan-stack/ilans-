@@ -1100,3 +1100,15 @@ try {
         'font: 12px "JetBrains Mono", monospace; color: #8a7bff;'
     );
 } catch (e) {}
+
+/* ── Back to top: JS-driven, no hash navigation. A bare href="#" makes
+   a history entry whose stored scroll position can be restored after
+   the smooth scroll is interrupted - the "jumps back down" bug. ── */
+(function() {
+    document.querySelectorAll('.footer-top, .nav-logo').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+        });
+    });
+})();
