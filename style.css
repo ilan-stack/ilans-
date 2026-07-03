@@ -1623,12 +1623,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
 @media (max-width: 1240px) { .rail { display: none; } }
 
 /* ── Footer sign-off ── */
-.footer-sign-row {
-    display: flex; align-items: baseline; justify-content: space-between;
-    gap: 20px; flex-wrap: wrap;
-    padding-bottom: 26px; margin-bottom: 26px;
-    border-bottom: 1px solid var(--line);
-}
 .footer-sign {
     font-family: var(--serif);
     font-size: clamp(18px, 2vw, 24px);
