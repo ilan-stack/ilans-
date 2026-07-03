@@ -921,3 +921,180 @@ function trackEvent(path) {
     }, { threshold: 0.6 });
     vids.forEach(function(v) { io.observe(v); });
 })();
+
+/* ── Command palette (⌘K): jump anywhere, do anything ── */
+(function() {
+    var ITEMS = [
+        { l: 'Work',                 k: 'Section', go: function() { jump('#work'); } },
+        { l: 'About',                k: 'Section', go: function() { jump('#about'); } },
+        { l: 'Skills',               k: 'Section', go: function() { jump('#skills'); } },
+        { l: 'Experience',           k: 'Section', go: function() { jump('#experience'); } },
+        { l: 'Contact',              k: 'Section', go: function() { jump('#contact'); } },
+        { l: 'Lens',                 k: 'Project', go: function() { focusCard('lens'); } },
+        { l: 'TaperSafe',            k: 'Project', go: function() { focusCard('tapersafe'); } },
+        { l: 'After Effects Hub',    k: 'Project', go: function() { focusCard('ae-hub'); } },
+        { l: '3D Medical Devices',   k: 'Project', go: function() { focusCard('medical-3d'); } },
+        { l: 'InkForge',             k: 'Project', go: function() { focusCard('inkforge'); } },
+        { l: 'Sprite Studio',        k: 'Project', go: function() { focusCard('sprite-studio'); } },
+        { l: 'Cubelets',             k: 'Project', go: function() { focusCard('cubelets'); } },
+        { l: 'AI Studio',            k: 'Project', go: function() { focusCard('ai-studio'); } },
+        { l: 'YouTube Downloader',   k: 'Project', go: function() { focusCard('yt-downloader'); } },
+        { l: 'Auto-Caption',         k: 'Project', go: function() { focusCard('auto-caption'); } },
+        { l: 'Toggle light / dark',  k: 'Action',  go: function() { var b = document.getElementById('themeToggle'); if (b) b.click(); } },
+        { l: 'Email me',             k: 'Action',  go: function() { var a = document.querySelector('.nav-cta'); if (a) a.click(); } },
+        { l: 'Download resume',      k: 'Action',  go: function() { window.open('ilan-lenzner-cv.pdf', '_blank', 'noopener'); } },
+        { l: 'Ask my AI',            k: 'Action',  go: function() { var b = document.querySelector('.agent-launcher'); if (b) b.click(); } },
+        { l: 'GitHub',               k: 'Action',  go: function() { window.open('https://github.com/ilan-stack', '_blank', 'noopener'); } },
+        { l: 'LinkedIn',             k: 'Action',  go: function() { window.open('https://www.linkedin.com/in/ilan-lenzner-395ba64/', '_blank', 'noopener'); } }
+    ];
+
+    function jump(sel) {
+        var el = document.querySelector(sel);
+        if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+    }
+    function focusCard(key) {
+        var el = document.querySelector('[data-focus="' + key + '"]');
+        if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+    }
+
+    var root = document.createElement('div');
+    root.className = 'cmdk';
+    root.hidden = true;
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-label', 'Command menu');
+    root.innerHTML =
+        '<div class="cmdk-backdrop" data-close></div>' +
+        '<div class="cmdk-card">' +
+        '<input class="cmdk-input" type="text" placeholder="Where to? Type a project, section, or action…" aria-label="Search commands">' +
+        '<div class="cmdk-list" role="listbox"></div>' +
+        '<div class="cmdk-foot"><span><kbd>↑↓</kbd>navigate</span><span><kbd>↵</kbd>select</span><span><kbd>esc</kbd>close</span></div>' +
+        '</div>';
+    document.body.appendChild(root);
+
+    var input = root.querySelector('.cmdk-input');
+    var list = root.querySelector('.cmdk-list');
+    var lastFocus = null, filtered = ITEMS, sel = 0;
+
+    function render() {
+        if (!filtered.length) {
+            list.innerHTML = '<div class="cmdk-empty">Nothing matches - try "lens" or "email"</div>';
+            return;
+        }
+        list.innerHTML = filtered.map(function(it, i) {
+            return '<div class="cmdk-item' + (i === sel ? ' sel' : '') + '" role="option" data-i="' + i + '"' + (i === sel ? ' aria-selected="true"' : '') + '>' +
+                '<span>' + it.l + '</span><span class="k">' + it.k + '</span></div>';
+        }).join('');
+        var s = list.querySelector('.sel');
+        if (s) s.scrollIntoView({ block: 'nearest' });
+    }
+    function filter() {
+        var q = input.value.trim().toLowerCase();
+        filtered = q ? ITEMS.filter(function(it) {
+            return (it.l + ' ' + it.k).toLowerCase().indexOf(q) !== -1;
+        }) : ITEMS;
+        sel = 0;
+        render();
+    }
+    function open() {
+        lastFocus = document.activeElement;
+        root.hidden = false;
+        document.body.style.overflow = 'hidden';
+        input.value = '';
+        filter();
+        input.focus();
+        trackEvent('cmdk-open');
+    }
+    function close() {
+        root.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocus) lastFocus.focus();
+    }
+    function run(i) {
+        var it = filtered[i];
+        if (!it) return;
+        close();
+        it.go();
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+            e.preventDefault();
+            root.hidden ? open() : close();
+            return;
+        }
+        if (root.hidden) return;
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(sel + 1, filtered.length - 1); render(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(sel - 1, 0); render(); }
+        else if (e.key === 'Enter') { e.preventDefault(); run(sel); }
+    });
+    input.addEventListener('input', filter);
+    root.addEventListener('click', function(e) {
+        if (e.target.closest('[data-close]')) { close(); return; }
+        var item = e.target.closest('.cmdk-item');
+        if (item) run(+item.dataset.i);
+    });
+    list.addEventListener('mousemove', function(e) {
+        var item = e.target.closest('.cmdk-item');
+        if (item && +item.dataset.i !== sel) { sel = +item.dataset.i; render(); }
+    });
+    var hint = document.getElementById('cmdkHint');
+    if (hint) hint.addEventListener('click', open);
+})();
+
+/* ── Section rail: scrollspy index on wide screens ── */
+(function() {
+    var SECTIONS = [
+        ['work', '01', 'Work'],
+        ['about', '03', 'About'],
+        ['skills', '04', 'Skills'],
+        ['experience', '05', 'Experience'],
+        ['contact', '06', 'Contact']
+    ];
+    var els = SECTIONS.map(function(s) { return document.getElementById(s[0]); });
+    if (els.some(function(e) { return !e; })) return;
+
+    var rail = document.createElement('nav');
+    rail.className = 'rail';
+    rail.setAttribute('aria-label', 'Section index');
+    rail.innerHTML = SECTIONS.map(function(s) {
+        return '<a href="#' + s[0] + '" data-sec="' + s[0] + '"><span class="rail-label">' + s[2] + '</span><span class="rail-idx">' + s[1] + '</span></a>';
+    }).join('');
+    document.body.appendChild(rail);
+    var links = rail.querySelectorAll('a');
+
+    var ticking = false;
+    function update() {
+        ticking = false;
+        var mid = window.innerHeight * 0.45;
+        var current = -1;
+        els.forEach(function(el, i) {
+            if (el.getBoundingClientRect().top <= mid) current = i;
+        });
+        links.forEach(function(a, i) { a.classList.toggle('active', i === current); });
+    }
+    window.addEventListener('scroll', function() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+})();
+
+/* ── Footer: live Tel Aviv clock ── */
+(function() {
+    var el = document.getElementById('tlvClock');
+    if (!el) return;
+    var fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' });
+    function tick() { el.textContent = fmt.format(new Date()); }
+    tick();
+    setInterval(tick, 30000);
+})();
+
+/* ── For the ones who open the console ── */
+try {
+    console.log(
+        '%cILAN LENZNER.%c\nCreative Technologist · Design Engineer\nHand-built, no frameworks. Press ⌘K.\n→ ilan@ilans.net',
+        'font: 700 18px Inter, sans-serif; letter-spacing: 2px;',
+        'font: 12px "JetBrains Mono", monospace; color: #8a7bff;'
+    );
+} catch (e) {}
