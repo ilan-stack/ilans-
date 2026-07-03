@@ -948,14 +948,15 @@ function trackEvent(path) {
         { l: 'LinkedIn',             k: 'Action',  go: function() { window.open('https://www.linkedin.com/in/ilan-lenzner-395ba64/', '_blank', 'noopener'); } }
     ];
 
-    function jump(sel) {
-        var el = document.querySelector(sel);
-        if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+    function go(el, center) {
+        if (!el) return;
+        var r = el.getBoundingClientRect();
+        var y = r.top + window.scrollY - (center ? Math.max(60, (window.innerHeight - r.height) / 2) : 60);
+        if (window.__driveScrollTo) window.__driveScrollTo(y);
+        else el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
     }
-    function focusCard(key) {
-        var el = document.querySelector('[data-focus="' + key + '"]');
-        if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
-    }
+    function jump(sel) { go(document.querySelector(sel), false); }
+    function focusCard(key) { go(document.querySelector('[data-focus="' + key + '"]'), true); }
 
     var root = document.createElement('div');
     root.className = 'cmdk';
@@ -1101,21 +1102,37 @@ try {
     );
 } catch (e) {}
 
-/* ── Back to top: self-driven animation. Native smooth scroll gets
-   cancelled by scroll anchoring when lazy content loads mid-flight,
-   which could strand or bounce the user. We set the position each
-   frame from our own easing instead, so nothing can hijack it -
-   only a deliberate wheel/touch from the user aborts. ── */
+/* ── In-page navigation: fully JS-driven, zero hash navigation.
+   Native #hash links create history entries with stored scroll
+   positions, and Chrome re-anchors to the current hash after layout
+   changes - both were bouncing users around (the back-to-top bug).
+   Every in-page jump now drives its own per-frame animation and
+   keeps the URL clean, so there is nothing to restore or re-anchor.
+   Only a deliberate user wheel/touch aborts a jump. ── */
 (function() {
     var animating = false;
-    function toTop() {
-        if (REDUCED || document.hidden || animating) { window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+
+    function stripHash() {
+        if (location.hash) {
+            try { history.replaceState(null, '', location.pathname + location.search); } catch (err) {}
+        }
+    }
+
+    function driveTo(targetY) {
+        stripHash();
+        targetY = Math.max(0, Math.round(targetY));
+        if (REDUCED || document.hidden) {
+            window.scrollTo({ top: targetY, behavior: 'instant' });
+            return;
+        }
+        if (animating) return;
         animating = true;
         var html = document.documentElement;
         var prevBehavior = html.style.scrollBehavior;
         html.style.scrollBehavior = 'auto'; // frames must apply instantly
         var start = window.scrollY;
-        var dur = Math.max(350, Math.min(900, start * 0.12));
+        var dist = Math.abs(targetY - start);
+        var dur = Math.max(350, Math.min(900, dist * 0.12));
         var t0 = performance.now();
         var aborted = false;
         function onUser() { aborted = true; }
@@ -1131,14 +1148,28 @@ try {
             if (aborted) return done();
             var t = Math.min((now - t0) / dur, 1);
             var e = 1 - Math.pow(1 - t, 3);
-            window.scrollTo(0, Math.round(start * (1 - e)));
+            window.scrollTo(0, Math.round(start + (targetY - start) * e));
             if (t < 1) requestAnimationFrame(step); else done();
         })(t0);
     }
+
+    window.__driveScrollTo = driveTo; // shared with the command palette
+
+    // Back to top
     document.querySelectorAll('.footer-top, .nav-logo').forEach(function(a) {
         a.addEventListener('click', function(e) {
             e.preventDefault();
-            toTop();
+            driveTo(0);
+        });
+    });
+
+    // Nav links, section rail, hero scroll hint: same driver, offset for the fixed nav
+    document.querySelectorAll('.nav-links a[href^="#"], .rail a[href^="#"], .scroll-hint[href^="#"]').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+            var target = document.querySelector(a.getAttribute('href'));
+            if (!target) return; // fall back to native
+            e.preventDefault();
+            driveTo(target.getBoundingClientRect().top + window.scrollY - 60);
         });
     });
 })();
