@@ -1173,3 +1173,38 @@ try {
         });
     });
 })();
+
+/* ── PWA install: offer "Install app" in the mobile menu when Chrome
+   says the site is installable. Hidden if already installed, and on
+   iOS (no install API there). ── */
+(function() {
+    var navLinksEl = document.getElementById('navLinks');
+    if (!navLinksEl) return;
+    var deferred = null;
+    var link = document.createElement('a');
+    link.href = '#';
+    link.className = 'nav-install';
+    link.textContent = 'Install app';
+    navLinksEl.appendChild(link);
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault(); // suppress Chrome's own mini-infobar
+        deferred = e;
+        link.classList.add('available');
+    });
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!deferred) return;
+        deferred.prompt();
+        deferred.userChoice.then(function(res) {
+            trackEvent('pwa-install-' + res.outcome);
+            deferred = null;
+            link.classList.remove('available');
+        });
+        setBurger(false);
+    });
+    window.addEventListener('appinstalled', function() {
+        link.classList.remove('available');
+        trackEvent('pwa-installed');
+    });
+})();

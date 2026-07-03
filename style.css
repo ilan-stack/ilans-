@@ -1634,3 +1634,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
 .footer-clock::before { content: '· '; }
 
 html[data-theme="light"] ::selection { background: var(--accent); color: #faf9f7; }
+
+/* ── PWA install entry (mobile menu; JS reveals when installable) ── */
+.nav-install { display: none; color: var(--accent-ink) !important; }
+.nav-install.available { display: block; }
+@media (min-width: 981px) { .nav-install { display: none !important; } }
