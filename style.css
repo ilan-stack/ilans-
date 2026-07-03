@@ -1430,3 +1430,90 @@ html[data-theme="light"] #heroWaveGrad stop:nth-child(1) { stop-color: #5b4de0; 
 html[data-theme="light"] #heroWaveGrad stop:nth-child(2) { stop-color: #8a7bff; }
 html[data-theme="light"] #heroWaveGrad stop:nth-child(3) { stop-color: #5b4de0; }
 html[data-theme="light"] .hero-wavy-wrap svg { filter: drop-shadow(0 0 7px rgba(91,77,224,0.38)); }
+
+/* ── Hero "Now" line ── */
+.hero-now {
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 10px;
+}
+.hero-now .now-tag {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 3px 9px;
+}
+.hero-now a { color: var(--ink-muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.hero-now a:hover { color: var(--accent-ink); text-decoration-color: var(--accent-ink); }
+
+/* ── Featured case pull-stat ── */
+.case-stat {
+    display: flex; align-items: baseline; gap: 14px;
+    margin: -4px 0 24px;
+}
+.case-stat-num {
+    font-family: var(--serif);
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--accent-ink);
+    white-space: nowrap;
+}
+.case-stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    line-height: 1.5;
+}
+
+/* ── Timeline role chip ── */
+.tl-chip {
+    font-family: var(--mono);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 9px;
+    white-space: nowrap;
+}
+
+/* ── Framed media: minimal window chrome on web/desktop tool previews ── */
+.mini-media.framed::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 26px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--line);
+    z-index: 2;
+}
+.mini-media.framed::after {
+    content: '';
+    position: absolute; top: 10px; left: 14px;
+    width: 6px; height: 6px; border-radius: 50%;
+    color: var(--ink-dim);
+    background: currentColor;
+    box-shadow: 11px 0 0 currentColor, 22px 0 0 currentColor;
+    opacity: 0.45;
+    z-index: 3;
+}
+.mini-media.framed img, .mini-media.framed video {
+    top: 26px;
+    height: calc(100% - 26px);
+}
+
+/* ── Touch devices: videos revealed by in-view autoplay (JS adds .playing) ── */
+.case-media.playing video, .mini-media.playing video { opacity: 1; }
+.case-media.playing img.has-video, .mini-media.playing img.has-video { opacity: 0; }
+
+@media (max-width: 640px) {
+    .case-stat-num { font-size: 32px; }
+    .hero-now { flex-wrap: wrap; }
+}

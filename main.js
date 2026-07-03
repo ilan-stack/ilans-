@@ -865,3 +865,59 @@ function trackEvent(path) {
     window.addEventListener('resize', onScroll);
     update();
 })();
+
+/* ── Stats: count-up on first reveal ── */
+(function() {
+    if (REDUCED || !('IntersectionObserver' in window)) return;
+    var nums = document.querySelectorAll('.stat-number');
+    if (!nums.length) return;
+    var parsed = [];
+    nums.forEach(function(el) {
+        var m = el.textContent.trim().match(/^(\d+)(.*)$/);
+        if (!m) return;
+        el._target = +m[1];
+        el._suffix = m[2];
+        el.textContent = '0' + el._suffix;
+        parsed.push(el);
+    });
+    var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(en) {
+            if (!en.isIntersecting) return;
+            io.unobserve(en.target);
+            var el = en.target;
+            var start = performance.now(), dur = 1400;
+            function tick(now) {
+                var t = Math.min((now - start) / dur, 1);
+                var e = 1 - Math.pow(1 - t, 3); // ease-out cubic
+                el.textContent = Math.round(el._target * e) + el._suffix;
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        });
+    }, { threshold: 0.5 });
+    parsed.forEach(function(el) { io.observe(el); });
+})();
+
+/* ── Touch devices: hover previews autoplay while ~60% in view.
+   Desktop keeps hover-to-play; this only runs where hover doesn't exist. ── */
+(function() {
+    if (REDUCED || !('IntersectionObserver' in window)) return;
+    if (!(window.matchMedia && window.matchMedia('(hover: none)').matches)) return;
+    var vids = document.querySelectorAll('.case-media video, .mini-media video');
+    if (!vids.length) return;
+    var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(en) {
+            var v = en.target;
+            var frame = v.closest('.case-media, .mini-media');
+            if (en.isIntersecting) {
+                if (!v.src && v.dataset.src) v.src = v.dataset.src;
+                v.play().catch(function() {});
+                if (frame) frame.classList.add('playing');
+            } else {
+                v.pause();
+                if (frame) frame.classList.remove('playing');
+            }
+        });
+    }, { threshold: 0.6 });
+    vids.forEach(function(v) { io.observe(v); });
+})();
