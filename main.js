@@ -1101,14 +1101,44 @@ try {
     );
 } catch (e) {}
 
-/* ── Back to top: JS-driven, no hash navigation. A bare href="#" makes
-   a history entry whose stored scroll position can be restored after
-   the smooth scroll is interrupted - the "jumps back down" bug. ── */
+/* ── Back to top: self-driven animation. Native smooth scroll gets
+   cancelled by scroll anchoring when lazy content loads mid-flight,
+   which could strand or bounce the user. We set the position each
+   frame from our own easing instead, so nothing can hijack it -
+   only a deliberate wheel/touch from the user aborts. ── */
 (function() {
+    var animating = false;
+    function toTop() {
+        if (REDUCED || document.hidden || animating) { window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+        animating = true;
+        var html = document.documentElement;
+        var prevBehavior = html.style.scrollBehavior;
+        html.style.scrollBehavior = 'auto'; // frames must apply instantly
+        var start = window.scrollY;
+        var dur = Math.max(350, Math.min(900, start * 0.12));
+        var t0 = performance.now();
+        var aborted = false;
+        function onUser() { aborted = true; }
+        window.addEventListener('wheel', onUser, { passive: true });
+        window.addEventListener('touchstart', onUser, { passive: true });
+        function done() {
+            window.removeEventListener('wheel', onUser);
+            window.removeEventListener('touchstart', onUser);
+            html.style.scrollBehavior = prevBehavior;
+            animating = false;
+        }
+        (function step(now) {
+            if (aborted) return done();
+            var t = Math.min((now - t0) / dur, 1);
+            var e = 1 - Math.pow(1 - t, 3);
+            window.scrollTo(0, Math.round(start * (1 - e)));
+            if (t < 1) requestAnimationFrame(step); else done();
+        })(t0);
+    }
     document.querySelectorAll('.footer-top, .nav-logo').forEach(function(a) {
         a.addEventListener('click', function(e) {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+            toTop();
         });
     });
 })();

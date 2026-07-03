@@ -630,6 +630,8 @@ html[data-theme="light"] .mini-ask-ai:hover { background: #000; }
 }
 .about-portrait {
     width: 100%; border-radius: 14px;
+    aspect-ratio: 1 / 1; /* reserve height pre-load: no layout shift mid-scroll */
+    object-fit: cover;
     border: 1px solid var(--line);
     filter: grayscale(25%);
     clip-path: inset(0 100% 0 0);
