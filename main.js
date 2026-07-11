@@ -842,7 +842,9 @@ function trackEvent(path) {
    depth without moving any text or layout. ── */
 (function() {
     if (REDUCED) return;
-    var medias = document.querySelectorAll('.case-media');
+    /* Lens card is excluded: its preview is a full-page screenshot whose top
+       nav must stay fully visible, so it keeps an exact 16:10 fit (no oversize). */
+    var medias = document.querySelectorAll('.case:not([data-focus="lens"]) .case-media');
     if (!medias.length) return;
     medias.forEach(function(m) { m.classList.add('parallax'); });
 
