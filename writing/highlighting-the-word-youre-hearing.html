@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d">
+  <title>Highlighting the word you're hearing - Ilan Lenzner</title>
+  <meta name="description" content="How I built karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside an editable document, for readers with dyslexia. A deep dive on TTS word-boundary timing and a canonical text serializer.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, Lens, read-aloud, karaoke highlighting, text to speech, TTS word boundary, dyslexia, accessibility, contenteditable, design engineer, Chrome extension">
+
+  <link rel="canonical" href="https://ilans.net/writing/highlighting-the-word-youre-hearing.html">
+  <meta property="og:title" content="Highlighting the word you're hearing - Ilan Lenzner">
+  <meta property="og:description" content="Building karaoke read-aloud in Lens: syncing a spoken word to its exact spot on screen, inside an editable document, for readers with dyslexia.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/highlighting-the-word-youre-hearing.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-07-19">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Highlighting the word you're hearing">
+  <meta name="twitter:description" content="Building karaoke read-aloud in Lens - TTS word-boundary timing and a canonical text serializer.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=3">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=3">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Highlighting the word you're hearing: building karaoke read-aloud in Lens",
+    "description": "How I built karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside an editable document, for readers with dyslexia.",
+    "image": "https://ilans.net/images/og-card.png",
+    "datePublished": "2026-07-19",
+    "dateModified": "2026-07-19",
+    "inLanguage": "en",
+    "author": {
+      "@type": "Person",
+      "@id": "https://ilans.net/#ilan",
+      "name": "Ilan Lenzner",
+      "url": "https://ilans.net/"
+    },
+    "publisher": {
+      "@type": "Person",
+      "@id": "https://ilans.net/#ilan",
+      "name": "Ilan Lenzner"
+    },
+    "about": ["Accessibility", "Text to Speech", "Design Engineering", "Dyslexia"],
+    "mainEntityOfPage": "https://ilans.net/writing/highlighting-the-word-youre-hearing.html",
+    "isPartOf": { "@id": "https://ilans.net/#website" }
+  }
+  </script>
+
+  <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts/fonts.css?v=1">
+  <style>
+    :root{
+      --bg:#0b0b0d; --bg-elev:#121215; --bg-card:#131318;
+      --ink:#ededea; --ink-muted:#a0a0a8; --ink-dim:#80808a;
+      --accent:#8a7bff; --accent-ink:#b9afff; --ok:#4ade80;
+      --line:#1f1f24; --line-strong:#2e2e35; --radius:14px;
+      --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+      --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+      --mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      background:var(--bg); color:var(--ink);
+      font-family:var(--sans); font-size:18px; line-height:1.72;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    ::selection{background:rgba(138,123,255,.28); color:#fff}
+    a{color:var(--accent-ink); text-decoration:none}
+    a:hover{text-decoration:underline; text-underline-offset:3px}
+    .wrap{max-width:720px; margin:0 auto; padding:0 24px}
+
+    nav.top{
+      position:sticky; top:0; z-index:10;
+      background:rgba(11,11,13,.72); backdrop-filter:saturate(160%) blur(14px);
+      border-bottom:1px solid var(--line);
+    }
+    nav.top .wrap{display:flex; align-items:center; justify-content:space-between; height:60px}
+    .logo{font-family:var(--mono); font-size:13px; letter-spacing:.04em; color:var(--ink); text-transform:uppercase}
+    .logo span{color:var(--accent)}
+    .back{font-family:var(--mono); font-size:12px; color:var(--ink-muted); display:inline-flex; gap:7px; align-items:center}
+    .back:hover{color:var(--ink); text-decoration:none}
+
+    header.hero{padding:72px 0 8px}
+    .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:22px}
+    h1{font-family:var(--serif); font-weight:400; font-size:clamp(38px,6.4vw,60px); line-height:1.06; letter-spacing:-.01em; margin-bottom:20px}
+    h1 em{font-style:italic; color:var(--accent-ink)}
+    .dek{font-size:20px; color:var(--ink-muted); line-height:1.6; max-width:60ch}
+    .byline{font-family:var(--mono); font-size:12px; color:var(--ink-dim); margin-top:26px; padding-bottom:30px; border-bottom:1px solid var(--line); display:flex; gap:16px; flex-wrap:wrap}
+
+    article{padding:40px 0 8px}
+    article h2{font-family:var(--serif); font-weight:400; font-size:30px; line-height:1.15; letter-spacing:-.01em; margin:48px 0 14px}
+    article h2 em{font-style:italic; color:var(--accent-ink)}
+    article p{margin:0 0 22px}
+    article p + p{margin-top:-4px}
+    article strong{color:#fff; font-weight:600}
+    article ul{margin:0 0 22px; padding-left:22px}
+    article li{margin:0 0 10px}
+    article li::marker{color:var(--accent)}
+    code{font-family:var(--mono); font-size:.86em; background:var(--bg-elev); border:1px solid var(--line); border-radius:6px; padding:1px 6px; color:var(--accent-ink)}
+    .pull{font-family:var(--serif); font-style:italic; font-size:26px; line-height:1.32; color:var(--ink); border-left:2px solid var(--accent); padding:6px 0 6px 24px; margin:34px 0}
+    .note{background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; margin:30px 0; font-size:16px; color:var(--ink-muted)}
+    .note b{color:var(--ink); font-weight:600}
+
+    .end{margin:56px 0 0; padding:30px 0 0; border-top:1px solid var(--line)}
+    .card{display:flex; gap:16px; align-items:center; background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px}
+    .card .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px}
+    .card .t{font-family:var(--serif); font-size:22px}
+    .card a.cta{margin-left:auto; font-family:var(--mono); font-size:13px; border:1px solid var(--line-strong); border-radius:999px; padding:9px 16px; color:var(--ink); white-space:nowrap}
+    .card a.cta:hover{border-color:var(--accent); color:var(--accent-ink); text-decoration:none}
+
+    footer{padding:50px 0 70px; text-align:center; color:var(--ink-dim); font-family:var(--mono); font-size:12px}
+    footer a{color:var(--ink-muted)}
+  </style>
+</head>
+<body>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <a href="../index.html#work" class="back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to site
+      </a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Writing / Engineering</p>
+      <h1>Highlighting the word <em>you're hearing</em></h1>
+      <p class="dek">Building karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside a document you can still edit, for readers with dyslexia.</p>
+      <p class="byline"><span>Ilan Lenzner</span><span>19 July 2026</span><span>~6 min read</span></p>
+    </header>
+
+    <article>
+      <p>Lens is a free reading and writing tool I build for people with dyslexia. One of its most-used features looks almost trivial: you press play, a voice reads the page, and each word lights up the instant it is spoken. Karaoke, basically. For a reader who loses their place in a wall of text, that moving highlight is the whole point - it keeps the eye and the ear on the same word, and the research on reading support backs this up.</p>
+
+      <p>It looks simple. It is one of the fussier things I have shipped. Here is why, and how it actually works.</p>
+
+      <h2>The two clocks problem</h2>
+      <p>Read-aloud has two independent clocks that have to agree. One is the <strong>audio</strong>: a neural voice speaking at its own pace, with pauses, emphasis, and per-word timing that you do not control. The other is the <strong>document</strong>: characters laid out on screen. Karaoke is the act of keeping those two clocks locked together, word by word, in real time.</p>
+
+      <p>The audio clock is the easy half. Lens speaks with Azure's neural voices, and crucially I request <em>timed</em> synthesis - alongside the audio, the service returns <strong>word-boundary events</strong>: for each spoken word, the character offset it starts at and the millisecond into the audio when it is spoken. That stream of "at 1.42s, the word at offset 87 begins" is the metronome everything else follows.</p>
+
+      <div class="pull">The audio tells you <em>which character offset</em> is being spoken and <em>when</em>. The hard part is that "character offset" and "what's on screen" are not the same thing.</div>
+
+      <h2>Why the document fights back</h2>
+      <p>If Lens were reading flat, read-only text, offset 87 would just be the 88th character and you would wrap it in a highlight. Done. But the Lens reading surface is a real editable document. People paste in Word files, fix a typo mid-read, change fonts, write in Hebrew right-to-left. Under the hood it is a block-paragraph model: every paragraph is its own <code>&lt;div&gt;</code> with real CSS margins for spacing, formatting lives in nested spans, and - the sharp edge - <strong>there is no actual newline character between paragraphs.</strong> The gaps you see are layout, not text.</p>
+
+      <p>So the word-boundary event says "offset 87," but the browser's DOM has no single place called offset 87. The character index the voice is counting and the tangle of nodes on screen are two different coordinate systems. Bridge them wrong and the highlight drifts a word ahead, or lands in the previous paragraph, or jumps the moment someone edits.</p>
+
+      <h2>One canonical text, and a map back to the DOM</h2>
+      <p>The fix is a single source of truth I lean on for far more than karaoke. I serialize the whole document to one <strong>canonical string</strong> - every paragraph block joined with a real <code>\n</code> - and I do <em>all</em> offset math against that string, never against the live DOM's text. Call it the document's spine.</p>
+
+      <p>Then one function's only job is to translate: given a character offset in that canonical string, walk the paragraph blocks, find which block and which text node the offset lands in, and hand back a live DOM <code>Range</code> I can wrap or paint. Every word-boundary event runs through it:</p>
+
+      <ul>
+        <li>A boundary arrives: <em>offset 87, length 4, at 1.42s</em>.</li>
+        <li>The map turns offset 87 into a real <code>Range</code> spanning those four characters on screen.</li>
+        <li>The current highlight moves to that range as the audio hits 1.42s.</li>
+      </ul>
+
+      <p>Because the map is derived fresh from the canonical text, it survives the messy reality: RTL Hebrew, styled spans, and paragraph gaps that are margins rather than characters. And the same coordinate system that drives karaoke also drives sentence navigation, selections, and voice-command editing - build the spine once and every feature speaks the same language.</p>
+
+      <div class="note"><b>The lesson I keep relearning:</b> when a feature has to reconcile two representations of "the same thing" - audio offsets vs. a live DOM - do not sync them directly. Invent one canonical representation both can map to, and make that mapping the only place the translation happens. Every bug I had in karaoke was a place where something skipped the spine and touched the DOM's text directly.</div>
+
+      <h2>Never let it fully break</h2>
+      <p>Neural voices cost money per character. Lens is free and I want it to stay that way, so read-aloud runs against a monthly budget with a hard ceiling. The interesting design question is what happens when a month runs hot. The answer: it degrades instead of dying. Past the budget, Lens falls back to the browser's own built-in speech synthesis - lower fidelity, but free and unlimited - <strong>and it keeps the word highlighting.</strong> The karaoke is wired to the boundary events, not to any one voice, so the feature that matters most for a struggling reader survives even when the premium voice does not.</p>
+
+      <p>That is the throughline of the whole product, really. The fancy part is the neural voice. The <em>load-bearing</em> part is the moving highlight - so that is the part I made sure can never switch off.</p>
+
+      <h2>Why I care about the boring half</h2>
+      <p>A moving highlight is not a demo feature. For the person it is built for, it is the difference between reading a page and giving up on it. Getting the spoken word and the lit word to land on the same beat, inside a document that refuses to hold still, is exactly the kind of unglamorous engineering that decides whether an accessibility tool actually helps or just looks like it does. I would rather spend a week on that than on almost anything flashier.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Try it</div>
+          <div class="t">Lens - free reading &amp; writing tool</div>
+        </div>
+        <a class="cta" href="https://lens-extension.online/" target="_blank" rel="noopener">Open Lens &rarr;</a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.
+    </footer>
+  </div>
+
+</body>
+</html>

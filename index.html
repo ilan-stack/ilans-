@@ -61,9 +61,39 @@
                 "sameAs": [
                     "https://github.com/ilan-stack",
                     "https://www.linkedin.com/in/ilan-lenzner-395ba64/",
+                    "https://www.figma.com/@playbatch",
                     "https://t.me/ilanzner",
                     "https://ai.ilans.net/"
+                ],
+                "owns": [
+                    { "@id": "https://ilans.net/#lens" },
+                    { "@id": "https://ilans.net/#downshift" }
                 ]
+            },
+            {
+                "@type": "SoftwareApplication",
+                "@id": "https://ilans.net/#lens",
+                "name": "Lens - AI Reading Adapter",
+                "url": "https://lens-extension.online/",
+                "applicationCategory": "BrowserApplication",
+                "operatingSystem": "Chrome",
+                "description": "A free reading and writing assistant for people with dyslexia. Simplifies text, reads pages aloud with karaoke highlighting, and adapts any web page for easier reading.",
+                "author": { "@id": "https://ilans.net/#ilan" },
+                "creator": { "@id": "https://ilans.net/#ilan" },
+                "downloadUrl": "https://chromewebstore.google.com/detail/hckaknplfeioegmfhpopjndbiegkjabk",
+                "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+            },
+            {
+                "@type": "SoftwareApplication",
+                "@id": "https://ilans.net/#downshift",
+                "name": "Downshift Health",
+                "applicationCategory": "HealthApplication",
+                "operatingSystem": "iOS",
+                "description": "A mobile app that helps people safely taper and reduce their medication with structured, personalized schedules.",
+                "author": { "@id": "https://ilans.net/#ilan" },
+                "creator": { "@id": "https://ilans.net/#ilan" },
+                "downloadUrl": "https://apps.apple.com/app/id6762042016",
+                "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
             },
             {
                 "@type": "WebSite",
@@ -108,6 +138,7 @@
                 <a href="#work">Work</a>
                 <a href="#about">About</a>
                 <a href="#experience">Experience</a>
+                <a href="writing/">Writing</a>
             </div>
             <a href="mailto:ilan@ilans.net?subject=Hello%20from%20ilans.net" class="nav-cta">Contact</a>
             <button class="cmdk-hint" id="cmdkHint" aria-label="Open command menu" title="Command menu"><kbd>⌘</kbd>K</button>
@@ -170,7 +201,7 @@
                 <p class="case-meta">Web app · Chrome extension · Android · Gemini · Groq · Azure Speech · Live usage dashboard</p>
                 <div class="case-links">
                     <a href="https://lens-extension.online/" target="_blank" rel="noopener" class="link-pill">Live site →</a>
-                    <a href="https://lens-case.vercel.app/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
+                    <a href="https://lens.ilans.net/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
                 </div>
             </div>
         </article>
@@ -187,7 +218,7 @@
                 <p class="case-meta">React Native · Expo · Supabase · Healthcare UX</p>
                 <div class="case-links">
                     <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener" class="link-pill">App Store →</a>
-                    <a href="https://tapersafe-case.vercel.app/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
+                    <a href="https://tapersafe.ilans.net/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
                 </div>
             </div>
         </article>
@@ -204,7 +235,7 @@
                 <p class="case-meta">CEP Extension · Kling · ElevenLabs · Used daily by a 100+ person creative team</p>
                 <div class="case-links">
                     <a href="https://github.com/ilan-stack/after-effects-hub" target="_blank" rel="noopener" class="link-pill">GitHub →</a>
-                    <a href="https://ae-hub-case.vercel.app/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
+                    <a href="https://ae-hub.ilans.net/" target="_blank" rel="noopener" class="link-plain">Case study →</a>
                 </div>
             </div>
         </article>
@@ -241,7 +272,7 @@
                     <p class="mini-desc">Native macOS drawing app with AI-powered editing, layers, brushes, and a Procreate-inspired UI.</p>
                     <div class="mini-links">
                         <a href="https://github.com/ilan-stack/InkForge" target="_blank" rel="noopener">GitHub →</a>
-                        <a href="https://inkforge-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://inkforge.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
@@ -256,7 +287,7 @@
                     <p class="mini-desc">Video-to-spritesheet pipeline with AI grid detection and chroma key. Hours of manual work down to minutes.</p>
                     <div class="mini-links">
                         <a href="https://sprite-studio-nine.vercel.app" target="_blank" rel="noopener">Live tool →</a>
-                        <a href="https://sprite-studio-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://sprite-studio.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
@@ -270,7 +301,7 @@
                     <p class="mini-desc">A cozy voxel merge-puzzle PWA - game design, art direction, and code, end-to-end.</p>
                     <div class="mini-links">
                         <a href="https://cubelets.vercel.app/" target="_blank" rel="noopener">Play →</a>
-                        <a href="https://cubelets-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://cubelets.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
@@ -285,7 +316,7 @@
                     <p class="mini-desc">One production interface for image generation, video, 3D, and background removal - used daily by creative teams.</p>
                     <div class="mini-links">
                         <a href="https://github.com/ilan-stack/ai-studio" target="_blank" rel="noopener">GitHub →</a>
-                        <a href="https://ai-studio-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://ai-studio.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
@@ -299,7 +330,7 @@
                     <p class="mini-desc">Native desktop downloader wrapping yt-dlp and FFmpeg into one signed, self-updating installer.</p>
                     <div class="mini-links">
                         <a href="https://github.com/ilan-stack/youtube-downloader" target="_blank" rel="noopener">GitHub →</a>
-                        <a href="https://yt-downloader-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://yt-downloader.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
@@ -313,7 +344,7 @@
                     <p class="mini-desc">Whisper + Claude + FFmpeg captioning with a pixel-accurate in-browser timeline editor.</p>
                     <div class="mini-links">
                         <a href="https://github.com/ilan-stack/caption-app" target="_blank" rel="noopener">GitHub →</a>
-                        <a href="https://caption-case.vercel.app/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://caption.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
                     </div>
                 </div>
             </div>
