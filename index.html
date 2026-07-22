@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
-    <script>(function(){try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
     <title>Ilan Lenzner | Creative Technologist & Design Engineer</title>
     <meta name="description" content="Ilan Lenzner - Creative Technologist & Design Engineer in Tel Aviv. I design and ship AI-powered products end-to-end, used daily by 100+ creatives.">
     <meta name="author" content="Ilan Lenzner">
