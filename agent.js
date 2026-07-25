@@ -69,6 +69,7 @@
         'sprite-studio': '[data-focus="sprite-studio"]',
         cubelets: '[data-focus="cubelets"]',
         'ai-studio': '[data-focus="ai-studio"]',
+        carscan: '[data-focus="carscan"]',
         'yt-downloader': '[data-focus="yt-downloader"]',
         'auto-caption': '[data-focus="auto-caption"]',
         sett: '[data-focus="sett"]',
