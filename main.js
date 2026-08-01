@@ -380,7 +380,7 @@ function trackEvent(path) {
 
     var W, H, cols, rows, particles;
     var mouseX = -9999, mouseY = -9999;
-    var frame = 0;
+    var frame = 0, prevCycle = -1, lastT = 0;
     var msgIndex = 0;
     var litMap = null;
     var offCanvas, offCtx;
@@ -397,13 +397,15 @@ function trackEvent(path) {
         canvas.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        cols = Math.ceil(W / SPACING) + 2;
-        rows = Math.ceil(H / SPACING) + 2;
+        // Cap total dots (~18k, the normal-desktop load) so 4K+ screens keep full frame rate
+        var spacing = Math.max(SPACING, Math.sqrt(W * H / 18000));
+        cols = Math.ceil(W / spacing) + 2;
+        rows = Math.ceil(H / spacing) + 2;
         particles = [];
         for (var r = 0; r < rows; r++) {
             for (var c = 0; c < cols; c++) {
-                var hx = c * SPACING;
-                var hy = r * SPACING;
+                var hx = c * spacing;
+                var hy = r * spacing;
                 particles.push({
                     hx: hx, hy: hy,
                     x: hx, y: hy,
@@ -556,29 +558,33 @@ function trackEvent(path) {
         }
     }
 
-    function animate() {
+    function animate(now) {
         if (!running) { rafId = null; return; }
         ctx.clearRect(0, 0, W, H);
 
-        frame++;
+        // Advance by real elapsed time so motion speed survives low frame rates
+        var fAdv = lastT ? Math.max(1, Math.min(4, Math.round((now - lastT) / 16.7))) : 1;
+        lastT = now;
+        frame += fAdv;
 
         var cycleFrame = frame % (MSG_DURATION + FADE_FRAMES * 2);
-        if (cycleFrame === 0) {
+        if (cycleFrame < prevCycle) {
             msgIndex = (msgIndex + 1) % MESSAGES.length;
             sampleMessage(MESSAGES[msgIndex]);
-        } else if (cycleFrame === MSG_DURATION) {
+        } else if (prevCycle < MSG_DURATION && cycleFrame >= MSG_DURATION) {
             // Prefetch the next message's video ~2s before it shows
             var next = MESSAGES[(msgIndex + 1) % MESSAGES.length];
             if (next.video) ensureVideo(next.video);
         }
+        prevCycle = cycleFrame;
 
         // Re-sample video frame every 3rd frame for live animation
-        if (currentIsVideo && activeVideo && activeVideo.readyState >= 2 && frame % 3 === 0) {
+        if (currentIsVideo && activeVideo && activeVideo.readyState >= 2 && (fAdv > 1 || frame % 3 === 0)) {
             sampleVideoFrame(activeVideo);
         }
 
         // Float the banner — every 2nd frame is plenty
-        if (frame % 2 === 0) updateLitMap();
+        if (fAdv > 1 || frame % 2 === 0) updateLitMap();
 
         var bannerAlpha = 1;
         if (cycleFrame < FADE_FRAMES) {
