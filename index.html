@@ -359,17 +359,15 @@
                 </div>
             </div>
 
-            <div class="mini reveal" style="--i:3" data-focus="ai-studio">
-                <a href="https://github.com/ilan-stack/ai-studio" target="_blank" rel="noopener" class="mini-media framed" aria-label="AI Studio - view on GitHub">
-                    <picture><source srcset="images/aistudio-preview.webp" type="image/webp"><img src="images/aistudio-preview.jpg" alt="AI Studio" class="has-video" loading="lazy" decoding="async"></picture>
-                    <video data-src="videos/aistudio-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+            <div class="mini reveal" style="--i:3" data-focus="window-layouts">
+                <a href="https://layouts.ilans.net/" target="_blank" rel="noopener" class="mini-media framed" aria-label="Window Layouts - open the site">
+                    <div class="wl-demo" id="wlDemo" aria-hidden="true"></div>
                 </a>
                 <div class="mini-body">
-                    <h3 class="mini-title"><a href="https://github.com/ilan-stack/ai-studio" target="_blank" rel="noopener">AI Studio</a></h3>
-                    <p class="mini-desc">One production interface for image generation, video, 3D, and background removal - used daily by creative teams.</p>
+                    <h3 class="mini-title"><a href="https://layouts.ilans.net/" target="_blank" rel="noopener">Window Layouts</a></h3>
+                    <p class="mini-desc">A free macOS menubar app that snaps your open windows into place. It picks the grid from how many windows are open and the shape of your screen.</p>
                     <div class="mini-links">
-                        <a href="https://github.com/ilan-stack/ai-studio" target="_blank" rel="noopener">GitHub →</a>
-                        <a href="https://ai-studio.ilans.net/" target="_blank" rel="noopener" class="case-link">Case study →</a>
+                        <a href="https://layouts.ilans.net/" target="_blank" rel="noopener">Site →</a>
                     </div>
                 </div>
             </div>
@@ -612,5 +610,53 @@
 <script src="main.js?v=34" defer></script>
 <script src="agent.js?v=30" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<style>
+/* Window Layouts card: the demo IS the product, so the thumbnail animates rather than
+   sitting still. Same fractions the app uses, so it can never drift out of date. */
+.wl-demo{position:relative;width:100%;aspect-ratio:16/10;background:#0b0d10;overflow:hidden}
+.wl-demo i{position:absolute;border-radius:3px;background:#cfd3da;
+  transition:left .5s cubic-bezier(.34,1.15,.4,1),top .5s cubic-bezier(.34,1.15,.4,1),
+             width .5s cubic-bezier(.34,1.15,.4,1),height .5s cubic-bezier(.34,1.15,.4,1),opacity .3s}
+.wl-demo i:nth-child(1){background:#3ecf8e}
+.wl-demo i:nth-child(3){background:#aeb4bf}
+.wl-demo i:nth-child(4){background:#8d939f}
+.wl-demo i:nth-child(5){background:#6f7580}
+@media (prefers-reduced-motion:reduce){.wl-demo i{transition:none}}
+</style>
+<script>
+(function(){
+  var el=document.getElementById('wlDemo'); if(!el) return;
+  var L=[
+    [[0,0,1/3,.5],[1/3,0,1/3,.5],[2/3,0,1/3,.5],[0,.5,.5,.5],[.5,.5,.5,.5]],
+    [[0,0,.5,1],[.5,0,.5,1]],
+    [[0,0,2/3,1],[2/3,0,1/3,.5],[2/3,.5,1/3,.5]],
+    [[0,0,1/3,1],[1/3,0,1/3,1],[2/3,0,1/3,1]],
+    [[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]]
+  ];
+  var G=2, panes=[], MAX=5, i;
+  for(i=0;i<MAX;i++){ var d=document.createElement('i'); el.appendChild(d); panes.push(d); }
+  var k=0, timer=null;
+  function draw(){
+    var s=L[k%L.length];
+    panes.forEach(function(p,n){
+      var v=s[n];
+      if(!v){ p.style.opacity=0; return; }
+      p.style.opacity=1;
+      p.style.left=(v[0]*100+G)+'%';  p.style.top=(v[1]*100+G*1.6)+'%';
+      p.style.width=(v[2]*100-G*2)+'%'; p.style.height=(v[3]*100-G*3.2)+'%';
+    });
+    k++;
+  }
+  draw();
+  // only animate while the card is on screen; no point burning frames off-viewport
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting && !timer){ timer=setInterval(draw,2100); }
+      else if(!e.isIntersecting && timer){ clearInterval(timer); timer=null; }
+    });
+  },{threshold:.25});
+  io.observe(el);
+})();
+</script>
 </body>
 </html>
