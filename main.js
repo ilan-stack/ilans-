@@ -946,7 +946,7 @@ function trackEvent(path) {
         { l: 'Sprite Studio',        k: 'Project', go: function() { focusCard('sprite-studio'); } },
         { l: 'Cubelets',             k: 'Project', go: function() { focusCard('cubelets'); } },
         { l: 'AI Studio',            k: 'Project', go: function() { focusCard('ai-studio'); } },
-        { l: 'YouTube Downloader',   k: 'Project', go: function() { focusCard('yt-downloader'); } },
+        { l: 'Talking Vacuum',       k: 'Project', go: function() { focusCard('roborock'); } },
         { l: 'Auto-Caption',         k: 'Project', go: function() { focusCard('auto-caption'); } },
         { l: 'Toggle light / dark',  k: 'Action',  go: function() { var b = document.getElementById('themeToggle'); if (b) b.click(); } },
         { l: 'Email me',             k: 'Action',  go: function() { var a = document.querySelector('.nav-cta'); if (a) a.click(); } },
