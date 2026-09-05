@@ -38,7 +38,7 @@
       }
     
       .cls-bg {
-        fill: #a50000;
+        fill: #15803d;
       }
 
       .mouthM { transform-box: view-box; transform-origin: 50% 51.8%; }
