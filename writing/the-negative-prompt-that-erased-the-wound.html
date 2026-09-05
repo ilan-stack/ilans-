@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>The negative prompt that erased the wound - Ilan Lenzner</title>
+  <meta name="description" content="Stock negative prompts carry deformed and ugly to fix mangled hands. In clinical imagery those same words delete the finding. What looked like a censored model was my own default config.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, negative prompt, clinical imagery, medical AI, SDXL, Stable Diffusion, wound documentation, LoRA, dataset bias, design engineer">
+
+  <link rel="canonical" href="https://ilans.net/writing/the-negative-prompt-that-erased-the-wound.html">
+  <meta property="og:title" content="The negative prompt that erased the wound - Ilan Lenzner">
+  <meta property="og:description" content="Defaults carry a worldview. In clinical imagery, the boilerplate that makes pictures pretty deletes the thing you are documenting.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/the-negative-prompt-that-erased-the-wound.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-08-26">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The negative prompt that erased the wound">
+  <meta name="twitter:description" content="Defaults carry a worldview. In clinical imagery, the boilerplate that makes pictures pretty deletes the finding.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=3">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=3">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"The negative prompt that erased the wound",
+    "description":"Stock negative prompts suppress anatomical abnormality, which in clinical imagery is the subject. How I found it, what replaced it, and where text-to-image still fails for medical work.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-08-26","dateModified":"2026-08-26","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["Medical Imaging","Generative AI","Design Engineering","Prompting"],
+    "mainEntityOfPage":"https://ilans.net/writing/the-negative-prompt-that-erased-the-wound.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css">
+</head>
+<body>
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI</p>
+      <h1>The negative prompt that <em>erased the wound</em></h1>
+      <p class="dek">I needed reference imagery for a clinical documentation tool, and every model I ran handed back something sanitised. It looked like refusal. It was four words in a config file I had copied without reading.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>26 August 2026</span><span>~6 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Clinical</span><span class="tag">Prompting</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>I spend a fair amount of time in medical and clinical territory - 3D anatomy work, a wound documentation concept, tools for clinicians who need to record what they are seeing rather than decide what it means. For one of those I needed generated reference imagery: a venous leg ulcer, a diabetic foot, a pressure injury. Not for diagnosis. For design. You cannot lay out a documentation interface around a photograph you do not have.</p>
+
+      <p>So I ran it through my own image studio, and the results were consistently, strangely <em>wrong</em>. Technically excellent. Beautifully lit. Clean backdrop, retouched skin, the whole thing composed like a product shot. Where the pathology should have been there was something polite and vague.</p>
+
+      <p>My first thought was the reflex everybody has now: the model is aligned into uselessness. It has been trained not to render this.</p>
+
+      <p>It had not. I had told it not to.</p>
+
+      <h2>Four words, copied from everywhere</h2>
+      <p>Every image model in my setup carried a baseline negative prompt - the boilerplate that gets pasted into every workflow on the internet. Some version of: <code>deformed, ugly, bad hands, extra limbs, blurry, watermark, cartoon</code>. All three of my models carried <code>deformed</code>. One also carried <code>ugly</code>.</p>
+
+      <p>Those words are in there for a real reason. Diffusion models are famously bad at hands, and telling the sampler to steer away from deformity is how a generation of people stopped generating six-fingered portraits. In general-purpose work it is close to free.</p>
+
+      <p>In clinical work it is the whole subject. "Deformed" does not mean "badly drawn hand" to a sampler. It means <strong>anatomical abnormality</strong>, and anatomical abnormality is precisely the thing a wound photograph exists to record. I had built a careful pipeline whose first instruction was to avoid the finding.</p>
+
+      <div class="pull">It reads as "the model is censored" when it is really your own config fighting you.</div>
+
+      <p>Once I read the rest of the boilerplate with that lens, more of it fell over:</p>
+
+      <div class="tablewrap">
+        <table class="data">
+          <thead>
+            <tr><th>Term in the default negative</th><th>Why it is there</th><th>What it does to a clinical frame</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">deformed</td><td>Stop mangled limbs and hands</td><td><span class="bad">Suppresses the abnormality itself</span></td></tr>
+            <tr><td class="mono">ugly</td><td>Push output toward attractive</td><td><span class="bad">Pushes away from disease presentation</span></td></tr>
+            <tr><td class="mono">beauty retouching, smooth skin</td><td>Flattering portraits</td><td><span class="bad">Erases periwound signs: mottling, staining, atrophy</span></td></tr>
+            <tr><td class="mono">dramatic lighting, vignette</td><td>Make it look cinematic</td><td><span class="bad">Produces a product shot, not a ward photograph</span></td></tr>
+            <tr><td class="mono">blurry, watermark, cartoon</td><td>Medium and quality control</td><td><span class="ok">Genuinely fine, keep these</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Replace, do not append</h2>
+      <p>The fix shipped as a <strong>Clinical mode</strong> toggle in the studio, and the single most important design decision in it is that the clinical negative prompt <em>replaces</em> the model's baseline rather than adding to it. Appending would have been the obvious, tidy implementation and it would have achieved nothing: the suppressing terms are still in the string, still steering. You cannot cancel a negative prompt with more prompt.</p>
+
+      <p>Alongside it goes a positive prefix that describes a camera rather than a subject: clinical photograph, medical documentation, even diffuse lighting, neutral background, sharp focus, true-to-life colour. That prefix is inserted <em>after</em> the model's own prefix, not instead of it, because some model families collapse entirely without their native quality tokens.</p>
+
+      <p>The A/B on the same prompt, a venous leg ulcer, was not subtle. Toggle off: a dissection specimen on a clean backdrop, dramatic light, airbrushed skin. Toggle on: a patient on white linen, ward equipment blurred behind, and the periwound findings actually present - the brown staining and the thin mottled skin that the old negatives had been quietly deleting.</p>
+
+      <div class="note"><b>The bug inside the fix,</b> for anyone building something similar: my prompt string was assembled from prefix plus user text early in the generate function, so mutating the prompt variable afterwards did nothing at all. Silent, and it cost me a round of confused testing. Build the head first, then read from it.</div>
+
+      <h2>Two prompt rules I only learned by failing</h2>
+      <p><strong>Negations do not work.</strong> I wrote "no exposed bone" into a prompt, and got back a full anatomical dissection with exposed bone. The model does not process the "no", it processes the noun. Anything you want absent goes in the negative prompt, never in the positive one. This is well known and I still did it, because writing instructions in English is such a natural thing to do that you forget you are not talking to a reader.</p>
+
+      <p><strong>Pathophysiology wording triggers illustration mode.</strong> "Full-thickness loss with visible subcutaneous fat" is correct clinical language and it produces a textbook cutaway every time, because that phrasing overwhelmingly appears in the training data next to diagrams. The wording that produces a photograph describes what the camera sees, in order: framing, site, wound bed, edges, surrounding skin, then the setting. Same information, completely different visual register.</p>
+
+      <h2>The honest ceiling</h2>
+      <p>I want to be straight about where this ends, because "I fixed the prompt and it worked" is not what happened.</p>
+
+      <p>After the fix, the <em>context</em> is convincing: framing, ward setting, lighting, skin texture, anatomy. The <em>pathology</em> is not. Yellow slough renders as literal glossy yellow goo - on one diabetic foot test it smeared the same yellow across unrelated toenails. Severity comes out wildly exaggerated. The models simply have very little real clinical photography behind them.</p>
+
+      <p>I tried to close that gap properly and trained a wound LoRA on 188 hand-curated images. It learned the context beautifully and the pathology not at all: every wound came out enormous and lurid, at full strength and at half. The cause was not the training run, it was the source. Public image libraries mostly hold wounds severe enough that somebody thought to photograph and upload them, so "wound" was learned as "large and dramatic". <strong>No number of epochs fixes a skew in what you collected.</strong></p>
+
+      <p>Which points at the real answer for anything that has to look genuinely clinical: stop generating from text. Anchor on a real photograph and edit it - inpaint with a smart selection, run image-to-image from a reference, condition on an actual case. Text-to-image is a good way to build a plausible <em>scene</em> and a bad way to invent a <em>finding</em>.</p>
+
+      <h2>Why I keep telling this story</h2>
+      <p>Because the failure was not technical, it was a default carrying a worldview. Someone, reasonably, encoded "good image" as "attractive, unblemished, well lit" and that definition propagated into thousands of configs including mine. It is invisible until you work in a domain where it is exactly backwards. Medical imagery is one. Accessibility work is full of others - the tidy default that assumes a reader who does not need help.</p>
+
+      <p>So the habit I have now, whenever I plug a general-purpose model into a specialised job: read the defaults before the docs, and ask what each one is silently optimising away. And when a model seems to be refusing you, check your own configuration before you blame its training. Most of the time the censor is sitting in your config file, wearing four words you copied and never read.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Related work</div>
+          <div class="t">Wound documentation - a clinical design demo</div>
+        </div>
+        <a class="cta" href="https://wound-doc.vercel.app/" target="_blank" rel="noopener">See the demo &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="draco-was-silently-dead.html">
+          <div class="k">More writing</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+        <a class="next" href="build-the-fake-inputs-first.html">
+          <div class="k">Read next</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js" defer></script>
+</body>
+</html>

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0b0d">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
   <title>Highlighting the word you're hearing - Ilan Lenzner</title>
   <meta name="description" content="How I built karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside an editable document, for readers with dyslexia. A deep dive on TTS word-boundary timing and a canonical text serializer.">
   <meta name="author" content="Ilan Lenzner">
@@ -56,93 +57,40 @@
   }
   </script>
 
-  <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/fonts/fonts.css?v=1">
-  <style>
-    :root{
-      --bg:#0b0b0d; --bg-elev:#121215; --bg-card:#131318;
-      --ink:#ededea; --ink-muted:#a0a0a8; --ink-dim:#80808a;
-      --accent:#8a7bff; --accent-ink:#b9afff; --ok:#4ade80;
-      --line:#1f1f24; --line-strong:#2e2e35; --radius:14px;
-      --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
-      --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-      --mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{-webkit-text-size-adjust:100%}
-    body{
-      background:var(--bg); color:var(--ink);
-      font-family:var(--sans); font-size:18px; line-height:1.72;
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    ::selection{background:rgba(138,123,255,.28); color:#fff}
-    a{color:var(--accent-ink); text-decoration:none}
-    a:hover{text-decoration:underline; text-underline-offset:3px}
-    .wrap{max-width:720px; margin:0 auto; padding:0 24px}
-
-    nav.top{
-      position:sticky; top:0; z-index:10;
-      background:rgba(11,11,13,.72); backdrop-filter:saturate(160%) blur(14px);
-      border-bottom:1px solid var(--line);
-    }
-    nav.top .wrap{display:flex; align-items:center; justify-content:space-between; height:60px}
-    .logo{font-family:var(--mono); font-size:13px; letter-spacing:.04em; color:var(--ink); text-transform:uppercase}
-    .logo span{color:var(--accent)}
-    .back{font-family:var(--mono); font-size:12px; color:var(--ink-muted); display:inline-flex; gap:7px; align-items:center}
-    .back:hover{color:var(--ink); text-decoration:none}
-
-    header.hero{padding:72px 0 8px}
-    .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:22px}
-    h1{font-family:var(--serif); font-weight:400; font-size:clamp(38px,6.4vw,60px); line-height:1.06; letter-spacing:-.01em; margin-bottom:20px}
-    h1 em{font-style:italic; color:var(--accent-ink)}
-    .dek{font-size:20px; color:var(--ink-muted); line-height:1.6; max-width:60ch}
-    .byline{font-family:var(--mono); font-size:12px; color:var(--ink-dim); margin-top:26px; padding-bottom:30px; border-bottom:1px solid var(--line); display:flex; gap:16px; flex-wrap:wrap}
-
-    article{padding:40px 0 8px}
-    article h2{font-family:var(--serif); font-weight:400; font-size:30px; line-height:1.15; letter-spacing:-.01em; margin:48px 0 14px}
-    article h2 em{font-style:italic; color:var(--accent-ink)}
-    article p{margin:0 0 22px}
-    article p + p{margin-top:-4px}
-    article strong{color:#fff; font-weight:600}
-    article ul{margin:0 0 22px; padding-left:22px}
-    article li{margin:0 0 10px}
-    article li::marker{color:var(--accent)}
-    code{font-family:var(--mono); font-size:.86em; background:var(--bg-elev); border:1px solid var(--line); border-radius:6px; padding:1px 6px; color:var(--accent-ink)}
-    .pull{font-family:var(--serif); font-style:italic; font-size:26px; line-height:1.32; color:var(--ink); border-left:2px solid var(--accent); padding:6px 0 6px 24px; margin:34px 0}
-    .note{background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; margin:30px 0; font-size:16px; color:var(--ink-muted)}
-    .note b{color:var(--ink); font-weight:600}
-
-    .end{margin:56px 0 0; padding:30px 0 0; border-top:1px solid var(--line)}
-    .card{display:flex; gap:16px; align-items:center; background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px}
-    .card .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px}
-    .card .t{font-family:var(--serif); font-size:22px}
-    .card a.cta{margin-left:auto; font-family:var(--mono); font-size:13px; border:1px solid var(--line-strong); border-radius:999px; padding:9px 16px; color:var(--ink); white-space:nowrap}
-    .card a.cta:hover{border-color:var(--accent); color:var(--accent-ink); text-decoration:none}
-
-    footer{padding:50px 0 70px; text-align:center; color:var(--ink-dim); font-family:var(--mono); font-size:12px}
-    footer a{color:var(--ink-muted)}
-  </style>
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css">
 </head>
 <body>
+  <div id="progress"></div>
 
   <nav class="top">
     <div class="wrap">
       <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
-      <a href="../index.html#work" class="back">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back to site
-      </a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
     </div>
   </nav>
 
   <div class="wrap">
-    <header class="hero">
+    <header class="post-hero">
       <p class="eyebrow">Writing / Engineering</p>
       <h1>Highlighting the word <em>you're hearing</em></h1>
       <p class="dek">Building karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside a document you can still edit, for readers with dyslexia.</p>
-      <p class="byline"><span>Ilan Lenzner</span><span>19 July 2026</span><span>~6 min read</span></p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>19 July 2026</span><span>~6 min read</span>
+        <span class="tags"><span class="tag">Accessibility</span><span class="tag">Engineering</span><span class="tag">TTS</span></span>
+      </p>
     </header>
 
     <article>
@@ -194,12 +142,25 @@
         </div>
         <a class="cta" href="https://lens-extension.online/" target="_blank" rel="noopener">Open Lens &rarr;</a>
       </div>
+
+      <div class="morenav">
+        <a href="the-negative-prompt-that-erased-the-wound.html">
+          <div class="k">More writing</div>
+          <div class="t">The negative prompt that erased the wound</div>
+        </a>
+        <a class="next" href="draco-was-silently-dead.html">
+          <div class="k">Read next</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+      </div>
     </div>
 
     <footer>
-      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
     </footer>
   </div>
 
+  <script src="writing.js" defer></script>
 </body>
 </html>

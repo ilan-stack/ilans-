@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>Draco was silently dead - Ilan Lenzner</title>
+  <meta name="description" content="My in-browser GLB compressor shipped uncompressed geometry from day one. The encoder never loaded, the loader swallowed the 404, and every export still reported success. On silent degradation, and the one assertion that catches it.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, Draco, glTF, GLB compression, gltf-transform, KHR_draco_mesh_compression, silent failure, web worker, 3D optimization, design engineer">
+
+  <link rel="canonical" href="https://ilans.net/writing/draco-was-silently-dead.html">
+  <meta property="og:title" content="Draco was silently dead - Ilan Lenzner">
+  <meta property="og:description" content="A 3D compressor that shipped uncompressed geometry for months, and still said done every time.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/draco-was-silently-dead.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-09-05">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Draco was silently dead">
+  <meta name="twitter:description" content="A 3D compressor that shipped uncompressed geometry for months, and still said done every time.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=3">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=3">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Draco was silently dead",
+    "description":"An in-browser GLB compressor that shipped uncompressed geometry from day one, because a 404 on the encoder was swallowed and the pipeline degraded without saying so.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-09-05","dateModified":"2026-09-05","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["3D","glTF","Compression","Design Engineering"],
+    "mainEntityOfPage":"https://ilans.net/writing/draco-was-silently-dead.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css">
+</head>
+<body>
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / 3D Tooling</p>
+      <h1>Draco was <em>silently dead</em></h1>
+      <p class="dek">My in-browser 3D compressor had been shipping uncompressed geometry since the day it launched. Nothing errored. Every export still said "done", and the file did get smaller, which is exactly why it took months to catch.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>5 September 2026</span><span>~7 min read</span>
+        <span class="tags"><span class="tag">3D</span><span class="tag">Tooling</span><span class="tag">Debugging</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>OptimizeGLB is a small tool I built for a problem I kept hitting: a 3D model that looks fine in Blender and is unusable on the web. You drop a <code>.glb</code> in the browser, pick a preset, and it comes back smaller. Everything runs client-side in a Web Worker, so the file never leaves the machine. That "never leaves your device" promise is why it exists at all - people will not upload a client's character model to a stranger's server.</p>
+
+      <p>The Web and Mobile AR presets both asked for <strong>Draco</strong>, Google's mesh compression codec. Draco is the big lever in glTF: it re-encodes vertex data and routinely takes geometry down by an order of magnitude. It is the reason a 3D model can live on a product page at all.</p>
+
+      <p>It had never once run.</p>
+
+      <h2>The number that gave it away</h2>
+      <p>I was benchmarking a game character - a 48MB soldier, half a million triangles, the kind of asset that makes the point. Web preset, Draco on. Output: 20.25MB.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Source</div><div class="v">47.8 MB</div><div class="n">Raw GLB, ~500k triangles</div></div>
+        <div class="stat"><div class="k">What shipped</div><div class="v bad">20.25 MB</div><div class="n">Textures compressed, geometry untouched</div></div>
+        <div class="stat"><div class="k">What it should be</div><div class="v ok">2.08 MB</div><div class="n">Same preset, Draco actually running</div></div>
+      </div>
+
+      <p>Look at the first two numbers on their own. 47.8 down to 20.25 is a 58% saving. A progress bar filled, a green check appeared, a file downloaded and it was less than half the size it started at. If I had not been holding a third number in my head - what this model <em>should</em> weigh - I would have called that a good day.</p>
+
+      <div class="pull">A partial success is a far better disguise than a failure. Nothing was broken enough to look broken.</div>
+
+      <p>The texture pipeline was doing all of that work by itself. WebP took the image atlases from many megabytes down to very little, and the geometry sailed through untouched. The saving was real. It was just coming from the half of the pipeline I was not asking about.</p>
+
+      <h2>Three failures stacked into silence</h2>
+      <p>The root cause took ten minutes to find once I knew to look, and it is embarrassingly mundane.</p>
+
+      <p>Draco ships as WebAssembly with a JavaScript glue file, and I was loading it from Google's static host at the versioned decoder path. That path is exactly what its name says: <strong>it hosts the decoder</strong>. The encoder is not there. The request for <code>draco_encoder.js</code> returned a 404 page.</p>
+
+      <p>Then three things happened in a row, each individually defensible:</p>
+      <ul>
+        <li>The fetch did not throw. It got a response, with a body. The body was HTML.</li>
+        <li>The loader tried to evaluate it, failed, caught the error, and <strong>returned null</strong> - a considerate loader, refusing to crash the worker.</li>
+        <li>The pipeline saw no encoder, skipped the Draco step, and carried on with everything else. No warning. It finished the job it could finish.</li>
+      </ul>
+
+      <p>Every one of those is the polite thing to do locally. Stacked, they turn a hard failure into a product that quietly does not do the thing it is named after.</p>
+
+      <h2>The one-line check that would have caught it on day one</h2>
+      <p>Here is what stings. glTF files declare their own extensions. A Draco-compressed file lists <code>KHR_draco_mesh_compression</code> in <code>extensionsUsed</code>. It is right there in the output, in plain JSON, and it is not a heuristic or a size threshold - it is the file stating what was done to it.</p>
+
+      <p>So the test is not "is the output smaller". The test is:</p>
+
+      <pre><code>// after the pipeline runs, before you call it a success
+if (preset.draco &amp;&amp; !json.extensionsUsed?.includes('KHR_draco_mesh_compression')) {
+  throw new Error('Draco was requested but is not present in the output');
+}</code></pre>
+
+      <p>Assert on the artifact, not on the process. The process will happily tell you it ran. The artifact tells you what actually happened to it.</p>
+
+      <div class="note accent"><b>The rule I took from this:</b> never let a requested capability fail into a console warning. If someone asked for a specific transformation and it did not occur, that is an error, not a note. A tool that silently substitutes a lesser result is worse than one that stops, because it spends your trust instead of your time.</div>
+
+      <h2>Fixing it, and the trap inside the fix</h2>
+      <p>The repair was to fetch both glue scripts from a host that actually carries the encoder - the Draco repo on jsDelivr - and to check at fetch time whether what came back is JavaScript or an HTML error page. If it starts with a doctype, it is not a codec.</p>
+
+      <p>That surfaced a second, sharper edge. The Draco glue declares itself as a plain <code>var DracoEncoderModule</code>, with a UMD tail at the bottom that exports it for CommonJS or AMD. Inside a module worker, evaluated through <code>new Function()</code>, neither of those environments exists. The module builds correctly and then has nowhere to go: the variable is scoped to the function I just created, the UMD tail matches nothing, and the global stays undefined. Everything succeeds and nothing is reachable.</p>
+
+      <p>The fix is one line appended to the source before evaluation:</p>
+
+      <pre><code>src += '\nself.DracoEncoderModule = DracoEncoderModule;';</code></pre>
+
+      <p>Which is a nice miniature of the whole bug. Loading a library is three separate questions - did it download, did it evaluate, is it reachable - and code that only checks the first one will report success at every step of a chain that produced nothing.</p>
+
+      <h2>When degrading gracefully is the wrong instinct</h2>
+      <p>I am generally a fan of falling back. In Lens, my reading tool for people with dyslexia, read-aloud runs on a metered neural voice and drops to the browser's built-in speech when the monthly budget runs out. Lower fidelity, still free, and crucially the word-by-word highlight keeps working. That fallback is correct: <strong>the user's ability to keep going matters more than the quality of any one component.</strong></p>
+
+      <p>Compression is the opposite shape. Nobody is mid-task and dependent on the tool staying alive. The entire output of the operation <em>is</em> the claim being made about the file. Degrading there does not preserve the experience, it falsifies the result and hands you a model you will put on a website believing it is nine times smaller than it is.</p>
+
+      <p>So the distinction I now draw, and it has held up everywhere since:</p>
+      <ul>
+        <li><strong>Fall back when the thing at risk is continuity.</strong> Keep the person working, tell them the quality changed.</li>
+        <li><strong>Fail loudly when the thing at risk is a claim about the output.</strong> There is no degraded version of a promise.</li>
+      </ul>
+
+      <p>OptimizeGLB now throws if a preset requests Draco and Draco is not available. It is a worse experience in the rare case the CDN is down. It is a vastly better tool.</p>
+
+      <h2>What it was worth</h2>
+      <p>With the encoder actually running, that soldier ends up somewhere very different. Straight compression takes it to 1.66MB. Run through the full pipeline I built afterwards - weld the duplicate vertices, retopologise to a few thousand quads, bake the lost detail into a normal map, then compress - the same character lands at <strong>365KB</strong>, which is a budget a real-time scene can actually afford.</p>
+
+      <p>None of that would have mattered while the codec was a no-op. And I would have gone on believing the tool worked, because it kept handing me smaller files and a green check, which is what I had taught it to do.</p>
+
+      <p>The bug I am most wary of now is not the one that crashes. It is the one that returns a plausible number.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Try it</div>
+          <div class="t">OptimizeGLB - compress 3D models in your browser</div>
+        </div>
+        <a class="cta" href="https://optimizeglb.js.org/" target="_blank" rel="noopener">Open OptimizeGLB &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="build-the-fake-inputs-first.html">
+          <div class="k">More writing</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+        <a class="next" href="the-negative-prompt-that-erased-the-wound.html">
+          <div class="k">Read next</div>
+          <div class="t">The negative prompt that erased the wound</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js" defer></script>
+</body>
+</html>

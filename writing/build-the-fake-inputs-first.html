@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>Build the fake inputs first - Ilan Lenzner</title>
+  <meta name="description" content="A local model identified every domain my network talks to with total confidence, including the six I invented. Why the control set of inputs that do not exist is the eval that decides your architecture.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, LLM evaluation, hallucination, confabulation, local LLM, qwen2.5, llama3.1, Ollama, control set, dnswatch, design engineer">
+
+  <link rel="canonical" href="https://ilans.net/writing/build-the-fake-inputs-first.html">
+  <meta property="og:title" content="Build the fake inputs first - Ilan Lenzner">
+  <meta property="og:description" content="A model that scores 10/10 on real inputs can be worthless if it also scores 10/10 on inputs that do not exist.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/build-the-fake-inputs-first.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-08-08">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Build the fake inputs first">
+  <meta name="twitter:description" content="A model that scores 10/10 on real inputs can be worthless if it also scores 10/10 on inputs that do not exist.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=3">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=3">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Build the fake inputs first",
+    "description":"Measuring recall on real inputs cannot detect confabulation. A control set of fabricated inputs is what separates a usable identification model from a confident fiction generator.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-08-08","dateModified":"2026-08-08","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["Large Language Models","Evaluation","Local AI","Engineering Process"],
+    "mainEntityOfPage":"https://ilans.net/writing/build-the-fake-inputs-first.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css">
+</head>
+<body>
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI</p>
+      <h1>Build the <em>fake inputs</em> first</h1>
+      <p class="dek">I asked a local model who owns each domain my home network talks to. It answered all of them with confidence, including the six domains I made up. The cheapest artifact in the project was the one that changed its architecture.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>8 August 2026</span><span>~6 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Evaluation</span><span class="tag">Local LLM</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>The DNS resolver I run at home logs every hostname my devices ask for. That is thousands of rows a day and almost all of it is meaningless on its own: <code>ib.adnxs.com</code>, <code>sync.crwdcntrl.net</code>, <code>omtrdc.net</code>. Raw, it is not observability, it is noise with timestamps.</p>
+
+      <p>So the obvious move: put a language model on the GPU and have it tell me, for each hostname, which company it belongs to and what category it is. Local model, no data leaving the house, runs continuously in the background. Straightforward.</p>
+
+      <p>Before wiring it in I wrote an eval. Ten real domains where I knew the answer, and - almost as an afterthought, to pad the set - <strong>six domains I invented on the spot</strong>. Things like <code>zorbaxcorp.com</code> and a few plausible-looking subdomains hung off names that have never been registered by anyone. For those six, the only correct answer is "I don't know."</p>
+
+      <h2>What came back</h2>
+
+      <div class="tablewrap">
+        <table class="data">
+          <thead>
+            <tr><th>Model</th><th>Prompt</th><th>Fabricated domains answered confidently</th><th>Real domains identified</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">qwen2.5:7b</td><td>naive</td><td><span class="bad">4 / 6</span></td><td>8 / 10</td></tr>
+            <tr class="hi"><td class="mono">qwen2.5:7b</td><td>registrable-first</td><td><span class="ok">0 / 6</span></td><td><span class="ok">10 / 10</span></td></tr>
+            <tr><td class="mono">llama3.1:8b</td><td>naive</td><td><span class="bad">6 / 6</span></td><td>10 / 10</td></tr>
+            <tr><td class="mono">llama3.1:8b</td><td>registrable-first</td><td><span class="bad">6 / 6</span></td><td>10 / 10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Read the last two rows the way I would have read them without the fake set: <strong>llama3.1:8b, 10 out of 10.</strong> Perfect recall, the larger and more famous model, obviously the one to ship.</p>
+
+      <p>It also invented a company for every single domain that does not exist. "ZorBax Corporation." "Vorple Dyne." Delivered at high confidence, with a category and a plausible business description. And on the <em>stricter</em> prompt it got worse rather than better: it began attributing my invented domains to real companies, handing one to Agilent Technologies and another to Google. No prompt I wrote moved that number off six.</p>
+
+      <div class="pull">A model that scores 10/10 on real inputs can be worthless if it also scores 10/10 on inputs that do not exist. From the output alone, the two are indistinguishable.</div>
+
+      <p>That is the whole point. Recall measures one failure mode - missing things that are there. It cannot see the other one, and in an identification task the other one is far more damaging, because a wrong answer here does not look wrong. It looks like an answer.</p>
+
+      <h2>The line that fixed the other model</h2>
+      <p>qwen2.5:7b went from four false answers to zero, and the change was not "be more careful" or a temperature tweak. Two specific instructions did it.</p>
+
+      <p>First, force the judgement onto the <strong>registrable domain</strong> - <code>zorbaxcorp.com</code>, not <code>telemetry-hub.zorbaxcorp.com</code>. Ownership is a property of the registered name; everything to the left of it is decoration the owner chose.</p>
+
+      <p>Second, and this is the sentence that carried the result: tell the model explicitly that the words inside a hostname - <em>telemetry, cdn, api, ads, auth</em> - are picked by whoever registered the name and prove nothing about what the service does.</p>
+
+      <p>Without that line, every model I tested classified <code>telemetry-hub.&lt;invented&gt;.com</code> as telemetry, confidently. It was reading the label off the box. That is keyword matching wearing the costume of recall, and a real-inputs-only eval scores it as a pass, because on real inputs the label on the box is usually right.</p>
+
+      <div class="note accent"><b>The generalisable version:</b> for any task shaped like "ask a model to identify a thing", write the fabricated-input control set <em>before</em> you write the prompt. It is the only instrument that measures fabrication, it takes about twenty minutes, and it is the one that will change your design.</div>
+
+      <h2>Still wrong even when it passes</h2>
+      <p>The winning configuration is not clean either, and this is where the eval stopped being a model-selection exercise and became an architecture decision.</p>
+
+      <p>For obscure ad-tech infrastructure, the model reverse-engineers company names out of the domain string. <code>ib.adnxs.com</code> belongs to AppNexus, now part of Xandr; the model returned "AdNexus Technologies", which is not a company. <code>sync.crwdcntrl.net</code> belongs to Lotame; it returned "CrowdControl Technologies". Both are the domain string, expanded into something that sounds corporate.</p>
+
+      <p>So the finding is more precise than good-model-bad-model:</p>
+      <ul>
+        <li>The <strong>category</strong> - advertising, telemetry, CDN, cloud - is reliable enough to build on.</li>
+        <li>The <strong>company name</strong> is reliable for well-known brands and invented for everything else.</li>
+        <li>Even correct answers arrive in inconsistent strings, so "Adobe Inc." and "Adobe Systems Incorporated" total up as two different companies unless you normalise first.</li>
+      </ul>
+
+      <h2>What I built instead of what I planned</h2>
+      <p>I had intended a model-classifies-everything pipeline. The eval killed it, and produced something better in three parts.</p>
+
+      <p>Most of the traffic is now resolved by a <strong>curated table of corporate domain families</strong>, hand-maintained, that covers roughly 78% of queries. It is the only mechanism that can know <code>adobess.com</code> and <code>adobelogin.com</code> are the same company - the model has no way to determine that and will guess. The model handles the remaining 22%, where a guess with a stated category is genuinely better than a blank.</p>
+
+      <p>And every company row in the dashboard carries a small badge: <strong>FACT</strong> or <strong>MODEL</strong>. If a name came from the lookup table it says so. If it came from the model, it says that too, right next to the name, permanently.</p>
+
+      <p>That badge is my favourite thing in the project. The instinct with a confident-sounding output is to hide the seam, because a clean unified list looks more finished. But the honest interface is the one where the reader can see which claims are grounded and which are inference, and can weigh them without having to know anything about my stack. Uncertainty is not a defect to be styled away. It is information, and the design should carry it.</p>
+
+      <h2>Twenty minutes</h2>
+      <p>The fake domain list is six lines in a text file. It took twenty minutes, it was almost not written at all, and it is the reason the tool does not confidently attribute my family's network traffic to companies that do not exist.</p>
+
+      <p>Every other artifact in that project - the resolver, the dashboard, the classification pipeline - exists to answer a question. That one exists to check whether the answers mean anything. I now write it first, before the thing it is going to test, because if you build it afterwards you will already be attached to a result.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Related work</div>
+          <div class="t">dnswatch - a DNS resolver you own, and what it sees</div>
+        </div>
+        <a class="cta" href="https://dnswatch.ilans.net/" target="_blank" rel="noopener">See the case study &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="a-bug-that-fails-one-time-in-three.html">
+          <div class="k">More writing</div>
+          <div class="t">A bug that fails one time in three</div>
+        </a>
+        <a class="next" href="draco-was-silently-dead.html">
+          <div class="k">Read next</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js" defer></script>
+</body>
+</html>

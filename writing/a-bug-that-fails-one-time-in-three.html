@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>A bug that fails one time in three - Ilan Lenzner</title>
+  <meta name="description" content="Two days, three confident diagnoses, three fixes that all worked. They worked because two thirds of the time anything works. How to break the false-fix loop on an intermittent bug using logs you already have.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, intermittent bug, flaky failure, debugging, base rate, DNS, dnswatch, false fix, design engineer">
+
+  <link rel="canonical" href="https://ilans.net/writing/a-bug-that-fails-one-time-in-three.html">
+  <meta property="og:title" content="A bug that fails one time in three - Ilan Lenzner">
+  <meta property="og:description" content="A single post-fix trial cannot tell a fix from the base rate. What finally broke the loop was counting the history I already had.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/a-bug-that-fails-one-time-in-three.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-08-18">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="A bug that fails one time in three">
+  <meta name="twitter:description" content="A single post-fix trial cannot tell a fix from the base rate.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=3">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=3">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"A bug that fails one time in three",
+    "description":"An intermittent failure judged one trial at a time produces a chain of confident false fixes. The way out is a machine-readable signature applied retrospectively to every occurrence in the logs.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-08-18","dateModified":"2026-08-18","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["Debugging","Observability","Engineering Process"],
+    "mainEntityOfPage":"https://ilans.net/writing/a-bug-that-fails-one-time-in-three.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css">
+</head>
+<body>
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / Debugging</p>
+      <h1>A bug that fails <em>one time in three</em></h1>
+      <p class="dek">Three confident diagnoses. Three fixes. All of them worked, and none of them were right. The trap is not the bug, it is the shape of the evidence you accept as proof.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>18 August 2026</span><span>~5 min read</span>
+        <span class="tags"><span class="tag">Debugging</span><span class="tag">Process</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>I run my own DNS resolver at home. Every device in the house resolves through it, which means I can see what my own hardware talks to all day, and block the parts I would rather it did not. It is a nice tool to own. It also means that when an app misbehaves, there is a real chance I did it.</p>
+
+      <p>One did. A news app on my phone would freeze on its splash screen and never load. Not always. Roughly one launch in three.</p>
+
+      <p>That ratio is the entire story. Everything that went wrong over the next two days went wrong because of it.</p>
+
+      <h2>Three fixes, all successful, all wrong</h2>
+      <p>The debugging went the way it always goes. Look at what the app queried in the seconds before it hung, find something blocked, unblock it, relaunch, watch it open. Announce the fix.</p>
+
+      <p>I did that three times, with three genuinely different theories. First an ad host that seemed to be the last thing queried before the hang. Then a theory about <em>how</em> I was refusing - whether a blocked name returned an empty address or a "does not exist", and whether the app's networking stack handled one worse. Then a different ad host.</p>
+
+      <p>Each theory was reasonable. Each was tested by relaunching the app once. Each time the app opened, and I moved on.</p>
+
+      <div class="pull">A bug that fires one time in three looks deterministic when every fix is judged by the single run that follows it.</div>
+
+      <p>Here is the arithmetic I should have done on the first day. If a failure occurs one time in three, a single post-fix launch has a <strong>67% chance of looking like a success no matter what I changed</strong>. Including changing nothing.</p>
+
+      <div class="tablewrap">
+        <table class="data">
+          <thead>
+            <tr><th>Clean launches after the "fix"</th><th>Chance it looks fixed while still broken</th><th>Verdict</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">1</td><td class="mono">67%</td><td><span class="bad">Worthless as evidence</span></td></tr>
+            <tr><td class="mono">2</td><td class="mono">44%</td><td><span class="bad">Still a coin flip</span></td></tr>
+            <tr><td class="mono">3</td><td class="mono">30%</td><td>Weak</td></tr>
+            <tr><td class="mono">5</td><td class="mono">13%</td><td>Getting somewhere</td></tr>
+            <tr class="hi"><td class="mono">8</td><td class="mono">4%</td><td><span class="ok">Now you can say fixed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Eight clean launches. I was declaring victory on one, three times in a row, and each false confirmation made the next theory feel better supported than the last, because now I had a "history of near misses" that was pure noise.</p>
+
+      <h2>The person re-testing notices before you do</h2>
+      <p>Worth saying plainly: the loop was obvious to whoever kept having to relaunch the app, well before it was obvious to me. That is structural, not a personality trait. The person doing the re-testing is accumulating the sample. They have the base rate in their hands and you have a theory in your head.</p>
+
+      <p>When someone says "you already fixed this twice", that is not impatience. It is a measurement, and it is telling you that your evidentiary standard is too low for the class of bug you are in.</p>
+
+      <h2>What actually broke the loop</h2>
+      <p>The move that ended it was not a better theory. It was refusing to have one for an hour.</p>
+
+      <p>Instead I went looking for a <strong>cheap machine-readable signature</strong> that separates a good run from a bad one, without a human watching a screen. It turned out to be sitting in the resolver logs: count the distinct hostnames the app queries per launch. A launch that opens normally resolves more than thirty names as it loads content. A frozen launch stops at about fifteen. Two clean populations, no judgement call, and I could compute it for every launch that had ever happened.</p>
+
+      <p>Then I applied it backwards over the whole log. That is the part that matters, and it took one query:</p>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Launches in the log</div><div class="v">39</div><div class="n">Every occurrence, not just the ones I watched</div></div>
+        <div class="stat"><div class="k">Opened fine while the "fatal" host was blocked</div><div class="v bad">26</div><div class="n">The theory dies here</div></div>
+        <div class="stat"><div class="k">Froze with nothing blocked at all</div><div class="v bad">1</div><div class="n">And here again, from the other side</div></div>
+      </div>
+
+      <p>Twenty six launches had worked <em>while</em> the host I was blaming was blocked. One had frozen with the block list empty. The correlation behind all three diagnoses evaporated in a single pass over data I had been sitting on the whole time.</p>
+
+      <div class="note accent"><b>The rule:</b> a diagnosis that does not separate the good runs from the bad runs across the <em>entire</em> history is not a diagnosis. It is a story that fits the last data point. And retrospective counting is nearly free when you are already logging - the experiment has been running for weeks, you just have not read it.</div>
+
+      <h2>What I do now</h2>
+      <p>Three things, in order, the moment a symptom has been "fixed" more than once:</p>
+      <ul>
+        <li><strong>Stop proposing fixes.</strong> The next theory will also be confirmed by the next run. That is guaranteed, and it is why the loop sustains itself.</li>
+        <li><strong>Estimate the base rate out loud.</strong> One in three, one in ten, whatever it is. Then state how many clean trials would actually clear that bar, and be honest about whether you are willing to run them.</li>
+        <li><strong>Find the separating signature before the cause.</strong> Something countable that distinguishes the two outcomes. Then run it over history, where the sample size already exists.</li>
+      </ul>
+
+      <p>The other half of the same lesson came from a different bug, where two test runs of the same thing disagreed with each other and I nearly wrote it off as flakiness. That disagreement was the clue that exposed a second, real defect underneath. <strong>Runs that contradict each other are signal, not noise.</strong> An intermittent bug is not a bug that is hard to see. It is a bug that keeps offering you evidence for whatever you already believe.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Related work</div>
+          <div class="t">dnswatch - a DNS resolver you own, and what it sees</div>
+        </div>
+        <a class="cta" href="https://dnswatch.ilans.net/" target="_blank" rel="noopener">See the case study &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="draco-was-silently-dead.html">
+          <div class="k">More writing</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+        <a class="next" href="build-the-fake-inputs-first.html">
+          <div class="k">Read next</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js" defer></script>
+</body>
+</html>
