@@ -555,8 +555,7 @@ section { padding: 130px 0; }
 .mini-wide-avatar {
     width: 52px; height: 52px;
     border-radius: 50%;
-    border: 1px solid var(--line-strong);
-    background: #d6d6d6;
+    background: #a50000;
     flex-shrink: 0;
 }
 .mini-wide-body { flex: 1; min-width: 0; }
@@ -1037,8 +1036,7 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
     width: 100%; height: 100%;
     display: block;
     border-radius: 50%;
-    border: 1px solid var(--line-strong);
-    background: #d6d6d6;
+    background: #a50000;
     animation: avatarBob 4.5s ease-in-out infinite;
     transition: transform 0.3s var(--ease-out);
     transform-origin: 50% 85%;

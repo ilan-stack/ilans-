@@ -133,7 +133,7 @@
     launcher.setAttribute('aria-label', 'Chat with AI Ilan');
     launcher.innerHTML =
         '<span class="agent-face" aria-hidden="true">' +
-            '<img src="images/ai-avatar.svg" alt="" class="agent-face-img">' +
+            '<img src="images/ai-avatar.svg?v=3" alt="" class="agent-face-img">' +
             '<span class="agent-online"></span>' +
         '</span>' +
         '<span class="agent-launcher-label">Ask my AI</span>';
@@ -146,7 +146,7 @@
     panel.innerHTML =
         '<div class="agent-head">' +
             '<span class="agent-face agent-face-lg" aria-hidden="true">' +
-                '<span class="agent-svg-slot"><img src="images/ai-avatar.svg" alt="" class="agent-face-img" id="agentAvatar"></span>' +
+                '<span class="agent-svg-slot"><img src="images/ai-avatar.svg?v=3" alt="" class="agent-face-img" id="agentAvatar"></span>' +
                 '<span class="agent-online"></span>' +
             '</span>' +
             '<div class="agent-head-text">' +
@@ -173,7 +173,7 @@
 
     /* Inline the avatar SVG in the header so the .talking class can
        drive the mouth animation embedded inside the artwork */
-    fetch('images/ai-avatar.svg').then(function(r) { return r.ok ? r.text() : null; }).then(function(text) {
+    fetch('images/ai-avatar.svg?v=3').then(function(r) { return r.ok ? r.text() : null; }).then(function(text) {
         if (!text) return;
         var slot = panel.querySelector('.agent-svg-slot');
         var tmp = document.createElement('div');
