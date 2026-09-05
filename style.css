@@ -419,11 +419,29 @@ section { padding: 130px 0; }
 .case:hover .case-media video { opacity: 1; transform: translateY(var(--py, 0px)) scale(1.025); }
 .case:hover .case-media img.has-video { opacity: 0; }
 
+
+/* ============================================================
+   PER-CASE COLOUR
+   One hue per discipline, shared with /writing so the site reads
+   as one system. --c falls back to the brand violet.
+   ============================================================ */
+:root{ --c: var(--accent-ink); }
+.c-violet { --c:#8a7bff; }   /* accessibility & assistive      */
+.c-teal   { --c:#2dd4bf; }   /* clinical & health              */
+.c-amber  { --c:#f0a33c; }   /* creative production & motion   */
+.c-lime   { --c:#a3e635; }   /* self-hosted AI & networks      */
+.c-coral  { --c:#fb7185; }   /* consumer apps & experiments    */
+html[data-theme="light"] .c-violet { --c:#5b4de0; }
+html[data-theme="light"] .c-teal   { --c:#0f766e; }
+html[data-theme="light"] .c-amber  { --c:#a35f00; }
+html[data-theme="light"] .c-lime   { --c:#4d7c0f; }
+html[data-theme="light"] .c-coral  { --c:#be123c; }
+
 .case-kicker {
     font-family: var(--mono);
     font-size: 11.5px; font-weight: 500;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--accent-ink);
+    color: var(--c);
     margin-bottom: 16px;
     display: flex; align-items: center; gap: 10px;
 }
@@ -438,7 +456,7 @@ section { padding: 130px 0; }
     margin-bottom: 16px;
 }
 .case-title a { color: #fff; }
-.case-title a:hover { color: var(--accent-ink); }
+.case-title a:hover { color: var(--c); }
 .case-line {
     font-size: 15.5px;
     color: var(--ink-muted);
@@ -486,7 +504,7 @@ section { padding: 130px 0; }
     transition: border-color 0.3s, transform 0.3s var(--ease-out), box-shadow 0.3s;
 }
 .mini:hover {
-    border-color: var(--line-strong);
+    border-color: color-mix(in srgb, var(--c) 42%, var(--line-strong));
     transform: translateY(-4px);
     box-shadow: 0 18px 48px rgba(0,0,0,0.45);
 }
@@ -515,7 +533,7 @@ section { padding: 130px 0; }
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
 .mini-title a { color: inherit; }
-.mini-title a:hover { color: var(--accent-ink); }
+.mini-title a:hover { color: var(--c); }
 .chip {
     font-family: var(--mono);
     font-size: 9.5px; font-weight: 600;
@@ -538,7 +556,7 @@ section { padding: 130px 0; }
     font-size: 12.5px; font-weight: 600;
 }
 .mini-links a { color: var(--ink-muted); }
-.mini-links a:hover { color: var(--accent-ink); }
+.mini-links a:hover { color: var(--c); }
 .mini-links a.case-link { color: var(--ink-dim); font-weight: 500; }
 .mini-links a.case-link:hover { color: var(--ink-muted); }
 
@@ -1414,7 +1432,7 @@ html[data-theme="light"] .contact-title,
 html[data-theme="light"] .case-title a,
 html[data-theme="light"] .mini-title,
 html[data-theme="light"] .timeline-role { color: var(--ink); }
-html[data-theme="light"] .case-title a:hover { color: var(--accent-ink); }
+html[data-theme="light"] .case-title a:hover { color: var(--c); }
 html[data-theme="light"] .btn-primary { background: var(--ink); color: #faf9f7; }
 html[data-theme="light"] .btn-primary:hover { background: #000; color: #fff; box-shadow: 0 10px 32px rgba(23,23,28,0.18); }
 html[data-theme="light"] .link-pill { background: var(--ink); color: #faf9f7 !important; }
@@ -1466,7 +1484,7 @@ html[data-theme="light"] .hero-wavy-wrap svg { filter: drop-shadow(0 0 7px rgba(
     font-size: 40px;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: var(--accent-ink);
+    color: var(--c);
     white-space: nowrap;
 }
 .case-stat-label {

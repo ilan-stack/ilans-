@@ -333,16 +333,19 @@ function trackEvent(path) {
 
     // Banner messages — text, images, and videos with real colors.
     // Mobile skips the video messages (CPU + bandwidth).
+    // Text messages carry a hue from the site palette; the glow eases
+    // between them so the field drifts through colour instead of sitting
+    // on one violet. Videos and images keep their own pixel colours.
     var MESSAGES = [
-        { text: 'ILAN LENZNER', scale: 0.9 },
+        { text: 'ILAN LENZNER', scale: 0.9, hue: [138,123,255] },
         { video: 'videos/dnc4.mp4', bgFilter: 147 },
-        { text: 'AI + DESIGN', scale: 0.9 },
+        { text: 'AI + DESIGN', scale: 0.9, hue: [45,212,191] },
         { video: 'videos/ilans-talk.mp4', bgFilter: 'grey' },
         { image: 'images/rhino-dots.webp' },
         { video: 'videos/bg_video.mp4', bgFilter: 'grey' },
         { video: 'videos/portrait-anim.mp4' },
-        { text: '45+ TOOLS', scale: 0.9 },
-        { text: 'CREATIVE TECH', scale: 0.9 },
+        { text: '45+ TOOLS', scale: 0.9, hue: [240,163,60] },
+        { text: 'CREATIVE TECH', scale: 0.9, hue: [163,230,53] },
     ];
     if (IS_MOBILE) {
         MESSAGES = MESSAGES.filter(function(m) { return !m.video; });
@@ -425,12 +428,19 @@ function trackEvent(path) {
         sampleMessage(MESSAGES[0]);
     }
 
+    // Glow hue drifts toward the active message's colour (violet is the rest state)
+    var HUE_HOME = [138,123,255];
+    var hueCur = HUE_HOME.slice();
+    var hueTarget = HUE_HOME.slice();
+    var HUE_EASE = 0.012;               // deliberately slow - this should never read as a colour cycle
+
     var litPixels = [];
     var currentIsImage = false;
     var currentIsVideo = false;
     var currentBgFilter = null;
 
     function sampleMessage(msg) {
+        hueTarget = (msg && msg.hue) ? msg.hue : HUE_HOME;
         if (activeVideo) {
             activeVideo.pause();
             activeVideo = null;
@@ -586,6 +596,11 @@ function trackEvent(path) {
         // Float the banner — every 2nd frame is plenty
         if (fAdv > 1 || frame % 2 === 0) updateLitMap();
 
+        // Ease the glow hue toward the active message's colour
+        for (var hi = 0; hi < 3; hi++) {
+            hueCur[hi] += (hueTarget[hi] - hueCur[hi]) * HUE_EASE * fAdv;
+        }
+
         var bannerAlpha = 1;
         if (cycleFrame < FADE_FRAMES) {
             bannerAlpha = cycleFrame / FADE_FRAMES;
@@ -643,15 +658,16 @@ function trackEvent(path) {
                 }
                 alpha = baseAlpha + glow * 0.82;
             } else if (themeLight) {
-                // Light theme: warm-grey base glowing toward indigo
-                r_c = Math.round(70 + glow * 21);     // 70 -> 91
-                g_c = Math.round(70 + glow * 7);      // 70 -> 77
-                b_c = Math.round(80 + glow * 144);    // 80 -> 224
+                // Light theme: warm-grey base glowing toward the active hue,
+                // darkened so it keeps its contrast on paper
+                r_c = Math.round(70 + glow * (hueCur[0] * 0.66 - 70));
+                g_c = Math.round(70 + glow * (hueCur[1] * 0.62 - 70));
+                b_c = Math.round(80 + glow * (hueCur[2] * 0.88 - 80));
             } else {
-                // Dark theme: ivory base glowing toward violet
-                r_c = Math.round(237 - glow * 99);    // 237 -> 138
-                g_c = Math.round(237 - glow * 114);   // 237 -> 123
-                b_c = Math.round(234 + glow * 21);    // 234 -> 255
+                // Dark theme: ivory base glowing toward the active message's hue
+                r_c = Math.round(237 + glow * (hueCur[0] - 237));
+                g_c = Math.round(237 + glow * (hueCur[1] - 237));
+                b_c = Math.round(234 + glow * (hueCur[2] - 234));
             }
             var color = 'rgba(' + r_c + ',' + g_c + ',' + b_c + ',' + alpha + ')';
 
