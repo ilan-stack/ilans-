@@ -702,6 +702,9 @@ html[data-theme="light"] .mini-ask-ai:hover { background: #000; }
     transition: color 0.25s ease;
     cursor: default;
 }
+/* Core terms carry the headline; the rest are the supporting range.
+   Declared BEFORE .decoding so the decode animation still wins (equal specificity). */
+.skill.core { color: var(--ink); font-weight: 500; }
 .skill.decoding { color: var(--accent-ink); }
 .skill:hover { color: var(--ink); }
 
