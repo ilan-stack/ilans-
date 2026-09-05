@@ -426,13 +426,15 @@ section { padding: 130px 0; }
    as one system. --c falls back to the brand violet.
    ============================================================ */
 :root{ --c: var(--accent-ink); }
-.c-violet { --c:#8a7bff; }   /* accessibility & assistive      */
-.c-teal   { --c:#2dd4bf; }   /* clinical & health              */
+.c-green  { --c:#34d399; }   /* accessibility & assistive      */
+.c-teal   { --c:#22d3ee; }   /* clinical & health              */
+.c-violet { --c:#8a7bff; }   /* site brand, not a category     */
 .c-amber  { --c:#f0a33c; }   /* creative production & motion   */
 .c-lime   { --c:#a3e635; }   /* self-hosted AI & networks      */
 .c-coral  { --c:#fb7185; }   /* consumer apps & experiments    */
+html[data-theme="light"] .c-green  { --c:#047857; }
+html[data-theme="light"] .c-teal   { --c:#0e7490; }
 html[data-theme="light"] .c-violet { --c:#5b4de0; }
-html[data-theme="light"] .c-teal   { --c:#0f766e; }
 html[data-theme="light"] .c-amber  { --c:#a35f00; }
 html[data-theme="light"] .c-lime   { --c:#4d7c0f; }
 html[data-theme="light"] .c-coral  { --c:#be123c; }

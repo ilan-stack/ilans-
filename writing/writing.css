@@ -80,13 +80,15 @@ body > *{position:relative; z-index:1}
    ============================================================ */
 :root{ --c:var(--accent); }
 .c-amber  { --c:#f0a33c; }
-.c-teal   { --c:#2dd4bf; }
+.c-green  { --c:#34d399; }
+.c-teal   { --c:#22d3ee; }
 .c-coral  { --c:#fb7185; }
 .c-lime   { --c:#a3e635; }
 .c-violet { --c:#8a7bff; }
 /* the dark-surface hues are too light to read on warm paper */
 html[data-theme="light"] .c-amber  { --c:#a35f00; }
-html[data-theme="light"] .c-teal   { --c:#0f766e; }
+html[data-theme="light"] .c-green  { --c:#047857; }
+html[data-theme="light"] .c-teal   { --c:#0e7490; }
 html[data-theme="light"] .c-coral  { --c:#be123c; }
 html[data-theme="light"] .c-lime   { --c:#4d7c0f; }
 html[data-theme="light"] .c-violet { --c:#5b4de0; }
