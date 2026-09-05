@@ -35,7 +35,7 @@
 
   /* ── topic filter (index) ── */
   var chips = document.querySelectorAll('.chip');
-  var posts = Array.prototype.slice.call(document.querySelectorAll('#posts .post'));
+  var posts = Array.prototype.slice.call(document.querySelectorAll('#posts .row'));
   var empty = document.getElementById('empty');
   if (chips.length && posts.length) {
     chips.forEach(function (chip) {

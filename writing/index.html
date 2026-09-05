@@ -44,7 +44,7 @@
   <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../fonts/fonts.css?v=1">
-  <link rel="stylesheet" href="writing.css">
+  <link rel="stylesheet" href="writing.css?v=2">
 </head>
 <body>
   <nav class="top">
@@ -86,89 +86,58 @@
 
     <ul class="posts" id="posts">
 
-      <li class="post featured" data-tags="3d engineering debugging">
+      <li class="row c-amber lead" data-tags="3d engineering debugging">
         <a class="hit" href="draco-was-silently-dead.html" aria-label="Read: Draco was silently dead"></a>
-        <div class="body">
-          <div class="meta">
-            <span class="flag">Latest</span>
-            <span class="num">01</span><span class="dot"></span>
-            <span>5 Sep 2026</span><span class="dot"></span>
-            <span>7 min read</span>
-          </div>
+        <div class="n">01</div>
+        <div>
+          <div class="meta"><span class="flag">Latest</span><b>3D · Tooling</b><span class="dot"></span><span>5 Sep 2026</span><span class="dot"></span><span>7 min read</span></div>
           <h2>Draco was <em>silently dead</em></h2>
           <p class="dek">My 3D compressor had been shipping uncompressed geometry since the day it launched. The encoder never loaded, the loader swallowed the 404, and every export still said "done". A story about tools that lie by omission, and the one assertion that would have caught it.</p>
-          <div class="foot">
-            <span class="tag">3D</span><span class="tag">Tooling</span><span class="tag">Debugging</span>
-            <span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
+          <div class="foot"><span class="tag">3D</span><span class="tag">Tooling</span><span class="tag">Debugging</span><span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
         </div>
       </li>
 
-      <li class="post" data-tags="ai engineering">
+      <li class="row c-teal" data-tags="ai engineering">
         <a class="hit" href="the-negative-prompt-that-erased-the-wound.html" aria-label="Read: The negative prompt that erased the wound"></a>
-        <div class="body">
-          <div class="meta">
-            <span class="num">02</span><span class="dot"></span>
-            <span>26 Aug 2026</span><span class="dot"></span>
-            <span>6 min read</span>
-          </div>
+        <div class="n">02</div>
+        <div>
+          <div class="meta"><b>AI · Clinical</b><span class="dot"></span><span>26 Aug 2026</span><span class="dot"></span><span>6 min read</span></div>
           <h2>The negative prompt that <em>erased the wound</em></h2>
           <p class="dek">Every image model I ran carried "deformed" and "ugly" in its default negative prompt. For medical imagery that is not a quality setting, it is an instruction to delete the finding. What looked like a censored model was my own config fighting me.</p>
-          <div class="foot">
-            <span class="tag">AI</span><span class="tag">Clinical</span><span class="tag">Prompting</span>
-            <span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
+          <div class="foot"><span class="tag">AI</span><span class="tag">Clinical</span><span class="tag">Prompting</span><span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
         </div>
       </li>
 
-      <li class="post" data-tags="debugging engineering">
+      <li class="row c-coral" data-tags="debugging engineering">
         <a class="hit" href="a-bug-that-fails-one-time-in-three.html" aria-label="Read: A bug that fails one time in three"></a>
-        <div class="body">
-          <div class="meta">
-            <span class="num">03</span><span class="dot"></span>
-            <span>18 Aug 2026</span><span class="dot"></span>
-            <span>5 min read</span>
-          </div>
+        <div class="n">03</div>
+        <div>
+          <div class="meta"><b>Debugging</b><span class="dot"></span><span>18 Aug 2026</span><span class="dot"></span><span>5 min read</span></div>
           <h2>A bug that fails <em>one time in three</em></h2>
           <p class="dek">Two days, three confident diagnoses, three fixes that all "worked". They worked because two thirds of the time anything works. What finally broke the loop was not a better theory, it was counting 39 launches already sitting in the logs.</p>
-          <div class="foot">
-            <span class="tag">Debugging</span><span class="tag">Process</span>
-            <span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
+          <div class="foot"><span class="tag">Debugging</span><span class="tag">Process</span><span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
         </div>
       </li>
 
-      <li class="post" data-tags="ai debugging">
+      <li class="row c-lime" data-tags="ai debugging">
         <a class="hit" href="build-the-fake-inputs-first.html" aria-label="Read: Build the fake inputs first"></a>
-        <div class="body">
-          <div class="meta">
-            <span class="num">04</span><span class="dot"></span>
-            <span>8 Aug 2026</span><span class="dot"></span>
-            <span>6 min read</span>
-          </div>
+        <div class="n">04</div>
+        <div>
+          <div class="meta"><b>AI · Evaluation</b><span class="dot"></span><span>8 Aug 2026</span><span class="dot"></span><span>6 min read</span></div>
           <h2>Build the <em>fake inputs</em> first</h2>
           <p class="dek">I asked a local model who owns each domain my network talks to. It answered every one with total confidence, including the six domains I invented. The eval that mattered was not the real inputs, it was the ones that do not exist.</p>
-          <div class="foot">
-            <span class="tag">AI</span><span class="tag">Evaluation</span><span class="tag">Local LLM</span>
-            <span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
+          <div class="foot"><span class="tag">AI</span><span class="tag">Evaluation</span><span class="tag">Local LLM</span><span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
         </div>
       </li>
 
-      <li class="post" data-tags="accessibility engineering">
+      <li class="row c-violet" data-tags="accessibility engineering">
         <a class="hit" href="highlighting-the-word-youre-hearing.html" aria-label="Read: Highlighting the word you're hearing"></a>
-        <div class="body">
-          <div class="meta">
-            <span class="num">05</span><span class="dot"></span>
-            <span>19 Jul 2026</span><span class="dot"></span>
-            <span>6 min read</span>
-          </div>
+        <div class="n">05</div>
+        <div>
+          <div class="meta"><b>Accessibility</b><span class="dot"></span><span>19 Jul 2026</span><span class="dot"></span><span>6 min read</span></div>
           <h2>Highlighting the word <em>you're hearing</em></h2>
           <p class="dek">Building karaoke read-aloud in Lens - syncing a spoken word to its exact spot on screen, inside a document you can still edit, for readers with dyslexia.</p>
-          <div class="foot">
-            <span class="tag">Accessibility</span><span class="tag">Engineering</span><span class="tag">TTS</span>
-            <span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
+          <div class="foot"><span class="tag">Accessibility</span><span class="tag">Engineering</span><span class="tag">TTS</span><span class="arrow">Read <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div>
         </div>
       </li>
 
@@ -190,6 +159,6 @@
     </footer>
   </div>
 
-  <script src="writing.js" defer></script>
+  <script src="writing.js?v=2" defer></script>
 </body>
 </html>
