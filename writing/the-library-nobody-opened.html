@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>The library nobody opened - Ilan Lenzner</title>
+  <meta name="description" content="I suspected I rewrite the same ten things in every project. I measured it, built the shared asset library that is supposed to fix it, and offered it to four fresh coding agents. None of them opened it. What that says about pull versus push.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, AI coding agents, Claude Code, skills, MCP, asset library, agent memory, design tokens, experiment, design engineer">
+
+  <link rel="canonical" href="https://ilans.net/writing/the-library-nobody-opened.html">
+  <meta property="og:title" content="The library nobody opened - Ilan Lenzner">
+  <meta property="og:description" content="I built the shared asset library that is supposed to stop me rewriting the same code, offered it to four fresh coding agents on tasks that matched it word for word, and got zero pulls.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://ilans.net/writing/the-library-nobody-opened.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-09-11">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The library nobody opened">
+  <meta name="twitter:description" content="I built the shared asset library that is supposed to stop me rewriting the same code, offered it to four fresh coding agents on tasks that matched it word for word, and got zero pulls.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"The library nobody opened",
+    "description":"A controlled test of whether AI coding agents will fetch stored code assets from a skill or MCP library instead of regenerating them. Four fresh agents, two description wordings, zero pulls. Why consistency across projects needs push, not pull.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-09-11","dateModified":"2026-09-11","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["AI Coding Agents","Developer Tooling","Model Context Protocol","Engineering Process"],
+    "mainEntityOfPage":"https://ilans.net/writing/the-library-nobody-opened.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css?v=3">
+</head>
+<body class="c-violet">
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI</p>
+      <h1>The library <em>nobody opened</em></h1>
+      <p class="dek">I suspected I rewrite the same ten things in every project. So I measured it, built the shared asset library that is supposed to fix it, and offered it to four fresh coding agents on tasks that matched it word for word. None of them opened it.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>11 September 2026</span><span>~7 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Agents</span><span class="tag">Tooling</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>Every new project starts the same way. A token file with the colours and spacing. A frosted glass card. A loop that starts a Replicate prediction and polls it until it finishes. I have written each of these more times than I can count, and every time the agent writing it with me does it slightly differently.</p>
+
+      <p>The fashionable answer is a shared asset library. Save a component, a design system or a helper once, and every agent on every project fetches it by name instead of writing it again. It comes in several shapes: a skill with an <code>assets/</code> folder, an MCP tool the agent calls, and by now a whole category of products selling the same idea to teams. The premise underneath all of them is identical, and I had never seen it tested. So I tested it.</p>
+
+      <h2>How much do I actually rewrite?</h2>
+
+      <p>I scanned every source file under my home directory, 8,505 of them across 101 project folders, with backups and mirrors excluded, and counted how many separate projects contain each of a dozen recurring patterns.</p>
+
+      <p>Forty of them contain a <code>:root</code> block of CSS custom properties. Thirty-seven have a <code>backdrop-filter</code> somewhere, which is to say a frosted glass panel. Twenty-eight handle right-to-left layout for Hebrew. Further down the list: <code>localStorage</code> persistence in sixteen, calls to the Claude API in thirteen, a Replicate polling loop in eleven, a three.js scene in ten, streaming responses and particle emitters in eight each.</p>
+
+      <p>There were also 190 groups of byte-identical files duplicated across projects, but those turned out to be vendored libraries and mirrors, which is not the story. The story is the soft duplication above: the same idea, written slightly differently, forty times. That is exactly what an asset library is supposed to kill.</p>
+
+      <p>And I noticed something slightly embarrassing. I had already built a primitive version of the library. One of my Claude Code skills is not a set of instructions at all, it is a complete project template with components, contexts and tokens, sitting in an <code>assets/</code> folder waiting to be copied. I had invented the thing, on my own, without ever checking whether it worked.</p>
+
+      <h2>The experiment</h2>
+
+      <p>So I built the library properly. One skill with three assets: a design token file distilled from the most complete of my forty (warm surfaces, a two-tone accent that keeps WCAG contrast honest, light, dark and system theming, RTL helpers), a frosted glass recipe, and a canonical Replicate runner in JavaScript and Python.</p>
+
+      <p>The runner was the most satisfying part to write, because consolidating my eleven existing copies surfaced three real bugs. One copy checked only for <code>succeeded</code> and <code>failed</code>, so a prediction that came back <code>canceled</code> would spin forever. The same copy had no wall-clock timeout at all. Several polled at a fixed one second, hammering the API for video jobs that routinely run minutes. The canonical version handles all three terminal states, backs off from one second to five, and cancels the job on timeout so it stops burning GPU time nobody is waiting for.</p>
+
+      <p>Then the test. Four agents with a clean context, each in an empty directory, given a task that matched the library's description almost word for word, and never told the library existed. Two tasks: a single-file dark landing page with frosted glass cards that works in light and dark mode, plain HTML and CSS; and a Node.js script that runs the FLUX image model on Replicate and saves the result to disk.</p>
+
+      <p>I ran each prompt twice. The first round used a broad description for the skill: reusable building blocks, use when starting a new page, and so on. For the second round I rewrote the description to be dense and specific, containing the exact phrases from the prompts: frosted glass cards, light and dark mode, Replicate predictions API, FLUX, polls until succeeded, failed or canceled.</p>
+
+      <p>Crucially, I did not ask the agents what they had used. I measured from the files they wrote. If the token file was pulled, the output contains the <code>--ds-</code> prefix. If the runner was pulled, it contains <code>runPrediction</code> and the terminal-status set. Fingerprints do not have opinions.</p>
+
+      <h2>Zero out of four</h2>
+
+      <div class="tablewrap">
+        <table class="data">
+          <thead>
+            <tr><th>Run</th><th>Task</th><th>Skill description</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">1</td><td>landing page</td><td>broad</td><td>wrote its own tokens and glass</td></tr>
+            <tr><td class="mono">2</td><td>Replicate script</td><td>broad</td><td>wrote its own polling loop</td></tr>
+            <tr><td class="mono">3</td><td>landing page</td><td>specific, matching the prompt</td><td>wrote its own tokens and glass</td></tr>
+            <tr><td class="mono">4</td><td>Replicate script</td><td>specific, matching the prompt</td><td>used the official SDK instead</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Two details are worth more than the score.</p>
+
+      <p>The first agent on the landing page <strong>did read the list of available skills</strong>. It said so in its report: it had seen my older React-based panel skill, considered it, and rejected the template because the task said no frameworks. It then borrowed that skill's visual recipe and ignored the new library completely, even though the new library was the one whose description matched the task. The mechanism works. The selection did not go my way.</p>
+
+      <p>The second detail is worse for the idea. In round two, the Replicate agent used the official <code>replicate</code> SDK, which does the polling internally. That is a better answer than my hand-written runner. The asset I had spent the morning perfecting was obsolete on the day it was written, and the agent knew it without being told.</p>
+
+      <div class="pull">Four agents, four competent rewrites. Every one of them rediscovered the same gotchas I had carefully stored in the library: glass needs something behind it to blur, a prediction can be canceled, a poll needs a deadline.</div>
+
+      <h2>Why it happens</h2>
+
+      <p>For small, well-known code, a capable model is confident, and confident generation beats retrieval. Writing a token block or a polling loop costs it nothing and it has seen ten thousand of them. Opening a file first is an extra step with no obvious payoff, so it does not take the step, no matter how precisely the file is described.</p>
+
+      <p>Where skills genuinely fire, in my experience, is on knowledge the model cannot derive: the endpoint of the GPU box in the other room, a client's brand rules, a decision we made in March and the reason for it. That is what most of my thirty-seven skills hold, and they earn their place. Commodity CSS does not belong in that company.</p>
+
+      <p>This reframes what the forty token blocks are actually costing me. It is not quality. Each of the four rewrites was fine. It is <strong>consistency</strong>: forty projects with forty prefixes, forty slightly different greys, forty opinions on what a dark theme override looks like.</p>
+
+      <p>This is also the part that applies beyond my own setup. A "fetch asset by name" tool exposed over MCP puts the agent in exactly the position my skill did: it has to choose to call the tool instead of writing the code, and the experiment says it will not, with an extra network hop for the privilege. For commodity assets, the premise fails on agent behaviour before it ever reaches the storage layer.</p>
+
+      <h2>Push, not pull</h2>
+
+      <p>If the agent will not fetch the file, the file has to already be there. I deleted the library the same afternoon. The token file and the glass recipe moved to a plain folder, and I created my first global <code>CLAUDE.md</code>, the instruction file every Claude Code session reads regardless of project, with one mandatory rule: when starting a page that needs CSS variables or theming, copy the token file in and use its variables. Do not write a new <code>:root</code> block.</p>
+
+      <p>Not a library the agent may consult. A rule it is told to follow.</p>
+
+      <p>I want to be honest about what that is. It is an untested assumption, exactly the kind the experiment was designed to catch. A skill description was a suggestion the agent declined four times; a global instruction is a different mechanism, but I have not yet proven it overrides the same instinct. The next new project I open is the test. If there is no <code>--ds-</code> in it, a rule was not enough either, and the next step is a hook that enforces it in code.</p>
+
+      <h2>Two things I did not expect</h2>
+
+      <p>The Replicate agents needed an API token to test their scripts, and I had not given them one. Both times, in two separate runs, the agent found a credentials file in my home directory, read the token out of it, and ran a paid generation. The cost was a third of a cent. The behaviour is the thing: any agent with a shell has every secret on the machine, and it will use them to finish the job you gave it, without asking. That is a reliability note for anyone running agents in bypass mode, and it went straight into my notes.</p>
+
+      <p>The second was a tooling trap that nearly ruined the experiment. I first tried to run each test as a fully cold command-line session. That session's login token had expired, and the CLI ignored the API key I offered instead, in every form. The only flag that accepts the key also turns off automatic skill loading, which is the exact thing under test. Running the agents as fresh sub-sessions inside a live one was the compromise, and it is why the honest caveat on this whole piece is: four runs, not forty, and warm sessions rather than cold ones.</p>
+
+      <h2>What a morning was worth</h2>
+
+      <p>I got a measurement of my own habits I would never have made otherwise, three real bugs fixed in code I had already shipped, and a clear enough result to stop building the thing I had half-built without noticing.</p>
+
+      <p>I keep landing on the same rule from different directions. Before building on a premise, find the cheapest experiment that could prove it false, and run that first. This time the premise was one an entire product category is built on, the experiment cost four agent runs, and the answer was zero.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Related work</div>
+          <div class="t">The four runs, side by side - screenshots, vocabularies, and the rule that replaced the library</div>
+        </div>
+        <a class="cta" href="https://library-case.ilans.net/" target="_blank" rel="noopener">See the case study &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="draco-was-silently-dead.html">
+          <div class="k">More writing</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+        <a class="next" href="a-bug-that-fails-one-time-in-three.html">
+          <div class="k">Read next</div>
+          <div class="t">A bug that fails one time in three</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js?v=3" defer></script>
+</body>
+</html>
