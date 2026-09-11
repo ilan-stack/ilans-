@@ -71,6 +71,7 @@
         'ai-studio': '[data-focus="ai-studio"]',
         carscan: '[data-focus="carscan"]',
         'roborock': '[data-focus="roborock"]',
+        library: '[data-focus="library"]',
         'auto-caption': '[data-focus="auto-caption"]',
         sett: '[data-focus="sett"]',
         rabin: '[data-focus="rabin"]',
