@@ -93,6 +93,7 @@
         // collapse the double space left where a marker was
         return s.replace(/\[\[focus:[a-z0-9-]+\]\]/g, '')
                 .replace(/\[\[lead\]\]/g, '')
+                .replace(/\[\[[^\]]{0,40}\]\]/g, '')   // any other marker the model invents - never show it
                 .replace(/\[\[[^\]\]]*$/, '')
                 .replace(/[ \t]{2,}/g, ' ');
     }
@@ -112,7 +113,7 @@
     }
 
     function cleanSeg(s) {
-        return s.replace(/\[\[lead\]\]/g, '').replace(/\[\[[^\]\]]*$/, '').replace(/[ \t]{2,}/g, ' ').trim();
+        return s.replace(/\[\[lead\]\]/g, '').replace(/\[\[[^\]]{0,40}\]\]/g, '').replace(/\[\[[^\]\]]*$/, '').replace(/[ \t]{2,}/g, ' ').trim();
     }
     // Split a raw reply into {text, key} parts at each marker, so speech and
     // page-pointing can be interleaved in narration order.
