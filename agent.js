@@ -490,11 +490,41 @@
 
     applyLang();   // localize chrome + render starters in the current language
 
+    // The facts file is full of bare hostnames (carscan.ilans.net, wound-doc.vercel.app),
+    // so matching only http:// would miss almost every link the agent hands out. Emails are
+    // matched first - an address contains a host and would otherwise be linked as a website.
+    var LINK_RE = /([a-z0-9._%+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})|((?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:co\.il|org\.il|com|net|org|io|ai|app|dev|cloud|co|me)(?:[\/?#][^\s<>"']*)?)/gi;
+    function linkifyInto(el, text) {
+        text = String(text == null ? '' : text);
+        el.textContent = '';
+        var last = 0;
+        text.replace(LINK_RE, function (m, mail, url, i) {
+            var hit = m, tail = '';
+            var trim = hit.match(/[.,;:!?)\]]+$/);
+            if (trim) { tail = trim[0]; hit = hit.slice(0, -tail.length); }
+            // Hebrew glues prefixes on with a hyphen - "ל-ilan@ilans.net".
+            // Without this the hyphen is swallowed into the address and the link is dead.
+            var lead = hit.match(/^[-.,;:!?(\[]+/);
+            if (lead) { i += lead[0].length; m = m.slice(lead[0].length); hit = hit.slice(lead[0].length); }
+            if (!/[a-z0-9]/i.test(hit)) return m;
+            if (!hit) return m;
+            if (i > last) el.appendChild(document.createTextNode(text.slice(last, i)));
+            var a = document.createElement('a');
+            a.textContent = hit;
+            if (mail) { a.href = 'mailto:' + hit; }
+            else { a.href = /^https?:\/\//i.test(hit) ? hit : 'https://' + hit; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+            el.appendChild(a);
+            if (tail) el.appendChild(document.createTextNode(tail));
+            last = i + m.length;
+            return m;
+        });
+        if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+    }
     function addMsg(role, text) {
         var el = document.createElement('div');
         el.className = 'agent-msg ' + (role === 'user' ? 'from-user' : 'from-ai');
         el.dir = 'auto';   // Hebrew renders RTL, English LTR - per message
-        el.textContent = text;
+        linkifyInto(el, text);
         msgsEl.appendChild(el);
         msgsEl.scrollTop = msgsEl.scrollHeight;
         return el;
@@ -643,7 +673,7 @@
             return pump().then(function() {
                 if (answer) {
                     var clean = stripMarkers(answer);
-                    aiEl.textContent = clean;
+                    linkifyInto(aiEl, clean);
                     maybeSwitchLang(clean);   // confirm the conversation language from the reply
                     history.push({ role: 'assistant', content: clean });
                     if (/\[\[lead\]\]/.test(answer)) showLeadForm();

@@ -1150,6 +1150,9 @@ html[data-theme="light"] .email-modal-card { box-shadow: 0 30px 80px rgba(23,23,
     align-self: flex-end;
     font-weight: 500;
 }
+.agent-msg a { color: var(--accent, #a78bfa); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-thickness: 1px; word-break: break-word; unicode-bidi: isolate; direction: ltr; }
+.agent-msg.from-user a { color: #fff; text-decoration-color: rgba(255,255,255,.55); }
 .agent-msg.thinking { color: var(--ink-dim); letter-spacing: 3px; }
 
 /* Inline lead-capture form inside the chat */
