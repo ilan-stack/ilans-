@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>Eight keys between me and the agents - Ilan Lenzner</title>
+  <meta name="description" content="I bought a Stream Deck Neo, never installed its software, and spent a day turning eight small screens into the place where my AI agents ask permission, show progress, and stop when I press a key. What a physical interface adds to agentic work, and the parts of macOS that fought back.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, Stream Deck, Claude Code, MCP, AI agents, hooks, voice control, macOS, hardware interface, creative technologist">
+
+  <link rel="canonical" href="https://ilans.net/writing/eight-keys-between-me-and-the-agents.html">
+  <meta property="og:title" content="Eight keys between me and the agents - Ilan Lenzner">
+  <meta property="og:description" content="A Stream Deck without its software, wired straight into Claude Code: approve a command, watch a task's progress, or pause an agent from across the desk.">
+  <meta property="og:image" content="https://ilans.net/writing/img/stream-deck/controls.png">
+  <meta property="og:url" content="https://ilans.net/writing/eight-keys-between-me-and-the-agents.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-10-09">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Eight keys between me and the agents">
+  <meta name="twitter:description" content="A Stream Deck without its software, wired straight into Claude Code: approve a command, watch a task's progress, or pause an agent from across the desk.">
+  <meta name="twitter:image" content="https://ilans.net/writing/img/stream-deck/controls.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Eight keys between me and the agents",
+    "description":"Turning a Stream Deck Neo, driven directly over USB without the vendor software, into a physical interface for AI coding agents: permission prompts, task progress, pause and stop controls, session status and voice commands, connected through Claude Code hooks and an MCP server.",
+    "image":"https://ilans.net/writing/img/stream-deck/controls.png",
+    "datePublished":"2026-10-09","dateModified":"2026-10-09","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["AI Coding Agents","Human-Computer Interaction","Model Context Protocol","Hardware Interfaces"],
+    "mainEntityOfPage":"https://ilans.net/writing/eight-keys-between-me-and-the-agents.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css?v=4">
+</head>
+<body class="c-teal">
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / Hardware · AI</p>
+      <h1>Eight keys between me <em>and the agents</em></h1>
+      <p class="dek">I bought a Stream Deck, never installed its software, and spent a day turning eight small screens into the place where my AI agents ask permission, show their progress, and stop when I press a key.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>9 October 2026</span><span>~9 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Agents</span><span class="tag">Hardware</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>Most of my working day now has an agent in it. Usually more than one. And the interface between us is a chat window: it asks for permission in the chat, it tells me it finished in the chat, and if I want it to stop, I have to find the right window and press Escape. That is fine when I am looking at it. It is a bad place to be interrupted from, and a worse place to keep an eye on four sessions at once.</p>
+
+      <p>So when I bought a Stream Deck Neo, the small one with eight keys and a strip of a display, I was not thinking about streaming. I was thinking about a second channel. Something on the desk that an agent can light up, and that I can press without switching context.</p>
+
+      <h2>It's a dumb device. Good.</h2>
+
+      <p>The first decision was not to install Elgato's app at all. A Stream Deck turns out to be refreshingly simple: eight tiny screens under keys, a 248 by 58 pixel display, two touch strips, all on USB. The device does not decide anything. It accepts a picture for a key, and it reports that a key went down or up. Everything else lives in whatever program is talking to it, and the protocol has been documented by the open-source community for years.</p>
+
+      <p>That means a key is just a picture I draw and a command I run. I wrote a small daemon that owns the device, draws every key and the display itself, and opens a local HTTP endpoint so that anything on the Mac, a script, a hook, an agent, can say "put a badge on key two" or "ask the user this and tell me what they pressed".</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/stream-deck/day-one.webp" type="image/webp">
+          <img src="img/stream-deck/day-one.jpg" width="1600" height="1200" alt="A Stream Deck Neo on a desk showing three text keys labelled Mute, WhatsApp and Mail, and a clock on its display.">
+        </picture>
+        <figcaption>Day one, a few hours in: three text keys and a clock. Everything after this is software.</figcaption>
+      </figure>
+
+      <h2>Approve from the desk</h2>
+
+      <p>The first real key was the one I had bought it for. Claude Code fires a hook whenever it is about to ask for permission. Mine sends the request to the daemon: the command appears on the display, and Approve and Deny light up on the bottom row. A press answers the agent directly and the terminal prompt never appears.</p>
+
+      <p>The part I cared about most was what happens when it fails. If I don't press anything within 25 seconds, if the daemon is down, or if the device is busy with another question, the hook returns nothing and Claude Code shows its normal prompt. The worst case is the old behaviour, never a stuck agent.</p>
+
+      <figure class="device">
+        <picture>
+          <source srcset="img/stream-deck/approval.webp" type="image/webp">
+          <img src="img/stream-deck/approval.png" width="1012" height="724" loading="lazy" alt="Rendering of the Stream Deck showing a shell command on its display, a Bash label on the first key, and green Approve and red Deny keys.">
+        </picture>
+        <figcaption>A permission request, rendered by the same code that draws the real device.</figcaption>
+      </figure>
+
+      <p>One honest note. Most of the time I run my sessions in a mode that never asks for permission at all, which means these keys never light up there. I found that out by testing the hook in a session that could not trigger it. The approval keys are for the sessions where I want a human in the loop, not for all of them.</p>
+
+      <h2>The key I didn't plan</h2>
+
+      <p>Halfway through the day I sent Claude a message that read <code>zv gucs nuzr vut nn,rdo</code>. I had typed Hebrew on the English keyboard layout, which anyone who writes in two alphabets does several times a day. Claude decoded it. The message itself was the feature request: select text typed on the wrong layout, press a key, and get the same keystrokes read on the other layout.</p>
+
+      <p>It is thirty lines, a fixed mapping between two keyboard layouts, no model involved, instant and free. It became the key I press most. The fancy AI keys I had planned, translate and rewrite, are used far less than the one that came out of a typo.</p>
+
+      <p>The same key also taught me the first lesson about physical interfaces. For a while it "sometimes converted and sometimes translated". The touch strips next to the display switch pages, they are sensitive, and on the second page the same position was Translate. Nothing on the device showed which page I was on. The fix was three small things: page dots on the display, touch strips that glow a different colour per page, and an automatic return to the first page after thirty idle seconds. On a device you use without looking, a mode you can't see is a bug.</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/stream-deck/today.webp" type="image/webp">
+          <img src="img/stream-deck/today.jpg" width="1600" height="1200" loading="lazy" alt="The same Stream Deck at night with icon keys: a speaker, a keyboard layout fix key, WhatsApp, Gmail, Claude, a personal avatar, LinkedIn and Facebook, and a clock with page dots on the display.">
+        </picture>
+        <figcaption>The same desk, the same evening. The keys carry live badges when there's something to show: unread messages, new mail, Claude sessions that finished or are waiting.</figcaption>
+      </figure>
+
+      <h2>macOS doesn't trust a background process</h2>
+
+      <p>The daemon runs in the background, started by the system at login. That turned out to be the hardest constraint of the whole project, because macOS privacy permissions are designed around apps a person launches.</p>
+
+      <p>The push-to-talk key recorded perfect silence. The microphone worked from my terminal, and recorded nothing from the daemon. A background Python process is never shown the "allow microphone" prompt, and unlike some other privacy lists, the Microphone list in System Settings has no plus button to add something by hand. The calendar had the same problem. The fix for both was to stop asking as the daemon: each one is now a tiny app bundle with its own name and its own usage description, launched through <code>open</code>. macOS asks once on behalf of "StreamDeck Mic", I allow it, and it remembers. Anything behind a privacy prompt now goes through a small app with its own name.</p>
+
+      <p>The same family of problem showed up twice more. Granting Full Disk Access to Python did nothing until the service started the actual Python binary inside the app bundle, because macOS checks the program that was launched, and a virtualenv symlink is a different program. And sending keystrokes through AppleScript failed with a permission error no matter what I granted Python, because the request came from <code>osascript</code>, not from Python. Posting the key events directly from Python fixed it.</p>
+
+      <h2>Voice, after watching Elgato do it</h2>
+
+      <p>Elgato showed a demo at CES this year of Stream Deck actions exposed to an AI model, so you speak and the model chooses which key to press. Most of the pieces were already on my desk, so I built my own version.</p>
+
+      <p>Hold the Talk key and speak. A local Whisper server transcribes it, in Hebrew or English, in about half a second once it is warm. It holds 1.8 GB of memory, so it starts on the first press and shuts itself down after ten idle minutes. The text goes to Claude Haiku with every key on the device described as a tool it can call, plus a few built-ins: a timer of any length, a note on the display, switching pages. It calls exactly one, or answers a question from live context like the next meeting or which of my servers is down.</p>
+
+      <p>Two rules make it safe enough to leave on. The model can only choose from the closed list of keys and built-ins, never a free-form command. And keys with a physical effect, like the robot vacuum, ask for a Yes on the device before they run. Eight test phrases in two languages were all routed correctly, and a spoken timer reaches the display about 1.2 seconds after I let go of the key.</p>
+
+      <h2>Letting the agents talk back</h2>
+
+      <p>Everything so far is one-directional: I press, something happens. The more interesting half came from turning the device into a tool the agents can use themselves. I wrote a small MCP server, the standard way to give Claude new tools, that wraps the daemon.</p>
+
+      <p>An agent can now ask me a multiple-choice question on the keys and wait for the press. It can show a real progress bar on the display for a long task. And before a long multi-step job it can put Pause, Continue and Stop on the bottom row, then check between steps whether I pressed one. If I pressed Pause, the check simply blocks until I press Continue or Stop.</p>
+
+      <figure class="pair">
+        <picture>
+          <source srcset="img/stream-deck/controls.webp" type="image/webp">
+          <img src="img/stream-deck/controls.png" width="1012" height="724" loading="lazy" alt="Rendering of an agent task under control: a progress bar reading Refactor auth 34 of 120 on the display, and Paused, Continue and Stop keys on the bottom row.">
+        </picture>
+        <picture>
+          <source srcset="img/stream-deck/sessions.webp" type="image/webp">
+          <img src="img/stream-deck/sessions.png" width="1012" height="724" loading="lazy" alt="Rendering of the sessions page: four coloured keys, one orange needing input, one green finished and two blue still working.">
+        </picture>
+        <figcaption>A paused agent task with its progress bar, and the sessions page: orange for waiting on me, green for finished, blue for working.</figcaption>
+      </figure>
+
+      <p>In the test run, a simulated task stopped at step 27 when I pressed Pause, resumed five seconds later on Continue, and at step 53 received a stop instruction, cleaned up, and removed its keys. That is the part of this I find genuinely new: stopping an agent from across the room, without finding its window.</p>
+
+      <p>The other half is the sessions page. The same hooks now track every Claude session: working, finished, or waiting for me. A page builds itself while sessions exist and disappears when they don't, one key per session, coloured by state and labelled with the session's real name from the app's sidebar. Pressing a key jumps straight to that session. With four sessions running, I no longer cycle through windows to find the one that is blocked.</p>
+
+      <div class="pull">The chat is where I work with an agent. The keys are where I keep an eye on all of them.</div>
+
+      <p>There is one tool I was careful with. An agent can add a key to the device, which sounds harmless until you remember that a key runs a command, and that the agent may have read a web page written by someone else on the way. So from a conversation, an agent can only add keys that open an app, open a link, or run a script that already exists. Anything else has to be entered by me in the dashboard. Reviewing that rule, I found a gap the tests had missed: a link in double quotes with <code>$(...)</code> inside it still runs a command. It is closed now, and it is the kind of hole I would rather find than read about.</p>
+
+      <h2>Moving it to another Mac</h2>
+
+      <p>At the end of the day I packaged a work version for a second Mac: no personal notifications, no home servers, and an installer that needs neither Homebrew nor admin rights. I tested it the pessimistic way, as if it had just arrived by AirDrop: every file marked as downloaded, the system's own Python, no developer tools. That test caught four things that would have failed on the other machine. Gatekeeper blocked a bundled library because it had been copied read-only, so the "downloaded" flag could not be removed. Hebrew on the display came out reversed, because Pillow loads its text-shaping library by bare name at import time, and loading it by path first does not count. The device library's newest versions crash on Python 3.9 despite claiming to support it. And the calendar helper sometimes finished before the command waiting for it noticed.</p>
+
+      <p>Rearranging the keys got a dashboard too: drag a key to swap it, drop an image on a key to replace its icon, and save straight to the device. It shares the same guarded write path as the agents, so a web page open in another tab can't rewrite my keys.</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/stream-deck/dashboard.webp" type="image/webp">
+          <img src="img/stream-deck/dashboard.png" width="2480" height="1520" loading="lazy" alt="Screenshot of the local dashboard: a rendering of the Stream Deck with the live keys marked, page tabs, and a side panel for editing the selected page.">
+        </picture>
+        <figcaption>The local dashboard (in Hebrew, which is how I use it). Keys marked LIVE carry a badge that follows them wherever they're moved.</figcaption>
+      </figure>
+
+      <h2>What a day was worth</h2>
+
+      <p>Some of this is a gadget, and I don't want to pretend otherwise. A mute key with an icon is a mute key. But two parts changed how I work, and both are about attention rather than speed. Status in peripheral vision: I know which sessions are done without looking for them. And decisions without a context switch: approve, pick an option, pause, stop, one press from wherever I am.</p>
+
+      <p>The caveats are real. All of this was built in a single day, and some of it has only been tested by me, on my desk. The microphone goes dark when the laptop lid is closed, which is a hardware privacy switch and not something software can route around. And the approval keys only matter in sessions where I let the agent ask.</p>
+
+      <p>What surprised me is how much of an interface for agents is not in the agent. It is in the ten thousand small decisions about who is allowed to ask what, and how you notice when something is waiting for you. Eight keys turned out to be a good place to make those decisions.</p>
+    </article>
+
+    <div class="end">
+      <div class="morenav">
+        <a href="the-library-nobody-opened.html">
+          <div class="k">More writing</div>
+          <div class="t">The library nobody opened</div>
+        </a>
+        <a class="next" href="draco-was-silently-dead.html">
+          <div class="k">Read next</div>
+          <div class="t">Draco was silently dead</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js?v=3" defer></script>
+</body>
+</html>

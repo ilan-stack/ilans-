@@ -276,3 +276,13 @@ footer a{color:var(--ink-muted)}
   *{transition:none !important; animation:none !important}
   html{scroll-behavior:auto}
 }
+
+/* figures (article pages) - photos and renders inside the essay */
+article figure{margin:34px 0 34px}
+article figure img{display:block; width:100%; height:auto; border-radius:var(--radius); border:1px solid var(--line); background:var(--bg-card)}
+article figure.device img{border:none; background:none; max-width:560px; margin:0 auto}
+article figure.pair{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+article figure.pair img{border:none; background:none}
+article figure.pair figcaption{grid-column:1 / -1}
+article figcaption{font-family:var(--mono); font-size:12px; line-height:1.6; color:var(--ink-dim); margin-top:12px; text-align:center}
+@media (max-width:640px){ article figure.pair{grid-template-columns:1fr} }
