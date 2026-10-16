@@ -40,7 +40,13 @@
     }, function () {
       card.setAttribute('data-status', 'unreachable');
       card.querySelector('.state').textContent = 'no response from this browser';
-    }).then(function () { clearTimeout(timer); done++; report(); });
+    }).then(function () {
+      clearTimeout(timer); done++; report();
+      if (done === cards.length) {
+        window.__appsUp = live;
+        document.querySelectorAll('[data-up]').forEach(function (n) { n.textContent = live; });
+      }
+    });
   }
 
   report();
@@ -534,4 +540,79 @@
       setTimeout(() => { if (!li.classList.contains('peeking')) v.pause(); }, 260);
     });
   }
+})();
+
+
+// Stat cubes: every few seconds the four stats roll forward in a wave, the next fact coming up
+// from the bottom face. Facts come from cv.json proof[].more. Pauses on hover, offscreen and in
+// background tabs; with reduced motion the first faces just stay.
+(() => {
+  const row = document.querySelector('.stats[data-every]');
+  if (!row || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const every = +row.dataset.every * 1000, stagger = +row.dataset.stagger * 1000;
+  const cubes = [...row.querySelectorAll('.stat[data-faces]')].map((st) => {
+    const faces = [st.querySelector('.face').innerHTML, ...JSON.parse(st.dataset.faces)];
+    return { st, cube: st.querySelector('.cube'), front: st.querySelector('.face'), faces, i: 0 };
+  });
+  if (!cubes.length) return;
+  // Sizes stay exactly what the first facts give: measure the row with the first faces, lock the
+  // column widths and tile heights, and let any longer fact shrink its type to fit instead.
+  function lock() {
+    const now = cubes.map((c) => c.front.innerHTML);
+    cubes.forEach((c) => { c.front.innerHTML = fresh(c.faces[0]); c.st.style.height = ''; fit(c.front, true); });
+    row.style.gridTemplateColumns = '';
+    const cols = getComputedStyle(row).gridTemplateColumns;
+    if (cols && cols !== 'none') row.style.gridTemplateColumns = cols;
+    cubes.forEach((c, k) => {
+      c.st.style.height = c.st.offsetHeight + 'px';
+      c.st.style.setProperty('--half', c.st.offsetHeight / 2 + 'px');
+      c.front.innerHTML = now[k]; fit(c.front);
+    });
+  }
+  function fit(face, reset) {
+    for (const el of face.querySelectorAll(':scope > b, :scope > span')) {
+      el.style.fontSize = '';
+      if (reset) continue;
+      const room = face.clientWidth - parseFloat(getComputedStyle(face).paddingLeft) * 2;
+      if (el.scrollWidth > room) {
+        const px = parseFloat(getComputedStyle(el).fontSize);
+        el.style.fontSize = Math.max(px * 0.7, px * room / el.scrollWidth - 0.2).toFixed(1) + 'px';
+      }
+    }
+  }
+  let rs = 0;
+  addEventListener('resize', () => { clearTimeout(rs); rs = setTimeout(lock, 120); });
+
+  const fresh = (html) => html.replace(/(<span data-up>)\d+/g, (m, open) => open + (window.__appsUp ?? m.slice(open.length)));
+  lock();
+  if (document.fonts) document.fonts.ready.then(lock);   // web fonts change the widths
+  function roll(c) {
+    if (c.cube.classList.contains('rolling')) return;
+    c.i = (c.i + 1) % c.faces.length;
+    const next = document.createElement('div');
+    next.className = 'face next';
+    next.innerHTML = fresh(c.faces[c.i]);
+    c.cube.append(next);
+    fit(next);
+    next.getBoundingClientRect();
+    c.cube.classList.add('rolling');
+    c.cube.addEventListener('transitionend', function done(e) {
+      if (e.target !== c.cube) return;
+      c.cube.removeEventListener('transitionend', done);
+      c.front.innerHTML = next.innerHTML;          // the bottom face becomes the front, cube snaps back unseen
+      fit(c.front);
+      next.remove();
+      c.cube.classList.remove('rolling');
+    });
+  }
+
+  let hover = false, seen = false, timer = 0;
+  row.addEventListener('pointerenter', () => { hover = true; });
+  row.addEventListener('pointerleave', () => { hover = false; });
+  new IntersectionObserver((es) => { seen = es[0].isIntersecting; }).observe(row);
+  function wave() {
+    if (!hover && seen && !document.hidden) cubes.forEach((c, k) => setTimeout(() => roll(c), k * stagger));
+    timer = setTimeout(wave, every);
+  }
+  timer = setTimeout(wave, every);
 })();
