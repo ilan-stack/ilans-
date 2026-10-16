@@ -434,3 +434,104 @@
     return f;
   }
 })();
+
+// App hover loops: a short muted clip of the app floats above its card while hovered.
+// It arrives and leaves through a TV signal-loss burst (same recipe as the portrait: sideways tear,
+// grain spike, a flash and a jump), drops out again at the loop seam and now and then while it plays.
+// Built lazily on first hover; desktop pointers only, never with reduced motion.
+(() => {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const INTENT_MS = 160;              // passing across the grid should not flash previews
+  const G = { tear: 46, contrast: 6, bias: -0.35, flash: 0.45, jump: 6, every: [1.6, 4.2] };
+  const NS = 'http://www.w3.org/2000/svg';
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  let uid = 0;
+
+  // one filter per card, so a preview leaving and the next arriving never share a burst
+  function makeFilter() {
+    const id = 'peek-g' + (++uid), k = G.contrast, ic = -(k - 1) / 2 + G.bias;
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'peek-defs'); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML =
+      `<filter id="${id}" x="-8%" y="0" width="116%" height="100%" color-interpolation-filters="sRGB">` +
+      '<feTurbulence type="turbulence" baseFrequency="0.0008 0.07" numOctaves="1" seed="2" result="bands"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="bands" scale="0" xChannelSelector="R" yChannelSelector="A" result="torn"/>' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="1" stitchTiles="stitch" result="noise"/>' +
+      '<feColorMatrix in="noise" type="saturate" values="0" result="mono"/>' +
+      `<feComponentTransfer in="mono" result="grain"><feFuncR type="linear" slope="${k}" intercept="${ic}"/>` +
+      `<feFuncG type="linear" slope="${k}" intercept="${ic}"/><feFuncB type="linear" slope="${k}" intercept="${ic}"/>` +
+      '<feFuncA type="linear" slope="0"/></feComponentTransfer>' +
+      '<feBlend in="grain" in2="torn" mode="hard-light"/></filter>';
+    document.body.append(svg);
+    const q = (sel) => svg.querySelector(sel);
+    return { id, bands: q('feTurbulence[result="bands"]'), tear: q('feDisplacementMap'),
+             noise: q('feTurbulence[result="noise"]'), alpha: q('feFuncA') };
+  }
+
+  for (const li of document.querySelectorAll('.app[data-clip]')) {
+    let v = null, f = null, timer = 0, raf = 0;
+    let burst = null, nextAt = 0, lastT = 0;
+
+    // k: 0..1 strength. decay: fades out over the burst (arrival) instead of jittering at full strength
+    const start = (ms, k, decay) => { burst = { t0: performance.now(), ms, k, decay }; loop(); };
+    const calm = () => {
+      f.tear.setAttribute('scale', 0); f.alpha.setAttribute('slope', 0);
+      v.style.filter = ''; v.style.transform = '';
+    };
+    function tick(now) {
+      raf = 0;
+      const live = li.classList.contains('peeking');
+      if (live && !v.paused) {
+        if (v.currentTime + 0.5 < lastT) start(rnd(160, 260), 0.85);          // the loop seam
+        lastT = v.currentTime;
+        if (!nextAt) nextAt = now + 1000 * rnd(...G.every);
+        if (!burst && now >= nextAt) { start(rnd(90, 220), rnd(0.55, 1)); nextAt = 0; }
+      }
+      if (burst) {
+        const p = (now - burst.t0) / burst.ms;
+        if (p >= 1) { burst = null; calm(); }
+        else {
+          const k = burst.decay ? burst.k * (1 - p) * (1 - p) : burst.k;
+          f.tear.setAttribute('scale', (G.tear * k * rnd(0.6, 1)).toFixed(1));
+          f.bands.setAttribute('seed', (Math.random() * 999 | 0) + 1);
+          f.noise.setAttribute('seed', (Math.random() * 999 | 0) + 1);
+          f.alpha.setAttribute('slope', k.toFixed(2));
+          v.style.filter = `url(#${f.id}) brightness(${(1 + G.flash * k * Math.random()).toFixed(2)})`;
+          v.style.transform = `translateX(${(rnd(-1, 1) * G.jump * k).toFixed(1)}px)`;
+        }
+      }
+      if (live || burst) loop();
+    }
+    const loop = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+    const prepare = () => {            // runs during the intent wait, so loading never stalls the entrance
+      if (v) return;
+      const peek = document.createElement('span');
+      peek.className = 'peek';
+      peek.setAttribute('aria-hidden', 'true');
+      v = document.createElement('video');
+      Object.assign(v, { muted: true, loop: true, playsInline: true, preload: 'auto' });
+      v.poster = li.dataset.clip + '.jpg';
+      v.src = li.dataset.clip + '.webm';
+      f = makeFilter();
+      peek.append(v);
+      li.append(peek);
+      peek.getBoundingClientRect();   // commit the hidden state first, or the first entrance skips its transition
+    };
+    const show = () => {
+      li.classList.add('peeking');
+      v.currentTime = 0; lastT = 0; nextAt = 0;
+      v.play().catch(() => {});
+      start(420, 1, true);             // the signal locks on
+    };
+    li.addEventListener('pointerenter', () => { prepare(); timer = setTimeout(show, INTENT_MS); });
+    li.addEventListener('pointerleave', () => {
+      clearTimeout(timer);
+      if (!li.classList.contains('peeking')) return;
+      li.classList.remove('peeking');
+      start(200, 0.9);                 // and drops out
+      setTimeout(() => { if (!li.classList.contains('peeking')) v.pause(); }, 260);
+    });
+  }
+})();
