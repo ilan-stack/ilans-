@@ -66,8 +66,10 @@ h1{font-family:var(--serif); font-weight:400; font-size:clamp(48px,9vw,88px); li
 .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px}
 .btn{display:inline-flex; align-items:center; gap:8px; height:44px; padding-inline:18px; border-radius:999px; font-size:15px; font-weight:600; border:1px solid var(--line-strong); color:var(--ink); background:var(--bg-card)}
 .btn:hover{text-decoration:none; border-color:var(--accent-line)}
-.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--btn-ink)}
-.btn.primary:hover{filter:brightness(1.08)}
+/* same gradient as the hand-drawn squiggle under "creative production" on the ilans.net hero */
+.btn.primary{background:linear-gradient(90deg,#8a7bff 0%,#c4b9ff 50%,#8a7bff 100%); background-size:200% 100%;
+  background-position:0% 0; border-color:transparent; color:#0b0b0d; transition:background-position .6s var(--ease)}
+.btn.primary:hover{background-position:100% 0}
 .btn .pulse{width:8px; height:8px; border-radius:50%; background:currentColor; animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
 .contact{display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:22px; font-size:14px; color:var(--ink-dim)}
