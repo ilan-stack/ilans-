@@ -46,3 +46,127 @@
   report();
   cards.forEach(ping);
 })();
+
+// ---------- portrait turntable behind the apps grid.
+// cv.json lists views for one side (angle, size, skull axis); the other side is the same view mirrored.
+// Each view is shown for the slice of the turn nearest its angle, so gaps between angles just hold longer.
+(function () {
+  var box = document.querySelector('.turntable[data-turntable]');
+  if (!box) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var cfg;
+  try { cfg = JSON.parse(box.getAttribute('data-turntable')); } catch (e) { return; }
+
+  var W = cfg.W, views = [];
+  cfg.frames.forEach(function (f) {
+    views.push({ f: f, angle: f.angle, mirror: false });
+    if (f.angle !== 0 && Math.abs(f.angle) !== 180) views.push({ f: f, angle: -f.angle, mirror: true });
+  });
+
+  var first = box.querySelector('img');
+  function place(img, v) {
+    var ax = v.mirror ? v.f.w - v.f.ax : v.f.ax;
+    img.style.left = ((W / 2 - ax) / W * 100).toFixed(3) + '%';
+    img.style.width = (v.f.w / W * 100).toFixed(3) + '%';
+    img.style.transform = v.mirror ? 'scaleX(-1)' : '';
+  }
+
+  // one <img> per view, stacked; only the current one is visible (no src swapping, no decode flicker)
+  var imgs = views.map(function (v) {
+    var img = new Image();
+    img.alt = ''; img.decoding = 'async'; img.src = v.f.file;
+    place(img, v); img.style.visibility = 'hidden';
+    return img;
+  });
+
+  function nearest(deg) {
+    var best = 0, bestD = 1e9;
+    views.forEach(function (v, i) {
+      var d = Math.abs(((deg - v.angle) % 360 + 540) % 360 - 180);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  var shown = -1, running = false, visible = true, t0 = null, spent = 0;
+  function show(i) {
+    if (i === shown) return;
+    if (shown >= 0) imgs[shown].style.visibility = 'hidden';
+    imgs[i].style.visibility = 'visible';
+    shown = i;
+  }
+  // living grain: a new noise pattern a few times a second (cv.json portrait.grain.fps)
+  var noise = document.getElementById('tt-noise'), grainEvery = cfg.grainFps ? 1000 / cfg.grainFps : 0,
+      grainAt = 0, seed = 1;
+
+  // signal-loss bursts (cv.json portrait.glitch): for a fraction of a second the image tears sideways,
+  // the grain spikes and the portrait flashes brighter, at random 1-2.5 s gaps so it never feels metronomic
+  var G = cfg.glitch, tear = document.getElementById('tt-tear'), bands = document.getElementById('tt-bands'),
+      ct = document.getElementById('tt-ct'), funcs = ct ? ct.children : [], calm = null,
+      burstUntil = 0, nextBurst = 0;
+  if (G && tear && ct) {
+    calm = [].map.call(funcs, function (f) { return [f.getAttribute('slope'), f.getAttribute('intercept')]; });
+  }
+  function grainLevel(strong) {
+    [].forEach.call(funcs, function (f, i) {
+      if (f.tagName === 'feFuncA') f.setAttribute('slope', strong ? G.strength : calm[i][0]);
+      else {
+        f.setAttribute('slope', strong ? G.contrast : calm[i][0]);
+        // bias < 0 pushes the noise below mid-grey, so the burst darkens instead of flashing white
+        f.setAttribute('intercept', strong ? -(G.contrast - 1) / 2 + (G.bias || 0) : calm[i][1]);
+      }
+    });
+  }
+  function glitch(now) {
+    if (!calm) return;
+    if (!nextBurst) nextBurst = now + 1000 * (G.every_min + Math.random() * (G.every_max - G.every_min));
+    if (now >= nextBurst && !burstUntil) {                      // start a burst, each one a different length
+      burstUntil = now + G.duration * 1000 * (0.6 + Math.random() * 0.8);
+      grainLevel(true);
+      box.style.opacity = G.opacity;
+    }
+    if (burstUntil) {
+      if (now < burstUntil) {                                   // jitter while it lasts
+        tear.setAttribute('scale', (G.tear * (0.65 + Math.random() * 0.35)).toFixed(1));
+        bands.setAttribute('seed', Math.floor(Math.random() * 999) + 1);
+        box.style.transform = 'translate(calc(-50% + ' + ((Math.random() * 2 - 1) * G.jump).toFixed(1) + 'px), -50%)';
+      } else {                                                  // back to calm
+        burstUntil = 0;
+        // sometimes the signal drops twice in a row, like a real bad antenna
+        nextBurst = Math.random() < (G.double || 0) ? now + 150 + Math.random() * 250 : 0;
+        tear.setAttribute('scale', 0); grainLevel(false);
+        box.style.opacity = ''; box.style.transform = '';
+      }
+    }
+  }
+  function frame(now) {
+    if (!running) return;
+    if (t0 === null) t0 = now - spent;
+    spent = now - t0;
+    if (noise && grainEvery && now - grainAt >= grainEvery) {
+      grainAt = now; seed = seed % 997 + 1; noise.setAttribute('seed', seed);
+    }
+    glitch(now);
+    var deg = -((spent / 1000) / cfg.seconds * 360) % 360;   // turns the same way as the source views
+    show(nearest(deg));
+    requestAnimationFrame(frame);
+  }
+  function update() {
+    var go = visible && !document.hidden;
+    if (go && !running) { running = true; t0 = null; requestAnimationFrame(frame); }
+    if (!go) running = false;
+  }
+
+  Promise.all(imgs.map(function (img) {
+    return img.decode ? img.decode().catch(function () {}) : Promise.resolve();
+  })).then(function () {
+    imgs.forEach(function (img) { box.appendChild(img); });
+    if (first) first.remove();
+    show(nearest(views[0].angle));
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; update(); }).observe(box);
+    }
+    document.addEventListener('visibilitychange', update);
+    update();
+  });
+})();
