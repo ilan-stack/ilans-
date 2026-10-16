@@ -1233,3 +1233,103 @@ try {
         trackEvent('pwa-installed');
     });
 })();
+
+
+/* ── About stats: cubes that roll through more facts ──
+   Facts live in each .stat's data-faces. Sizes are locked to the first facts so nothing
+   around them moves; a longer fact shrinks its type instead. Pauses on hover, offscreen and
+   in background tabs; with reduced motion the first facts just stay. */
+(function () {
+    var grid = document.querySelector('.stats-grid');
+    if (!grid || REDUCED || !('IntersectionObserver' in window)) return;
+    var EVERY = 5000, STAGGER = 140;
+    var cubes = Array.prototype.map.call(grid.querySelectorAll('.stat[data-faces]'), function (st) {
+        var html = function (num, label) {
+            var n = document.createElement('div'); n.className = 'stat-number'; n.textContent = num;
+            var l = document.createElement('div'); l.className = 'stat-label'; l.textContent = label;
+            return n.outerHTML + l.outerHTML;
+        };
+        // the first face is the real number, not whatever the count-up shows right now
+        var num = st.querySelector('.stat-number'), label = st.querySelector('.stat-label');
+        var first = num._target != null ? num._target + num._suffix
+                  : num._countTarget != null ? num._countTarget + num._countSuffix : num.textContent;
+        var faces = [html(first, label.textContent)].concat(JSON.parse(st.getAttribute('data-faces')).map(function (f) {
+            return html(f[0], f[1]);
+        }));
+        // move the live elements in (the count-up holds references to them), do not copy them
+        var cube = document.createElement('div'); cube.className = 'cube';
+        var face = document.createElement('div'); face.className = 'face';
+        while (st.firstChild) face.appendChild(st.firstChild);
+        cube.appendChild(face); st.appendChild(cube);
+        st.classList.add('cubed');
+        return { st: st, cube: cube, front: face, faces: faces, i: 0 };
+    });
+    if (!cubes.length) return;
+
+    function fit(face, reset) {
+        Array.prototype.forEach.call(face.children, function (el) {
+            el.style.fontSize = '';
+            if (reset) return;
+            var cs = getComputedStyle(face);
+            var room = face.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+            if (el.scrollWidth > room) {
+                var px = parseFloat(getComputedStyle(el).fontSize);
+                el.style.fontSize = Math.max(px * 0.65, px * room / el.scrollWidth - 0.2).toFixed(1) + 'px';
+            }
+        });
+    }
+    function lock() {
+        // measure with the first facts (only swap content in when another fact is showing)
+        var now = cubes.map(function (c) {
+            if (c.i === 0) return null;
+            var h = c.front.innerHTML; c.front.innerHTML = c.faces[0]; return h;
+        });
+        cubes.forEach(function (c) { c.st.style.height = ''; fit(c.front, true); });
+        grid.style.gridTemplateColumns = '';
+        var cols = getComputedStyle(grid).gridTemplateColumns;
+        if (cols && cols !== 'none') grid.style.gridTemplateColumns = cols;
+        cubes.forEach(function (c, k) {
+            var h = c.st.offsetHeight;
+            c.st.style.height = h + 'px';
+            c.st.style.setProperty('--half', h / 2 + 'px');
+            if (now[k] != null) c.front.innerHTML = now[k];
+            fit(c.front);
+        });
+    }
+    lock();
+    if (document.fonts) document.fonts.ready.then(lock);
+    var rs = 0;
+    window.addEventListener('resize', function () { clearTimeout(rs); rs = setTimeout(lock, 120); });
+
+    function roll(c) {
+        if (c.cube.classList.contains('rolling')) return;
+        c.i = (c.i + 1) % c.faces.length;
+        var next = document.createElement('div');
+        next.className = 'face next';
+        next.innerHTML = c.faces[c.i];
+        c.cube.appendChild(next);
+        fit(next);
+        next.getBoundingClientRect();
+        c.cube.classList.add('rolling');
+        c.cube.addEventListener('transitionend', function done(e) {
+            if (e.target !== c.cube) return;
+            c.cube.removeEventListener('transitionend', done);
+            c.front.innerHTML = next.innerHTML;   // the bottom face becomes the front, the cube snaps back unseen
+            fit(c.front);
+            c.cube.removeChild(next);
+            c.cube.classList.remove('rolling');
+        });
+    }
+    var hover = false, seen = false;
+    grid.addEventListener('pointerenter', function () { hover = true; });
+    grid.addEventListener('pointerleave', function () { hover = false; });
+    new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }).observe(grid);
+    (function wave() {
+        setTimeout(function () {
+            if (!hover && seen && !document.hidden) {
+                cubes.forEach(function (c, k) { setTimeout(function () { roll(c); }, k * STAGGER); });
+            }
+            wave();
+        }, EVERY);
+    })();
+})();

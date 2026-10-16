@@ -692,6 +692,18 @@ html[data-theme="light"] .mini-ask-ai:hover { background: #000; }
     margin-top: 10px;
 }
 
+/* About stats as cubes (main.js): every few seconds they roll forward in a wave, the next fact
+   rising from the bottom face. The size is locked to the first facts; longer ones shrink to fit. */
+.stat.cubed { padding: 0; background: none; border: 0; perspective: 900px; --half: 60px; }
+.stat.cubed .cube { position: relative; height: 100%; transform-style: preserve-3d; transform: translateZ(calc(-1 * var(--half))); }
+.stat.cubed .cube.rolling { transform: translateZ(calc(-1 * var(--half))) rotateX(90deg); transition: transform .8s cubic-bezier(.65,0,.25,1.2); }
+.stat.cubed .face {
+    height: 100%; padding: 26px 24px 22px; background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: var(--radius); transform: translateZ(var(--half)); backface-visibility: hidden;
+}
+.stat.cubed .face.next { position: absolute; inset: 0; transform: rotateX(-90deg) translateZ(var(--half)); }
+.stat.cubed .stat-number, .stat.cubed .stat-label { white-space: nowrap; }
+
 /* ── SKILLS ── */
 #skills .section-title { margin-bottom: 40px; }
 .skills-rows { border-top: 1px solid var(--line); }
@@ -1378,7 +1390,8 @@ html[data-theme="light"] .agent-spotlight { animation: agentSpotlightLight 2.8s 
     .about-photo-grid { grid-template-columns: 1fr; }
     .about-portrait { max-width: 220px; }
     .stats-grid { gap: 10px; }
-    .stat { padding: 20px 18px 16px; }
+    .stat, .stat.cubed .face { padding: 20px 18px 16px; }
+    .stat.cubed { padding: 0; }
     .stat-number { font-size: 34px; }
     .timeline { padding-left: 28px; }
     .timeline-item::before { left: -25px; }
