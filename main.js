@@ -966,6 +966,7 @@ function trackEvent(path) {
         { l: 'Auto-Caption',         k: 'Project', go: function() { focusCard('auto-caption'); } },
         { l: 'Toggle light / dark',  k: 'Action',  go: function() { var b = document.getElementById('themeToggle'); if (b) b.click(); } },
         { l: 'Email me',             k: 'Action',  go: function() { var a = document.querySelector('.nav-cta'); if (a) a.click(); } },
+        { l: 'Open CV',              k: 'Action',  go: function() { window.location.href = 'cv/'; } },
         { l: 'Download profile',     k: 'Action',  go: function() { window.open('ilan-lenzner-profile.pdf', '_blank', 'noopener'); } },
         { l: 'Ask my AI',            k: 'Action',  go: function() { var b = document.querySelector('.agent-launcher'); if (b) b.click(); } },
         { l: 'GitHub',               k: 'Action',  go: function() { window.open('https://github.com/ilan-stack', '_blank', 'noopener'); } },
