@@ -107,22 +107,50 @@
   if (G && tear && ct) {
     calm = [].map.call(funcs, function (f) { return [f.getAttribute('slope'), f.getAttribute('intercept')]; });
   }
-  function grainLevel(strong) {
+  // outside control (the ask box): face the visitor, think, speak. views[0] is the -15 view, the most frontal.
+  var mode = { attend: false, thinking: false, level: 0 }, speaking = false,
+      calmOpacity = parseFloat(getComputedStyle(box).opacity) || 0.22;
+  window.ttControl = {
+    attend: function (on) {
+      if (mode.attend && !on) { spent = (15 / 360) * cfg.seconds * 1000; t0 = null; }   // resume from the front
+      mode.attend = !!on;
+    },
+    thinking: function (on) { mode.thinking = !!on; nextBurst = 0; },
+    level: function (v) { mode.level = Math.max(0, Math.min(1, +v || 0)); }
+  };
+
+  // t = 0 calm grain, 1 full burst; anything between follows a voice
+  function grainMix(t) {
     [].forEach.call(funcs, function (f, i) {
-      if (f.tagName === 'feFuncA') f.setAttribute('slope', strong ? G.strength : calm[i][0]);
-      else {
-        f.setAttribute('slope', strong ? G.contrast : calm[i][0]);
-        // bias < 0 pushes the noise below mid-grey, so the burst darkens instead of flashing white
-        f.setAttribute('intercept', strong ? -(G.contrast - 1) / 2 + (G.bias || 0) : calm[i][1]);
-      }
+      var cs = +calm[i][0];
+      if (f.tagName === 'feFuncA') { f.setAttribute('slope', cs + (G.strength - cs) * t); return; }
+      var ci = +(calm[i][1] || 0), si = -(G.contrast - 1) / 2 + (G.bias || 0);
+      f.setAttribute('slope', cs + (G.contrast - cs) * t);
+      // bias < 0 pushes the noise below mid-grey, so a burst darkens instead of flashing white
+      f.setAttribute('intercept', ci + (si - ci) * t);
     });
+  }
+  function calmDown() {
+    tear.setAttribute('scale', 0); grainMix(0);
+    box.style.opacity = ''; box.style.transform = '';
   }
   function glitch(now) {
     if (!calm) return;
-    if (!nextBurst) nextBurst = now + 1000 * (G.every_min + Math.random() * (G.every_max - G.every_min));
+    if (mode.level > 0.03) {                                    // speaking: the signal follows the voice
+      var v = mode.level;
+      tear.setAttribute('scale', (G.tear * 0.5 * v).toFixed(1));
+      bands.setAttribute('seed', Math.floor(Math.random() * 999) + 1);
+      grainMix(Math.min(1, v * 1.2));
+      box.style.opacity = (calmOpacity + (G.opacity - calmOpacity) * v).toFixed(3);
+      speaking = true; burstUntil = 0;
+      return;
+    }
+    if (speaking) { speaking = false; calmDown(); nextBurst = 0; }
+    var lo = mode.thinking ? 0.18 : G.every_min, hi = mode.thinking ? 0.6 : G.every_max;
+    if (!nextBurst) nextBurst = now + 1000 * (lo + Math.random() * (hi - lo));
     if (now >= nextBurst && !burstUntil) {                      // start a burst, each one a different length
-      burstUntil = now + G.duration * 1000 * (0.6 + Math.random() * 0.8);
-      grainLevel(true);
+      burstUntil = now + (mode.thinking ? 0.12 : G.duration) * 1000 * (0.6 + Math.random() * 0.8);
+      grainMix(1);
       box.style.opacity = G.opacity;
     }
     if (burstUntil) {
@@ -134,21 +162,24 @@
         burstUntil = 0;
         // sometimes the signal drops twice in a row, like a real bad antenna
         nextBurst = Math.random() < (G.double || 0) ? now + 150 + Math.random() * 250 : 0;
-        tear.setAttribute('scale', 0); grainLevel(false);
-        box.style.opacity = ''; box.style.transform = '';
+        calmDown();
       }
     }
   }
   function frame(now) {
     if (!running) return;
-    if (t0 === null) t0 = now - spent;
-    spent = now - t0;
     if (noise && grainEvery && now - grainAt >= grainEvery) {
       grainAt = now; seed = seed % 997 + 1; noise.setAttribute('seed', seed);
     }
     glitch(now);
-    var deg = -((spent / 1000) / cfg.seconds * 360) % 360;   // turns the same way as the source views
-    show(nearest(deg));
+    if (mode.attend) {                                          // facing the visitor, not turning
+      t0 = null; show(0);
+    } else {
+      if (t0 === null) t0 = now - spent;
+      spent = now - t0;
+      var deg = -((spent / 1000) / cfg.seconds * 360) % 360;    // turns the same way as the source views
+      show(nearest(deg));
+    }
     requestAnimationFrame(frame);
   }
   function update() {
@@ -169,4 +200,237 @@
     document.addEventListener('visibilitychange', update);
     update();
   });
+})();
+
+
+// ---------- a link made for one company: ilans.net/cv/#for=<base64 json> (build.py --link).
+// The fragment never reaches a server, so no public file lists who Ilan is talking to.
+(function () {
+  var m = /[#&]for=([A-Za-z0-9_-]+)/.exec(location.hash);
+  if (!m) return;
+  var spec;
+  try {
+    var b = m[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    spec = JSON.parse(decodeURIComponent(escape(atob(b))));
+  } catch (e) { return; }
+  if (!spec || !spec.c) return;
+
+  var h1 = document.querySelector('header.hero h1');
+  if (h1) {
+    var tag = document.createElement('div'), who = document.createElement('b');
+    tag.className = 'prepared';
+    tag.appendChild(document.createTextNode('Prepared for '));
+    who.textContent = spec.c; tag.appendChild(who);
+    if (spec.r) tag.appendChild(document.createTextNode(' · ' + spec.r));
+    h1.insertAdjacentElement('afterend', tag);
+  }
+  var list = document.querySelector('.apps');                 // most relevant work first
+  if (list && spec.t && spec.t.length) {
+    [].slice.call(list.children).map(function (li, i) {
+      var tags = (li.getAttribute('data-tags') || '').split(' ');
+      return { li: li, i: i, s: spec.t.filter(function (t) { return tags.indexOf(t) >= 0; }).length };
+    }).sort(function (a, b) { return b.s - a.s || a.i - b.i; })
+      .forEach(function (x) { list.appendChild(x.li); });
+  }
+  if (spec.v && /^ilan-lenzner-cv[\w-]*\.pdf$/.test(spec.v)) {
+    var dl = document.querySelector('.actions a[download]');
+    if (dl) dl.setAttribute('href', spec.v);
+  }
+  var ta = document.getElementById('askText');
+  if (ta && !ta.value) {
+    ta.value = spec.r ? 'Is Ilan a fit for the ' + spec.r + ' role at ' + spec.c + '?'
+                      : 'Is Ilan a fit for ' + spec.c + '?';
+  }
+  document.title = 'CV - Ilan Lenzner, for ' + spec.c;
+})();
+
+// ---------- ask his AI: the same honest role-fit agent as the ilans.net widget, streamed in place.
+// The portrait turns to face the visitor, glitches while it thinks, and its signal follows the voice.
+(function () {
+  var form = document.querySelector('.ask-form');
+  if (!form) return;
+  var api = form.getAttribute('data-api'), ta = document.getElementById('askText'),
+      thread = document.getElementById('askThread'), btn = form.querySelector('button[type=submit]'),
+      history = [], idleTimer = null;
+  function tt(fn, v) { if (window.ttControl) window.ttControl[fn](v); }
+  function settleSoon(ms) { clearTimeout(idleTimer); idleTimer = setTimeout(function () { tt('attend', false); }, ms); }
+
+  [].forEach.call(document.querySelectorAll('[data-ask]'), function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('ask').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(function () { ta.focus({ preventScroll: true }); }, 450);
+    });
+  });
+
+  function strip(t) { return t.replace(/\[\[[^\]]*\]\]/g, '').replace(/[ \t]+\n/g, '\n').trim(); }
+  function linkify(el, text) {
+    el.textContent = '';
+    var re = /(https?:\/\/[^\s)]+|[\w.+-]+@[\w-]+\.[\w.]+|\b(?:[a-z0-9-]+\.)+(?:net|com|org|io|ai|app|cloud|dev)(?:\/[^\s)]*)?)/gi,
+        last = 0, m;
+    while ((m = re.exec(text))) {
+      var u = m[0].replace(/[.,;:!?]+$/, '');
+      el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement('a');
+      a.textContent = u;
+      a.href = /^https?:/.test(u) ? u : (/@/.test(u) ? 'mailto:' + u : 'https://' + u);
+      if (!/^mailto:/.test(a.href)) { a.target = '_blank'; a.rel = 'noopener'; }
+      el.appendChild(a);
+      last = m.index + u.length;
+    }
+    el.appendChild(document.createTextNode(text.slice(last)));
+  }
+  function bubble(cls, text) {
+    var d = document.createElement('div');
+    d.className = cls;
+    if (text) d.textContent = text;
+    thread.appendChild(d);
+    return d;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = ta.value.trim();
+    if (!q || btn.disabled) return;
+    if (history.length >= 22) history = history.slice(-20);
+    history.push({ role: 'user', content: q });
+    bubble('ask-q', q);
+    var a = bubble('ask-a thinking', 'Thinking...'), answer = '';
+    ta.value = ''; btn.disabled = true;
+    clearTimeout(idleTimer); tt('attend', true); tt('thinking', true);
+
+    fetch(api + '/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history })
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.json().catch(function () { return {}; }).then(function (d) {
+          throw new Error(d.error || 'The AI is not answering right now - the real one is at ilan@ilans.net.');
+        });
+      }
+      var reader = res.body.getReader(), dec = new TextDecoder(), buf = '';
+      function pump() {
+        return reader.read().then(function (step) {
+          if (step.done) return;
+          buf += dec.decode(step.value, { stream: true });
+          var lines = buf.split('\n');
+          buf = lines.pop();
+          lines.forEach(function (line) {
+            if (line.indexOf('data: ') !== 0) return;
+            try {
+              var ev = JSON.parse(line.slice(6));
+              if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
+                if (!answer) { a.classList.remove('thinking'); tt('thinking', false); }
+                answer += ev.delta.text;
+                a.textContent = strip(answer);
+              }
+            } catch (err) {}
+          });
+          return pump();
+        });
+      }
+      return pump();
+    }).then(function () {
+      tt('thinking', false);
+      if (!answer) throw new Error('No answer this time - try again, or write to ilan@ilans.net.');
+      var clean = strip(answer);
+      history.push({ role: 'assistant', content: clean });
+      linkify(a, clean);
+      var tools = document.createElement('div');
+      tools.className = 'tools';
+      if (clean.length <= 1600) {
+        var say = document.createElement('button');
+        say.type = 'button'; say.textContent = 'Hear it in his voice';
+        say.addEventListener('click', function () { speak(clean, say); });
+        tools.appendChild(say);
+      }
+      a.appendChild(tools);
+      if (/\[\[lead\]\]/.test(answer)) a.appendChild(leadForm());
+      settleSoon(9000);
+    }).catch(function (err) {
+      tt('thinking', false);
+      a.classList.remove('thinking');
+      a.textContent = err.message;
+      history.pop();
+      settleSoon(3000);
+    }).then(function () { btn.disabled = false; });
+  });
+
+  ta.addEventListener('keydown', function (e) {                 // Cmd/Ctrl+Enter sends
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (form.requestSubmit) form.requestSubmit(); else btn.click();
+    }
+  });
+
+  var ctx = null, current = null;
+  function speak(text, button) {
+    if (current) { current.pause(); current = null; tt('level', 0); }
+    button.disabled = true; button.textContent = 'Getting his voice...';
+    clearTimeout(idleTimer); tt('attend', true);
+    try {                                                       // create/resume inside the click, while it counts as a gesture
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+    } catch (e) { ctx = null; }
+    fetch(api + '/tts', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('voice');
+      return r.blob();
+    }).then(function (blob) {
+      var audio = new Audio(URL.createObjectURL(blob));
+      current = audio;
+      if (ctx) {
+        var an = ctx.createAnalyser(), data = new Uint8Array(512);
+        an.fftSize = 512;
+        ctx.createMediaElementSource(audio).connect(an);
+        an.connect(ctx.destination);
+        audio.addEventListener('playing', function loop() {
+          if (audio.paused || audio.ended) { tt('level', 0); return; }
+          an.getByteTimeDomainData(data);
+          var sum = 0;
+          for (var i = 0; i < data.length; i++) { var x = (data[i] - 128) / 128; sum += x * x; }
+          tt('level', Math.min(1, Math.sqrt(sum / data.length) * 4));
+          requestAnimationFrame(loop);
+        });
+      }
+      audio.addEventListener('ended', function () {
+        tt('level', 0); current = null;
+        button.disabled = false; button.textContent = 'Hear it again';
+        settleSoon(4000);
+      });
+      button.textContent = 'Speaking...';
+      return audio.play();
+    }).catch(function () {
+      tt('level', 0);
+      button.disabled = false; button.textContent = 'Voice unavailable right now';
+      settleSoon(3000);
+    });
+  }
+
+  function leadForm() {
+    var f = document.createElement('form');
+    f.className = 'lead';
+    f.innerHTML = '<input name="name" placeholder="Your name" required autocomplete="name">' +
+                  '<input name="email" type="email" placeholder="Email" required autocomplete="email">' +
+                  '<textarea name="note" rows="2" placeholder="Role or project, in a line (optional)"></textarea>' +
+                  '<button class="btn primary" type="submit">Send to Ilan</button>';
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(f), sb = f.querySelector('button');
+      sb.disabled = true; sb.textContent = 'Sending...';
+      fetch(api + '/lead', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fd.get('name'), email: fd.get('email'), note: fd.get('note') })
+      }).then(function (r) {
+        if (!r.ok) throw new Error();
+        f.innerHTML = '<span class="ok">Sent - Ilan gets it right away.</span>';
+      }).catch(function () {
+        sb.disabled = false; sb.textContent = 'Did not go through - try again, or ilan@ilans.net';
+      });
+    });
+    return f;
+  }
 })();

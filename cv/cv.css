@@ -173,3 +173,54 @@ footer{padding-block:56px 48px; margin-top:40px; border-top:1px solid var(--line
 @media print{
   nav.top, .actions, body::before{display:none}
 }
+
+/* ---------- screen-reader only */
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
+
+/* ---------- prepared-for banner (per-company link) */
+.prepared{display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:6px 12px; border-radius:999px;
+  border:1px solid var(--accent-line); background:var(--accent-wash); font-size:13px; color:var(--ink)}
+.prepared b{font-weight:650}
+
+/* ---------- shipping pulse: stat tile + 30-day columns (dataviz: single series, accent = last 7 days) */
+section.pulse{padding-block:36px 0}
+section.pulse .as-of{letter-spacing:.04em; text-transform:none; color:var(--ink-dim)}
+.pulse-row{display:flex; align-items:flex-end; gap:28px; flex-wrap:wrap}
+.pulse-fig b{display:block; font-size:clamp(34px,5vw,46px); line-height:1; font-weight:650; letter-spacing:-.02em; color:var(--ink-strong)}
+.pulse-fig span{display:block; margin-top:6px; font-size:14px; color:var(--ink-muted)}
+.pulse-fig .sub{font-size:13px; color:var(--ink-dim)}
+.pulse-bars{--bar-old:#5f55ad; --bar-now:#8a7bff;
+  flex:1 1 320px; min-width:0; height:72px; display:flex; align-items:flex-end; gap:2px; border-bottom:1px solid var(--line)}
+html[data-theme="light"] .pulse-bars{--bar-old:#8378dc; --bar-now:#4d3ed1}
+.pulse-bars .col{position:relative; flex:1 1 0; max-width:24px; height:100%; display:flex; align-items:flex-end; cursor:default}
+.pulse-bars .col i{display:block; width:100%; border-radius:4px 4px 0 0; background:var(--bar-old)}
+.pulse-bars .col.now i{background:var(--bar-now)}
+.pulse-bars .col:hover i{filter:brightness(1.2)}
+.pulse-bars .col::after{content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  white-space:nowrap; padding:5px 9px; border-radius:6px; background:var(--bg-card-hi); border:1px solid var(--line-strong);
+  font-size:12px; color:var(--ink); opacity:0; pointer-events:none; transition:opacity .15s; z-index:2}
+.pulse-bars .col:hover::after, .pulse-bars .col:focus-visible::after{opacity:1}
+.pulse-bars .col:nth-child(-n+6)::after{left:0; transform:none}
+.pulse-bars .col:nth-last-child(-n+6)::after{left:auto; right:0; transform:none}
+
+/* ---------- ask his AI */
+.ask textarea{width:100%; min-height:96px; resize:vertical; padding:14px 16px; border-radius:var(--radius);
+  border:1px solid var(--line-strong); background:var(--bg-card); color:var(--ink); font:inherit; font-size:15px; line-height:1.5}
+.ask textarea:focus{outline:none; border-color:var(--accent-line); box-shadow:0 0 0 3px var(--accent-wash)}
+.ask-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:10px}
+.ask-note{font-size:13px; color:var(--ink-dim); flex:1 1 280px}
+.ask .btn[disabled]{opacity:.6; cursor:progress}
+.ask-thread{margin-top:18px; display:grid; gap:12px}
+.ask-q{justify-self:end; max-width:85%; padding:10px 14px; border-radius:14px 14px 4px 14px; background:var(--accent-wash);
+  border:1px solid var(--accent-line); font-size:14px; color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere;
+  max-height:9.5em; overflow:auto}
+.ask-a{padding:14px 16px; border-radius:14px 14px 14px 4px; background:var(--bg-card); border:1px solid var(--line);
+  font-size:15px; line-height:1.6; color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere}
+.ask-a.thinking{color:var(--ink-dim)}
+.ask-a .tools{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; white-space:normal}
+.ask-a .tools button{height:34px; padding-inline:14px; border-radius:999px; border:1px solid var(--line-strong);
+  background:transparent; color:var(--ink); font:inherit; font-size:13px; cursor:pointer}
+.ask-a .tools button:hover{border-color:var(--accent-line)}
+.lead{display:grid; gap:8px; margin-top:12px; white-space:normal}
+.lead input, .lead textarea{padding:9px 12px; border-radius:10px; border:1px solid var(--line-strong); background:var(--bg); color:var(--ink); font:inherit; font-size:14px}
+.lead .ok{color:var(--ok)}
