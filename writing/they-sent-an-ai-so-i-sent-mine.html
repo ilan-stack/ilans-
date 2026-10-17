@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>They sent an AI, so I sent mine - Ilan Lenzner</title>
+  <meta name="description" content="The first round of an AI Engineer interview was a recorded video with nobody on the other side. I sent my AI avatar to answer it, with a banner on every frame saying so, and approved each answer from a key on my desk before it spoke. How it was built in a morning, what broke, and why the disclosed version is the only one worth building.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, AI avatar, async video interview, AI interviewer, voice clone, Playwright, getUserMedia, human in the loop, Claude Code, Stream Deck, disclosure, creative technologist">
+
+  <link rel="canonical" href="https://ilans.net/writing/they-sent-an-ai-so-i-sent-mine.html">
+  <meta property="og:title" content="They sent an AI, so I sent mine - Ilan Lenzner">
+  <meta property="og:description" content="A recorded video interview with no one on the other side, answered by my AI avatar, openly. Built in a morning, every answer approved by me before it played.">
+  <meta property="og:image" content="https://ilans.net/writing/img/avatar/frame.jpg">
+  <meta property="og:url" content="https://ilans.net/writing/they-sent-an-ai-so-i-sent-mine.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-10-17">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="They sent an AI, so I sent mine">
+  <meta name="twitter:description" content="A recorded video interview with no one on the other side, answered by my AI avatar, openly. Built in a morning, every answer approved by me before it played.">
+  <meta name="twitter:image" content="https://ilans.net/writing/img/avatar/frame.jpg">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"They sent an AI, so I sent mine",
+    "description":"Answering an asynchronous video interview with a disclosed AI avatar: a Playwright-driven Chrome whose camera and microphone are replaced by a canvas and an audio bus, a persona agent and a cloned voice, and a human approval step on a Stream Deck before every answer is spoken.",
+    "image":"https://ilans.net/writing/img/avatar/frame.jpg",
+    "datePublished":"2026-10-17","dateModified":"2026-10-17","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["AI Agents","Human-in-the-loop","Voice Cloning","AI Disclosure","Hiring"],
+    "mainEntityOfPage":"https://ilans.net/writing/they-sent-an-ai-so-i-sent-mine.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css?v=4">
+</head>
+<body class="c-coral">
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI · Agents</p>
+      <h1>They sent an AI, <em>so I sent mine</em></h1>
+      <p class="dek">The first round of an AI Engineer interview was a recorded video with nobody on the other side. I sent my AI avatar to answer it, with a banner on every frame saying so, and approved each answer from a key on my desk before it spoke. Twenty-eight minutes from the email to the submit button.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>17 October 2026</span><span>~8 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Agents</span><span class="tag">Hiring</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>On Saturday morning I got a reminder that a digital interview was still waiting for me, for an AI Engineer role in the AI division of a large Israeli insurer. I had opened the link a few days earlier and closed it again. The format is an asynchronous video interview: a question appears on screen, the camera records your answer, the answers are transcribed automatically, and nobody from the company is in the room. The first reader of whatever I said was going to be software.</p>
+
+      <p>The role is about building agents. So this time I pasted the email into Claude Code and asked it to take over the browser and handle the interview for me.</p>
+
+      <h2>The agent said no first</h2>
+
+      <p>It opened the page, read the job description, clicked through to the screen that asks for camera access, and stopped there. Then it told me what it would not do: build an avatar, a deepfake or a virtual camera that answers in my place without the company knowing. What it offered instead was to drive the screens and prepare notes for me while I answered myself, or to do the whole thing in the open, with the screen saying plainly that an agent was answering.</p>
+
+      <p>I pushed back. I said I wanted to get around the camera on purpose, and that the interviewer was an AI anyway. It held its position, and its argument was better than mine. The software only filters, it said; at the end of the pipeline there are people who will watch the recordings that pass, and they are the ones who would feel deceived. And the point I was trying to make works far better openly. "You sent an AI to interview me, so I sent mine to answer" is a sentence a hiring manager in an AI division remembers. In the hidden version, the best outcome is that nobody notices.</p>
+
+      <p>Then I said what I actually meant, which was the same thing: I didn't want them to think it was me. I wanted them to see it was my avatar. And I already had most of one, running in public at <a href="https://talk.ilans.net/" target="_blank" rel="noopener">talk.ilans.net</a>.</p>
+
+      <h2>A camera that is a canvas</h2>
+
+      <p>talk.ilans.net is a persona of me that people can chat with or call: a Claude-based agent that knows my work and is strict about not inventing facts, and a cloned voice. It has a chat endpoint and a speech endpoint. What it did not have was a way into someone else's video recorder.</p>
+
+      <p>The bridge is about 150 lines of Python and 100 of JavaScript. Python starts a dedicated Chrome through Playwright, with its own profile so it never touches my real browser. Before any page script runs, an injected script replaces <code>navigator.mediaDevices.getUserMedia</code>. Whatever the page asks for, it gets back a stream made of two things I control:</p>
+
+      <ul>
+        <li><strong>Video</strong> from a 1280 by 720 canvas, captured at 30 frames a second: my portrait in a circle, a waveform that moves with the voice, live captions, and a banner across the top that is drawn on every single frame. There is no code path that hides it.</li>
+        <li><strong>Audio</strong> from a Web Audio bus. Each answer is voiced by the clone, decoded, and played into the bus and to my speakers at the same time, so I hear exactly what the recording hears. A silent oscillator keeps the track alive between answers, so the recorder never sees a dead microphone.</li>
+      </ul>
+
+      <p>The device list is replaced too, so the page sees one camera and one microphone, both labelled as Ilan's AI avatar. A small local HTTP API lets the agent drive it: open a page, read its text, click a button by its label, voice a text, take a screenshot.</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/avatar/frame.webp" type="image/webp">
+          <img src="img/avatar/frame.jpg" width="1280" height="720" alt="The avatar camera feed: a lilac banner across the top reading, in Hebrew, Ilan Lenzner's AI avatar, not Ilan himself, sent openly and on purpose. Below it a circular portrait of Ilan, a purple waveform, a Hebrew caption, and the line Ilan Lenzner's AI avatar, brain and voice: talk.ilans.net.">
+        </picture>
+        <figcaption>The feed during the local test, mid-sentence. The banner says, in Hebrew: "Ilan Lenzner's AI avatar - not Ilan himself. Sent openly and on purpose."</figcaption>
+      </figure>
+
+      <p>Before going near the real interview, the agent recorded fourteen seconds from the fake camera while the avatar spoke, and checked the file for both the picture and the voice. That passed seven minutes after I pasted the email. Then the brain: the persona already knew most of what the role asks for, so the bridge adds one paragraph of context per question. It names the role, lists the exact numbers it may use and says not to round them, and tells it that on the degree, salary and availability, the honest answer is that I will cover those myself.</p>
+
+      <h2>Ten seconds is not enough time to think</h2>
+
+      <p>The interview platform accepted the avatar camera without complaint. The candidate photo it saved for my file is the avatar frame, banner included, and the right way round. The format turned out to be strict in one place: each question is shown for ten seconds with a note not to answer yet, then recording starts on its own and runs until you press Finish. There is no going back to a previous question.</p>
+
+      <p>Ten seconds is less than the pipeline needs. Drafting an answer, then making it ready to speak, then voicing it, takes well over that. And I had asked for one more step that cannot be fast: I wanted to see every answer before it was spoken.</p>
+
+      <p>The fix was to make the delay honest. The agent starts drafting the moment a question appears. As soon as recording starts, the avatar says a short line in my voice: <em>"Ilan reviews each of my answers before I speak it. One moment while he reads this one."</em> The draft appears in a review panel inside the avatar's browser window, which is page markup and never part of the recorded canvas. And the decision goes to my desk.</p>
+
+      <h2>The key that decides</h2>
+
+      <p>I wrote a few weeks ago about <a href="eight-keys-between-me-and-the-agents.html">turning a Stream Deck into a channel for my agents</a>. This was the first time it mattered. For each answer the agent asked on the device: Approve, Rewrite or Skip. I read the draft on screen and pressed a key. The first three approvals took about three seconds each. The silence in each recording is mostly the machine, not me.</p>
+
+      <div class="pull">The pause before every answer isn't a flaw in the demo. It is the demo: a human in the loop, audible on the recording.</div>
+
+      <p>Two questions went differently. For salary, the device offered Defer, Give range or Skip. I thought about it for twenty-six seconds and pressed Skip. That is a question I want to answer in a conversation, not through an avatar. So the recorded answer to "what are your salary expectations" is the avatar saying that Ilan is reviewing, and then nothing until the next question. The draft that would have deferred it politely was never played.</p>
+
+      <p>The closing question, whether I had anything to add, got two drafts. The first was all machinery, an explanation of how the answers were made. Nobody pressed anything for ninety seconds, and the second version kept one line of that and spent the rest on me: a designer who writes his own code, who came up through 3D and medical modelling, and who tests an idea cheaply on real data before committing weeks to it. That is the one I approved. It opens with the sentence the whole morning was built around: <em>"You sent an AI to interview Ilan, so he sent his AI to answer, openly, because that's the job you're hiring for."</em></p>
+
+      <h2>The persona wouldn't speak English</h2>
+
+      <p>I wanted the answers in English. The persona behind talk.ilans.net is built to talk with me in Hebrew, and the context paragraph I had added that morning was written in Hebrew too. Asking it for English did not win against either. Every draft came back in Hebrew.</p>
+
+      <p>So a second agent sat between the persona and me: the same Claude Code session running the bridge translated each draft and checked it against facts it could verify before it reached the review panel. In practice it did more than translate. The draft for the production-code question led with the avatar itself and a lesson about evaluation. The version I approved led with the strongest production evidence I have: more than forty-five AI tools I built at Sett that a creative team of over a hundred people used every day. The persona wrote a first draft. An editor made it an answer. I decided whether it was spoken.</p>
+
+      <p>That three-step chain is, I think, the real answer to "use a stronger AI". The stronger thing was not a bigger model. It was a pipeline with a persona that knows my work, an editor with a different job, and a person with a veto.</p>
+
+      <h2>What went wrong</h2>
+
+      <ul>
+        <li><strong>Dead air on the first question.</strong> The practice question and the real ones use different page layouts. The script that reads the question off the page found nothing, recording had already started, and the agent handled the first answer by hand. The first answer opens with a few seconds of silence before the avatar speaks.</li>
+        <li><strong>Every answer starts with a wait.</strong> The hold line covers it honestly, but a reviewer still watches a pause before each answer. A faster pipeline would shorten it. I chose not to rush the one step that was a person.</li>
+        <li><strong>The language instruction lost.</strong> A persona's standing context beats a one-line instruction in the message. Worth knowing for anyone who builds a persona and then tries to reuse it somewhere new.</li>
+      </ul>
+
+      <div class="tablewrap">
+        <table class="data">
+          <thead><tr><th>Time</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">09:23</td><td>The reminder email, pasted into Claude Code with "take over the browser"</td></tr>
+            <tr><td class="mono">09:24</td><td>The agent stops at the camera screen and declines the hidden version</td></tr>
+            <tr><td class="mono">09:27</td><td>"I want them to see it's my avatar"</td></tr>
+            <tr><td class="mono">09:30</td><td>Fourteen-second test recording: avatar picture and cloned voice both present</td></tr>
+            <tr><td class="mono">09:36</td><td>The interview platform accepts the avatar camera; the candidate photo is saved with the banner</td></tr>
+            <tr><td class="mono">09:41</td><td>First answer approved on the Stream Deck</td></tr>
+            <tr class="hi"><td class="mono">09:47</td><td>Salary: Skip</td></tr>
+            <tr><td class="mono">09:50</td><td>Closing answer approved</td></tr>
+            <tr><td class="mono">09:51</td><td>Interview submitted</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Why open, and not just better</h2>
+
+      <p>Afterwards I said the obvious thing: the way to deal with an interviewer that is an AI is to answer with a stronger AI. The agent agreed, and then pointed out that what made the difference was the banner, not the strength. A stronger AI in secret is an arms race. They improve detection, you improve evasion, and the best result available to you is that nobody notices. A disclosed one stops being a test you are trying to pass and becomes a demonstration of the job they are hiring for.</p>
+
+      <p>There is a quieter reason too. The voice is a clone of mine and the face is my photo. Without the banner, that is impersonation, whatever the intent. With the banner on every frame, the same pieces are a portfolio piece. The difference between the two is one rectangle that the code is not allowed to remove.</p>
+
+      <p>I don't want to oversell the outcome. This was an unusual way to answer a screening, and a conservative reviewer could reasonably reject it for not following the format. I have not heard back from the insurer, I don't expect to, and nothing here suggests they endorse any of it. The degree and salary questions are still mine to answer, if anyone asks.</p>
+
+      <p>But the experiment was worth running for what it showed me. The first response of the agent I work with every day was to refuse the dishonest version, and to argue me into a better one. The interesting engineering was not the fake camera, which took minutes. It was deciding what the avatar is allowed to say, where the human sits in the loop, and making sure the one fact that matters most is drawn on every frame.</p>
+    </article>
+
+    <div class="end">
+      <div class="card">
+        <div>
+          <div class="k">Try it</div>
+          <div class="t">The persona that answered the interview - chat with it, or call it</div>
+        </div>
+        <a class="cta" href="https://talk.ilans.net/" target="_blank" rel="noopener">Talk to the avatar &rarr;</a>
+      </div>
+
+      <div class="morenav">
+        <a href="eight-keys-between-me-and-the-agents.html">
+          <div class="k">More writing</div>
+          <div class="t">Eight keys between me and the agents</div>
+        </a>
+        <a class="next" href="build-the-fake-inputs-first.html">
+          <div class="k">Read next</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js?v=3" defer></script>
+</body>
+</html>
