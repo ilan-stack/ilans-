@@ -69,6 +69,7 @@
         'sprite-studio': '[data-focus="sprite-studio"]',
         cubelets: '[data-focus="cubelets"]',
         'ai-studio': '[data-focus="ai-studio"]',
+        tvbox: '[data-focus="tvbox"]',
         carscan: '[data-focus="carscan"]',
         'roborock': '[data-focus="roborock"]',
         library: '[data-focus="library"]',
