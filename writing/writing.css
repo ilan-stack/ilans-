@@ -286,3 +286,20 @@ article figure.pair img{border:none; background:none}
 article figure.pair figcaption{grid-column:1 / -1}
 article figcaption{font-family:var(--mono); font-size:12px; line-height:1.6; color:var(--ink-dim); margin-top:12px; text-align:center}
 @media (max-width:640px){ article figure.pair{grid-template-columns:1fr} }
+
+/* compare: two small images with labels and a score between them (v5) */
+article figure.compare{margin:34px 0}
+.cmp{display:grid; grid-template-columns:180px 1fr 180px; gap:18px; align-items:center; justify-content:center;
+  background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius); padding:22px 26px; max-width:640px; margin:0 auto}
+.cmp-item{display:grid; gap:10px; justify-items:center}
+.cmp-k{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); text-align:center}
+.cmp-item img{width:180px; height:180px; object-fit:cover; border-radius:12px; border:1px solid var(--line); display:block}
+.cmp-mid{display:grid; gap:6px; justify-items:center; text-align:center}
+.cmp-v{font-family:var(--serif); font-size:44px; line-height:1; color:var(--c)}
+.cmp-n{font-family:var(--mono); font-size:11px; line-height:1.5; color:var(--ink-dim)}
+.cmp-scale{font-family:var(--mono); font-size:11px; color:var(--ink-muted); border-top:1px solid var(--line); padding-top:8px; margin-top:4px}
+@media (max-width:640px){
+  .cmp{grid-template-columns:1fr 1fr; padding:18px}
+  .cmp-mid{grid-column:1 / -1; order:3}
+  .cmp-item img{width:100%; height:auto; aspect-ratio:1}
+}

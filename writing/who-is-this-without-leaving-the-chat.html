@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>Who is this, without leaving the chat - Ilan Lenzner</title>
+  <meta name="description" content="Halfway through a conversation the question is usually who this person is, and answering it means stopping to search. I built a Chrome side panel that answers it inside LinkedIn and Facebook Messenger chats, only in threads I'm part of. Most of the work was deciding what it should refuse to do.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, Chrome extension, side panel, Claude, LLM, identity resolution, privacy by design, human in the loop, feasibility test, creative technologist">
+
+  <link rel="canonical" href="https://ilans.net/writing/who-is-this-without-leaving-the-chat.html">
+  <meta property="og:title" content="Who is this, without leaving the chat - Ilan Lenzner">
+  <meta property="og:description" content="A Chrome side panel that tells me who I'm talking to on LinkedIn and Facebook Messenger while the conversation is still happening, only in threads I'm part of. Tested on fake inputs first, and the photo shortcut I decided not to take.">
+  <meta property="og:image" content="https://ilans.net/writing/img/who-is-this/og.jpg">
+  <meta property="og:url" content="https://ilans.net/writing/who-is-this-without-leaving-the-chat.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-10-26">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Who is this, without leaving the chat">
+  <meta name="twitter:description" content="A Chrome side panel that tells me who I'm talking to on LinkedIn and Facebook Messenger while the conversation is still happening, only in threads I'm part of. Tested on fake inputs first, and the photo shortcut I decided not to take.">
+  <meta name="twitter:image" content="https://ilans.net/writing/img/who-is-this/og.jpg">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Who is this, without leaving the chat",
+    "description":"A Chrome side panel that briefs me on the person I'm chatting with on LinkedIn or Messenger, only in threads I have replied in: a content script that reads the thread header and message metadata, a local server that runs web searches and asks Claude for a sourced brief, and the decisions about what it must not do.",
+    "image":"https://ilans.net/writing/img/who-is-this/og.jpg",
+    "datePublished":"2026-10-26","dateModified":"2026-10-26","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["LLM","Chrome Extensions","Privacy by Design","Human-in-the-loop","Feasibility Testing"],
+    "mainEntityOfPage":"https://ilans.net/writing/who-is-this-without-leaving-the-chat.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css?v=5">
+</head>
+<body class="c-amber">
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI · Product</p>
+      <h1>Who is this, <em>without leaving the chat</em></h1>
+      <p class="dek">Halfway through a conversation, the question is usually who this person actually is. Answering it means stopping, opening a tab and searching. I built a Chrome side panel that answers it inside LinkedIn and Facebook Messenger, while the chat is open, only in threads I'm part of. Most of the time went into deciding what it should refuse to do.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>26 October 2026</span><span>~7 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Product</span><span class="tag">Privacy</span></span>
+      </p>
+    </header>
+
+    <article>
+      <figure>
+        <picture>
+          <source srcset="img/who-is-this/hero.webp" type="image/webp">
+          <img src="img/who-is-this/hero.jpg" width="1600" height="979" alt="A Chrome window on linkedin.com/messaging with a conversation from Daniel Sorkin-Lavi asking for a call. Docked on the right, the Who is this side panel shows his photo and name, a green Identified, high confidence pill, a one-line summary, and sourced facts under the label Not visible on the profile.">
+        </picture>
+        <figcaption>On LinkedIn, in day mode: the panel docks next to the conversation and answers before I have to ask. The people and companies in this piece are fictional and their photos are generated; the panel is the real one, running on made-up data.</figcaption>
+      </figure>
+
+      <p>Most of my new conversations start in a message. Someone writes on LinkedIn about a project, someone answers a Marketplace listing on Facebook, an old colleague resurfaces after two years. By the second or third message I usually want to know who I'm talking to: what their company does, what they've worked on, whether we have something in common. And every time, the answer lives in another tab.</p>
+
+      <p>So the conversation stops. I open the profile, then a search, then the company site, and come back a few minutes later having half forgotten what I was going to say. I wanted the answer to be there already, next to the chat, while the conversation is still happening.</p>
+
+      <p>I built it as a Chrome extension with a side panel. It works in LinkedIn messaging and in Facebook Messenger, both on the full messages pages and in the small chat windows that pop up at the bottom of the feed. Open a chat, and the panel shows who is on the other side, with a source for every line.</p>
+
+      <h2>Test the premise before the extension</h2>
+
+      <p>The extension itself is the easy part. The part that decides whether it is worth building is identity. Plenty of people share a name, and a language model will happily merge three of them into one confident paragraph. A brief about the wrong person is worse than no brief at all, because it sounds right.</p>
+
+      <p>So before any extension code, I wrote a small script: run a few web searches, hand the results to Claude, and ask for a brief that only states facts it can tie to an anchor (the profile URL, or details that match what I already know). Name alone is not a match. If several people fit, say so. If nobody fits, say that. And every fact has to carry the URL of the search result it came from.</p>
+
+      <p>Then, as I've <a href="build-the-fake-inputs-first.html">written before</a>, I fed it inputs where I knew the right answer was nothing. An invented name with an invented job. A very common Israeli name with a vague context line. A real name with plenty of search results, paired with a context that fits none of them. All three came back empty: "not found" or "ambiguous", no facts. In the common-name case it found a near match, an engineer at the right kind of company, and rejected him because he lived in a different city. That was the behaviour I wanted before trusting it with anything real.</p>
+
+      <p>Only then did it run on six people I had actually been messaging. All six were identified, every cited source was one of the real search results, and the three I know personally were described correctly.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Real contacts</div><div class="v ok">6 / 6</div><div class="n">identified with a matching anchor</div></div>
+        <div class="stat"><div class="k">Invented sources</div><div class="v accent">0</div><div class="n">every fact cites a search result</div></div>
+        <div class="stat"><div class="k">Decoy inputs</div><div class="v ok">3 / 3</div><div class="n">correctly returned nothing</div></div>
+        <div class="stat"><div class="k">Per brief</div><div class="v">~$0.05</div><div class="n">10 to 25 seconds, then cached</div></div>
+      </div>
+
+      <h2>A correct answer that didn't help</h2>
+
+      <p>One of the six was an old friend I used to work with. The brief about him was accurate, sourced, and completely useless to me. I know who he is. What I didn't know was what had happened since we last talked, and the brief had no idea we had a history at all.</p>
+
+      <p>That split the panel into two modes. <strong>Who is this?</strong> is for someone new: what isn't visible on their profile, and a few natural ways to open. <strong>What's new?</strong> is for someone I already know: it reads the dates in the thread, finds the last time we talked, and looks only for things that happened after it. A private note per person, kept only in my browser, tells it what I already know and anchors the search. A note, or a thread history older than a month, switches the default to What's new.</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/who-is-this/known.webp" type="image/webp">
+          <img src="img/who-is-this/known.jpg" width="1600" height="1003" loading="lazy" alt="A Chrome window on facebook.com/messages with a Messenger chat with Omri Teller, where the last message before today is from March 2024. The panel is in What's new mode, with the label New since 3.3.2024 and four dated items: a new Creative Director role, a conference talk, a typeface side project, and closing his freelance studio.">
+        </picture>
+        <figcaption>In Messenger, with an old friend: What's new mode shows only things dated after the last time we talked, newest first.</figcaption>
+      </figure>
+
+      <h2>Ambiguous is not an answer</h2>
+
+      <p>The first time I used it for real, on a Marketplace chat, it said "ambiguous": at least two people with that name. That was honest, and it was also no help. The model had found both of them and then shown me neither, because I had told it never to guess.</p>
+
+      <p>Not guessing was right. Hiding what it found was not. Now an ambiguous result shows each person as a separate card, with what was found about that person only and where it came from, and a button that says <em>That's them</em>. The panel still never merges two people into one. It just stops pretending the choice isn't mine. Picking one is remembered for that contact and becomes the anchor for every later brief.</p>
+
+      <figure>
+        <picture>
+          <source srcset="img/who-is-this/candidates.webp" type="image/webp">
+          <img src="img/who-is-this/candidates.jpg" width="1600" height="1194" loading="lazy" alt="A Chrome window on facebook.com with a Marketplace chat popup at the bottom of the feed, from Gal Shenhar, whose chat photo is a family on a beach. The panel shows an amber Ambiguous pill and two cards: Gal Shenhar in DevOps and security at Larkspur Networks with an office headshot and three sourced facts, and Gal Shenhar in IT services at Bramble Systems with a different headshot and one fact. Each card has a That's them button.">
+        </picture>
+        <figcaption>In a Facebook Marketplace chat popup: two people with the same name, shown apart. The decision stays with the person in the conversation.</figcaption>
+      </figure>
+
+      <h2>The shortcut I didn't take</h2>
+
+      <p>Looking at that screen, the obvious idea is the photo. The chat shows one, the candidates have one, so let the machine match them and skip the cards.</p>
+
+      <p>I tested the harmless version of that first: not comparing faces, only checking whether the chat photo is the same picture as a candidate's profile photo, using a perceptual hash. Identical pictures score close to zero. The chat photo against the right person's profile photo scored between 21 and 28. Photos of entirely different people, used as a control, scored between 19 and 41. In other words, no signal at all.</p>
+
+      <figure class="compare">
+        <div class="cmp">
+          <div class="cmp-item">
+            <span class="cmp-k">Facebook chat photo</span>
+            <picture>
+              <source srcset="img/who-is-this/photo-chat.webp" type="image/webp">
+              <img src="img/who-is-this/photo-chat.jpg" width="400" height="400" loading="lazy" alt="Generated photo of a man crouching on a Tel Aviv beach with his wife and two young children.">
+            </picture>
+          </div>
+          <div class="cmp-mid">
+            <span class="cmp-v">30</span>
+            <span class="cmp-n">hash distance<br>same man</span>
+            <span class="cmp-scale">different men: 24 to 34<br>identical photos: under 8</span>
+          </div>
+          <div class="cmp-item">
+            <span class="cmp-k">LinkedIn profile photo</span>
+            <picture>
+              <source srcset="img/who-is-this/photo-profile.webp" type="image/webp">
+              <img src="img/who-is-this/photo-profile.jpg" width="400" height="400" loading="lazy" alt="Generated LinkedIn profile photo of the same man in a navy shirt by an office window.">
+            </picture>
+          </div>
+        </div>
+        <figcaption>The same check on two generated photos of one fictional man. His own two photos score further apart than photos of three different men.</figcaption>
+      </figure>
+
+      <p>The reason is obvious once you see it. People put a family photo where they talk to friends and a headshot where they look for work. The only thing those two images share is a face, and matching faces to find out who a stranger is, is a different kind of tool from the one I set out to build. It is also the kind I don't think should exist as a browser extension. So the photos stay in the panel, for me to look at, and the machine doesn't decide anything from them.</p>
+
+      <div class="pull">The model never says who someone is from a face. It shows me what it found and lets me decide.</div>
+
+      <h2>What it reads, and what it doesn't</h2>
+
+      <p>Most of the rules came from the same question: what is the smallest amount this thing needs to see?</p>
+
+      <ul>
+        <li><strong>Only threads I'm part of.</strong> If I haven't replied in a thread, the panel says so and searches for nothing. No profiles, feeds, comments or message requests from strangers.</li>
+        <li><strong>Only the header and metadata.</strong> The content script takes the name, the headline, the profile link, who sent each message and when. What the messages say is never kept, searched or sent anywhere.</li>
+        <li><strong>Keys and searches stay on my machine.</strong> The panel talks to a small server on my laptop, which runs the searches and calls Claude. The extension holds no API keys, and the server refuses requests from any web page.</li>
+        <li><strong>Professional, public, and sourced.</strong> Role, company, work, talks, public posts. No addresses, family, health, religion, politics or money, even when a search result mentions them. Any fact whose source isn't among the search results is dropped before it reaches the screen.</li>
+        <li><strong>Nothing is stored about anyone.</strong> Briefs are cached for three days so switching tabs doesn't cost another search. Notes and picks live in my browser.</li>
+      </ul>
+
+      <h2>What went wrong</h2>
+
+      <ul>
+        <li><strong>It didn't work where I actually chat.</strong> I had built and tested it on the full messaging pages. In practice I talk in the small chat popups at the bottom of the feed. On LinkedIn those live inside a shadow DOM the content script couldn't see; on Facebook they are a different structure altogether, and a Marketplace chat has no profile link at all, only a first name and an avatar.</li>
+        <li><strong>The empty panel.</strong> After installing it, the panel stayed blank. Tabs that were open before an extension loads have no content script, and a bug in the panel turned the "reload this page" message into the empty state. The fix was to stop asking: the panel now injects the script itself when it finds a tab without one.</li>
+        <li><strong>Messenger has little to anchor on.</strong> Facebook profiles are barely indexed by search engines and the profile page doesn't contain the intro. Without a note, many Messenger contacts come back as not found. That is the correct answer, and it is still the weakest part of the tool.</li>
+      </ul>
+
+      <h2>Why it stays on my machine</h2>
+
+      <p>It works, and I use it, but I'm not releasing it. A public extension that reads LinkedIn pages runs against their terms, and a tool for researching the people in your conversations is easy to turn into a tool for researching anyone. The version that makes sense to me is the narrow one: my threads, my notes, a model that shows its sources, and a person who makes the call.</p>
+
+      <p>The interesting engineering wasn't the scraping or the prompt. It was the list of things the panel refuses to do, and making each of those refusals a line of code rather than a hope.</p>
+
+      <div class="note">
+        <b>About the examples.</b> Daniel, Omri, Gal, Quillmark, Brightloom, Larkspur and Bramble are made up, and every photo in this piece is generated. The numbers come from the real tests on real contacts, whose names stay out of it.
+      </div>
+    </article>
+
+    <div class="end">
+      <div class="morenav">
+        <a href="they-sent-an-ai-so-i-sent-mine.html">
+          <div class="k">More writing</div>
+          <div class="t">They sent an AI, so I sent mine</div>
+        </a>
+        <a class="next" href="build-the-fake-inputs-first.html">
+          <div class="k">Read next</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js?v=3" defer></script>
+</body>
+</html>
