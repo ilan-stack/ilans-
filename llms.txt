@@ -1,0 +1,37 @@
+# Ilan Lenzner (אילן לנצנר)
+
+> Ilan Lenzner is a Creative Technologist and Design Engineer in Tel Aviv, Israel. He designs and builds AI tools for creative and ad production teams, AI agents that keep a human in control, and private AI on a team's own hardware. He designs in Figma and ships in code. Hebrew name: אילן לנצנר. Sometimes misspelled Ilan Lentsner.
+
+Works in Hebrew and English, in Tel Aviv or remote. Contact: ilan@ilans.net.
+
+## Services
+
+- [Custom AI tools for creative and ad production teams](https://ilans.net/services/ai-tools-for-creative-teams.html): AI inside the tools a creative team already uses, such as ten AI modules inside After Effects used daily by a 100+ person creative team.
+- [AI agents and workflow automation](https://ilans.net/services/ai-agents-and-automation.html): agents that ask before they act, with approve, pause and stop controls; tested on decoy inputs before they are trusted.
+- [Private, self-hosted AI](https://ilans.net/services/private-ai-on-your-own-hardware.html): open models on hardware the team owns; 25+ models on one $500 secondhand PC, zero cloud.
+- [AI implementation for organizations, in Hebrew](https://ai.ilans.net/): mapping, quick-win pilots, building and connecting to existing systems, training.
+
+## Selected work
+
+- [Lens](https://lens.ilans.net/): a free, non-profit reading and writing tool for people with dyslexia; web app, Chrome extension and Android, in four languages.
+- [Downshift](https://tapersafe.ilans.net/): a medication-tapering app on the App Store, 100% on-device.
+- [After Effects Hub](https://ae-hub.ilans.net/): ten AI modules inside After Effects.
+- [The AI Studio experiment](https://ai-studio.ilans.net/): a $500 PC turned headless GPU server running 25+ open models through one web app.
+- [dnswatch](https://dnswatch.ilans.net/): a home DNS resolver that names the company behind every request with a local model, and marks each answer as verified fact or model guess.
+- [Sprite Studio](https://sprite-studio.ilans.net/): video-to-spritesheet pipeline with AI grid detection.
+
+## Experience
+
+- Senior Product Designer, AI Tools, Sett (2025-2026): 45+ AI production tools for playable-ad teams; AI character animation from 4 hours to 15 minutes per asset.
+- Design Lead, Digital Health, Rabin Medical Center (2023-2025).
+- Product Designer at PlayBatch and Bites; Creative Director at justAd and Market Group; 500+ rich media campaigns at eyeblaster.
+
+## Writing
+
+- [All writing](https://ilans.net/writing/): long-form posts on building AI tools, including the experiments that failed.
+
+## Optional
+
+- [CV](https://ilans.net/cv/)
+- [GitHub](https://github.com/ilan-stack)
+- [LinkedIn](https://www.linkedin.com/in/ilan-lenzner-395ba64/)

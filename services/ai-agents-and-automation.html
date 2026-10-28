@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta')&&document.getElementById('themeColorMeta').setAttribute('content','#f6f4ef');}}catch(e){}})();</script>
+  <title>AI agents and workflow automation with a human in control - Ilan Lenzner</title>
+  <meta name="description" content="I build AI agents that do real work, read the calendar, act on a request, run a long task, and the controls that keep a person in charge of them: approve, pause, stop, and see what is running.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <link rel="canonical" href="https://ilans.net/services/ai-agents-and-automation.html">
+  <meta property="og:title" content="AI agents and workflow automation with a human in control - Ilan Lenzner">
+  <meta property="og:description" content="I build AI agents that do real work, read the calendar, act on a request, run a long task, and the controls that keep a person in charge of them: approve, pause, stop, and see what is running.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:url" content="https://ilans.net/services/ai-agents-and-automation.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+  <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://ilans.net/services/ai-agents-and-automation.html#service",
+   "name": "AI agents and workflow automation with a human in control",
+   "serviceType": "AI agent development and workflow automation",
+   "description": "I build AI agents that do real work, read the calendar, act on a request, run a long task, and the controls that keep a person in charge of them: approve, pause, stop, and see what is running.",
+   "provider": {
+    "@type": "Person",
+    "@id": "https://ilans.net/#ilan",
+    "name": "Ilan Lenzner",
+    "alternateName": "אילן לנצנר",
+    "url": "https://ilans.net/"
+   },
+   "areaServed": [
+    {
+     "@type": "Country",
+     "name": "Israel"
+    },
+    "Worldwide (remote)"
+   ],
+   "url": "https://ilans.net/services/ai-agents-and-automation.html"
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://ilans.net/services/ai-agents-and-automation.html#faq",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "How do you stop an agent from doing something it shouldn't?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "By putting the decision points in front of a person. In Eight Keys every risky action waits for a physical key press, and any running agent can be paused or stopped."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Will the agent make things up?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It answers from a defined set of facts. Before trusting a tool I test it on inputs where I know the right answer is nothing, and I make it say when it is guessing."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Does it work in Hebrew?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. Talking Vacuum and the AI twin on this site both work in Hebrew and English."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you share what you learn?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, in long-form posts under Writing, including the experiments that failed, like the shared library four agents never used."
+     }
+    }
+   ]
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Ilan Lenzner",
+     "item": "https://ilans.net/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://ilans.net/services/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "AI agents and workflow automation with a human in control",
+     "item": "https://ilans.net/services/ai-agents-and-automation.html"
+    }
+   ]
+  }
+ ]
+}
+  </script>
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="../writing/writing.css?v=5">
+  <style>:lang(he){font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Arial Hebrew",Arial,sans-serif;letter-spacing:0;text-transform:none}</style>
+</head>
+<body class="c-teal">
+  <div id="progress"></div>
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All services
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Services / Agents</p>
+      <h1>AI agents and automation, <em>with a human in control</em></h1>
+      <p class="dek">I build AI agents that do real work, read the calendar, act on a request, run a long task, and the controls that keep a person in charge of them: approve, pause, stop, and see what is running.</p>
+      <p class="byline"><span>Ilan Lenzner</span><span lang="he" dir="rtl">אילן לנצנר</span><span>Tel Aviv or remote</span></p>
+    </header>
+    <article>
+      <h2>Who it's for</h2>
+      <ul><li>Teams that want an agent to take over a repetitive task but need to approve what it does.</li><li>Products that need a voice or chat assistant grounded in real facts, not a demo.</li><li>Anyone who wants to test whether an agent can do the job before paying for a build.</li></ul>
+      <h2>What you get</h2>
+      <ul><li><strong>Agents that ask before they act.</strong> In Eight Keys, agents ask permission on a physical key, show their progress, and pause or stop when I press.</li><li><strong>Natural language to one concrete action.</strong> Talking Vacuum turns a sentence in Hebrew or English into one action on a robot's real floor plan.</li><li><strong>Assistants that stick to facts.</strong> The AI twin on this site talks, listens and gives voice-guided tours, and answers only from a facts file.</li><li><strong>A test before the build.</strong> Every tool starts with a cheap feasibility test on real inputs and on decoys where the right answer is nothing.</li></ul>
+      <div class="stats"><div class="stat"><div class="k">AI agent skills</div><div class="v">35+</div><div class="n">built</div></div><div class="stat"><div class="k">Decoy inputs</div><div class="v">3 / 3</div><div class="n">correctly returned nothing in a recent build</div></div><div class="stat"><div class="k">Library pulls</div><div class="v">0</div><div class="n">agents offered a matching library on four tasks</div></div><div class="stat"><div class="k">Languages</div><div class="v">2</div><div class="n">Hebrew and English</div></div></div>
+      <h2>How it works</h2>
+      <ol><li><strong>Name the task and the decision points</strong> where a person has to approve.</li><li><strong>Test the premise cheaply</strong> on real inputs and on inputs where the answer should be nothing.</li><li><strong>Build the agent and its controls together</strong>: approval, progress, pause and stop.</li><li><strong>Hand over</strong> with the facts it is allowed to use written down.</li></ol>
+      <h2>Questions</h2>
+      <h3>How do you stop an agent from doing something it shouldn&#x27;t?</h3>
+      <p>By putting the decision points in front of a person. In Eight Keys every risky action waits for a physical key press, and any running agent can be paused or stopped.</p>
+      <h3>Will the agent make things up?</h3>
+      <p>It answers from a defined set of facts. Before trusting a tool I test it on inputs where I know the right answer is nothing, and I make it say when it is guessing.</p>
+      <h3>Does it work in Hebrew?</h3>
+      <p>Yes. Talking Vacuum and the AI twin on this site both work in Hebrew and English.</p>
+      <h3>Do you share what you learn?</h3>
+      <p>Yes, in long-form posts under Writing, including the experiments that failed, like the shared library four agents never used.</p>
+      
+      <div class="note"><b>See the work.</b> <a href="../writing/eight-keys-between-me-and-the-agents.html">Eight keys between me and the agents</a> · <a href="../writing/the-library-nobody-opened.html">The library nobody opened</a> · <a href="../writing/build-the-fake-inputs-first.html">Build the fake inputs first</a></div>
+      <p><strong>Want to talk about your team?</strong> A two-line email is enough: <a href="mailto:ilan@ilans.net?subject=AI agents and workflow automation with a human in control">ilan@ilans.net</a>.</p>
+    </article>
+    <footer>
+      <a href="../index.html">Ilan Lenzner</a> · <span lang="he" dir="rtl">אילן לנצנר</span> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="mailto:ilan@ilans.net">ilan@ilans.net</a> · <a href="https://ai.ilans.net/" lang="he" dir="rtl">בעברית: הטמעת AI בארגונים</a>
+    </footer>
+  </div>
+  <script src="../writing/writing.js?v=3" defer></script>
+</body>
+</html>

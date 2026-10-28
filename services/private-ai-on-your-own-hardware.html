@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta')&&document.getElementById('themeColorMeta').setAttribute('content','#f6f4ef');}}catch(e){}})();</script>
+  <title>Private, self-hosted AI on your own hardware - Ilan Lenzner</title>
+  <meta name="description" content="I set up open AI models on hardware you own, so images, video, speech and text are generated without your data leaving the building and without a monthly subscription per seat.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <link rel="canonical" href="https://ilans.net/services/private-ai-on-your-own-hardware.html">
+  <meta property="og:title" content="Private, self-hosted AI on your own hardware - Ilan Lenzner">
+  <meta property="og:description" content="I set up open AI models on hardware you own, so images, video, speech and text are generated without your data leaving the building and without a monthly subscription per seat.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:url" content="https://ilans.net/services/private-ai-on-your-own-hardware.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+  <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://ilans.net/services/private-ai-on-your-own-hardware.html#service",
+   "name": "Private, self-hosted AI on your own hardware",
+   "serviceType": "Self-hosted AI infrastructure",
+   "description": "I set up open AI models on hardware you own, so images, video, speech and text are generated without your data leaving the building and without a monthly subscription per seat.",
+   "provider": {
+    "@type": "Person",
+    "@id": "https://ilans.net/#ilan",
+    "name": "Ilan Lenzner",
+    "alternateName": "אילן לנצנר",
+    "url": "https://ilans.net/"
+   },
+   "areaServed": [
+    {
+     "@type": "Country",
+     "name": "Israel"
+    },
+    "Worldwide (remote)"
+   ],
+   "url": "https://ilans.net/services/private-ai-on-your-own-hardware.html"
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://ilans.net/services/private-ai-on-your-own-hardware.html#faq",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What hardware do we need?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Less than you might think. The AI Studio experiment runs 25+ models on a $500 secondhand PC with an 8GB graphics card. The limits are real, and the experiment documents them."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is the quality as good as cloud tools?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "For many tasks it is close, for some it is not. The point of a test first is to find out which on your own files before you commit."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can it run models in Hebrew?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Speech and text models handle Hebrew at different levels, so I test on Hebrew inputs before recommending one."
+     }
+    }
+   ]
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Ilan Lenzner",
+     "item": "https://ilans.net/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://ilans.net/services/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Private, self-hosted AI on your own hardware",
+     "item": "https://ilans.net/services/private-ai-on-your-own-hardware.html"
+    }
+   ]
+  }
+ ]
+}
+  </script>
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="../writing/writing.css?v=5">
+  <style>:lang(he){font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Arial Hebrew",Arial,sans-serif;letter-spacing:0;text-transform:none}</style>
+</head>
+<body class="c-amber">
+  <div id="progress"></div>
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All services
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Services / Self-hosted AI</p>
+      <h1>Private AI <em>on your own hardware</em></h1>
+      <p class="dek">I set up open AI models on hardware you own, so images, video, speech and text are generated without your data leaving the building and without a monthly subscription per seat.</p>
+      <p class="byline"><span>Ilan Lenzner</span><span lang="he" dir="rtl">אילן לנצנר</span><span>Tel Aviv or remote</span></p>
+    </header>
+    <article>
+      <h2>Who it's for</h2>
+      <ul><li>Teams whose files cannot go to a cloud AI service: client assets, medical, legal, unreleased work.</li><li>Studios paying for several AI subscriptions that would rather own the capability.</li><li>Anyone who wants to know what a small budget can actually run before buying hardware.</li></ul>
+      <h2>What you get</h2>
+      <ul><li><strong>A complete studio on one machine.</strong> The AI Studio experiment turned a $500 secondhand PC into a headless GPU server running 25+ open models through one web app, reachable from any device.</li><li><strong>Infrastructure that heals itself.</strong> Self-healing services, no cloud, no subscriptions, and discipline about what fits in 8GB of video memory.</li><li><strong>Local models that admit what they don't know.</strong> dnswatch names the company behind every network request with a model on my own GPU, and marks each answer as verified fact or model guess.</li></ul>
+      <div class="stats"><div class="stat"><div class="k">Open models</div><div class="v">25+</div><div class="n">on one $500 box</div></div><div class="stat"><div class="k">Monthly cost</div><div class="v">$0</div><div class="n">no cloud, no subscriptions</div></div><div class="stat"><div class="k">Companies contacted</div><div class="v">154</div><div class="n">by the devices in one home, found in one afternoon</div></div><div class="stat"><div class="k">Requests blocked</div><div class="v">1 in 5</div><div class="n">after dnswatch went live</div></div></div>
+      <h2>How it works</h2>
+      <ol><li><strong>List what you need to generate</strong> and what must never leave your network.</li><li><strong>Match models to the hardware you have</strong>, or to the smallest budget that runs them.</li><li><strong>Set it up behind one interface</strong> your team can use from any device.</li><li><strong>Make it recover on its own</strong> and show you when it is guessing.</li></ol>
+      <h2>Questions</h2>
+      <h3>What hardware do we need?</h3>
+      <p>Less than you might think. The AI Studio experiment runs 25+ models on a $500 secondhand PC with an 8GB graphics card. The limits are real, and the experiment documents them.</p>
+      <h3>Is the quality as good as cloud tools?</h3>
+      <p>For many tasks it is close, for some it is not. The point of a test first is to find out which on your own files before you commit.</p>
+      <h3>Can it run models in Hebrew?</h3>
+      <p>Speech and text models handle Hebrew at different levels, so I test on Hebrew inputs before recommending one.</p>
+      
+      <div class="note"><b>See the work.</b> <a href="https://ai-studio.ilans.net/">The AI Studio experiment</a> · <a href="https://dnswatch.ilans.net/">dnswatch</a></div>
+      <p><strong>Want to talk about your team?</strong> A two-line email is enough: <a href="mailto:ilan@ilans.net?subject=Private, self-hosted AI on your own hardware">ilan@ilans.net</a>.</p>
+    </article>
+    <footer>
+      <a href="../index.html">Ilan Lenzner</a> · <span lang="he" dir="rtl">אילן לנצנר</span> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="mailto:ilan@ilans.net">ilan@ilans.net</a> · <a href="https://ai.ilans.net/" lang="he" dir="rtl">בעברית: הטמעת AI בארגונים</a>
+    </footer>
+  </div>
+  <script src="../writing/writing.js?v=3" defer></script>
+</body>
+</html>

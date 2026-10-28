@@ -9,7 +9,7 @@
     <meta name="description" content="Ilan Lenzner - Creative Technologist & Design Engineer in Tel Aviv. I design and ship AI-powered products end-to-end, used daily by 100+ creatives.">
     <meta name="author" content="Ilan Lenzner">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="keywords" content="Ilan Lenzner, product designer, design engineer, AI tools, Tel Aviv, UX, design systems, creative technologist">
+    <meta name="keywords" content="Ilan Lenzner, אילן לנצנר, creative technologist, design engineer, custom AI tools for creative teams, AI agents, self-hosted AI, Tel Aviv">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Ilan Lenzner | Creative Technologist & Design Engineer">
@@ -44,7 +44,7 @@
                 "@type": "Person",
                 "@id": "https://ilans.net/#ilan",
                 "name": "Ilan Lenzner",
-                "alternateName": "אילן לנצנר",
+                "alternateName": ["אילן לנצנר", "Ilan Lentsner"],
                 "givenName": "Ilan",
                 "familyName": "Lenzner",
                 "url": "https://ilans.net/",
@@ -60,6 +60,11 @@
                     "addressCountry": "IL"
                 },
                 "knowsLanguage": ["English", "Hebrew"],
+                "makesOffer": [
+                    {"@type": "Offer", "itemOffered": {"@id": "https://ilans.net/services/ai-tools-for-creative-teams.html#service"}},
+                    {"@type": "Offer", "itemOffered": {"@id": "https://ilans.net/services/ai-agents-and-automation.html#service"}},
+                    {"@type": "Offer", "itemOffered": {"@id": "https://ilans.net/services/private-ai-on-your-own-hardware.html#service"}}
+                ],
                 "knowsAbout": ["AI", "GenAI", "AI Agents", "LLM Integration", "MCP Servers", "Prompt Engineering", "Model Evaluation", "Creative Automation", "Product Design", "Design Engineering", "Design Systems", "UX Design", "Accessibility", "Motion Design", "3D", "Blender", "React Native", "TypeScript", "Python", "Self-Hosting", "CI/CD", "Docker", "CAD", "SOLIDWORKS", "Mimics", "Cinema 4D", "Medical Imaging"],
                 "sameAs": [
                     "https://github.com/ilan-stack",
@@ -141,6 +146,7 @@
                 <a href="#work">Work</a>
                 <a href="#about">About</a>
                 <a href="#experience">Experience</a>
+                <a href="services/">Services</a>
                 <a href="writing/">Writing</a>
             </div>
             <a href="mailto:ilan@ilans.net?subject=Hello%20from%20ilans.net" class="nav-cta">Contact</a>
@@ -210,12 +216,12 @@
         </article>
 
         <article class="case flip reveal c-teal" data-focus="tapersafe">
-            <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener" class="case-media" aria-label="TaperSafe - view on the App Store">
-                <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="TaperSafe iOS app screens" loading="lazy" decoding="async"></picture>
+            <a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener" class="case-media" aria-label="Downshift - view on the App Store">
+                <picture><source srcset="images/tapersafe-preview.webp" type="image/webp"><img src="images/tapersafe-preview.png" alt="Downshift iOS app screens" loading="lazy" decoding="async"></picture>
             </a>
             <div class="case-body">
                 <p class="case-kicker">iOS app · Digital health <span class="badge">● Live on App Store</span></p>
-                <h3 class="case-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener">TaperSafe</a></h3>
+                <h3 class="case-title"><a href="https://apps.apple.com/gb/app/tapersafe/id6762042016" target="_blank" rel="noopener">Downshift</a></h3>
                 <p class="case-line">Safe, guided medication tapering. Patient and provider modes, on-device privacy, daily dose reminders, and QR plan sharing between clinicians and patients. Designed, built, and shipped end-to-end.</p>
                 <p class="case-stat"><span class="case-stat-num">100%</span><span class="case-stat-label">on-device - health data never leaves the phone</span></p>
                 <p class="case-meta">React Native · Expo · Supabase · Healthcare UX</p>
@@ -463,6 +469,7 @@
             <div class="cta-band-actions">
                 <a href="mailto:ilan@ilans.net?subject=Hello%20from%20ilans.net" class="btn btn-primary">Email me</a>
                 <a href="https://t.me/ilanzner" target="_blank" rel="noopener" class="link-plain">or DM @ilanzner →</a>
+                <a href="services/" class="link-plain">How I can help →</a>
             </div>
         </div>
     </div>
@@ -630,7 +637,7 @@
 
 <footer>
     <div class="container">
-        <p>© 2026 Ilan Lenzner · Tel Aviv <span class="footer-clock" id="tlvClock" aria-hidden="true"></span> · <a class="footer-he" href="https://ai.ilans.net/" hreflang="he" title="AI implementation services, in Hebrew">עברית</a></p>
+        <p>© 2026 Ilan Lenzner · <span lang="he" dir="rtl">אילן לנצנר</span> · Tel Aviv <span class="footer-clock" id="tlvClock" aria-hidden="true"></span> · <a class="footer-he" href="https://ai.ilans.net/" hreflang="he" title="AI implementation services, in Hebrew">עברית</a></p>
         <p class="footer-sign">Designed in Figma, shipped in <em>code</em>.</p>
     </div>
 </footer>
