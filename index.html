@@ -217,15 +217,15 @@
 
         <article class="case flip reveal c-teal" data-focus="inside">
             <a href="https://inside.ilans.net/" target="_blank" rel="noopener" class="case-media" aria-label="INSIDE - read the case study">
-                <picture><source srcset="images/inside-preview.webp" type="image/webp"><img src="images/inside-preview.jpg" alt="INSIDE - a 3D torso falling apart into cubes around the heart, which is left alone in its real colour" class="has-video" loading="lazy" decoding="async"></picture>
+                <picture><source srcset="images/inside-preview.webp" type="image/webp"><img src="images/inside-preview.jpg" alt="INSIDE Studio - a chest CT cut open in 3D, every organ in its own colour, found by AI" class="has-video" loading="lazy" decoding="async"></picture>
                 <video data-src="videos/inside-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
             </a>
             <div class="case-body">
-                <p class="case-kicker">Imaging · AI segmentation · Pen input <span class="badge">● Work in progress</span></p>
+                <p class="case-kicker">Medical imaging · AI segmentation · Pen input <span class="badge">● Work in progress</span></p>
                 <h3 class="case-title"><a href="https://inside.ilans.net/" target="_blank" rel="noopener">INSIDE</a></h3>
-                <p class="case-line">Imaging software you work with a pen. The slices of a real human body become a body in 3D you turn, cut and peel; press on an organ and SAM 2 traces it through every section while Claude names it and says where it really ends, or just ask for one by name. The fun part was what fought back: SAM didn't know where a heart ends, the newer SAM 3 found it in none of 150 sections, and the body's CT came in a 1990s file format I had to decode myself.</p>
-                <p class="case-stat"><span class="case-stat-num">409</span><span class="case-stat-label">sections of one real body · any organ lifted out by pointing at it</span></p>
-                <p class="case-meta">WebGL2 volume raymarcher · SAM 2.1 · Claude Opus 5.5 · RTX 3060 · Wacom Cintiq 16 · Visible Human Project (NLM)</p>
+                <p class="case-line">Imaging software you work with a pen. Bring in any CT or MRI, from a disc, a folder or a file, and it opens in 3D with every organ already found and named by TotalSegmentator. Ask for one and it lifts out in under two seconds; cut, measure, read the value under the pen, and export the organ as an STL for printing. It started on one real body's photographed sections, where SAM 2 traces what you point at and Claude names it. The fun part was what fought back: SAM didn't know where a heart ends, and the CT and MRI came in 1990s formats I had to decode and stitch myself.</p>
+                <p class="case-stat"><span class="case-stat-num">81</span><span class="case-stat-label">organs and bones found in a chest CT, in 83 seconds, on one PC</span></p>
+                <p class="case-meta">WebGL2 volume raymarcher · TotalSegmentator · SAM 2.1 · Claude Opus 5.5 · DICOM · STL · RTX 3060 · Wacom Cintiq 16 · Visible Human Project (NLM)</p>
                 <div class="case-links">
                     <a href="https://inside.ilans.net/" target="_blank" rel="noopener" class="link-pill">Case study →</a>
                 </div>
