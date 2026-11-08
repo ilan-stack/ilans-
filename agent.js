@@ -70,6 +70,7 @@
         cubelets: '[data-focus="cubelets"]',
         'ai-studio': '[data-focus="ai-studio"]',
         tvbox: '[data-focus="tvbox"]',
+        pulse: '[data-focus="pulse"]',
         inside: '[data-focus="inside"]',
         carscan: '[data-focus="carscan"]',
         'roborock': '[data-focus="roborock"]',
