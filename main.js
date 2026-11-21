@@ -699,7 +699,7 @@ function trackEvent(path) {
     }
 
     function start() {
-        if (running) return;
+        if (running || window.__introHold) return;   // the intro (intro.js) owns the screen until it lifts
         running = true;
         if (activeVideo) activeVideo.play().catch(function() {});
         if (!rafId) rafId = requestAnimationFrame(animate);
@@ -708,6 +708,8 @@ function trackEvent(path) {
         running = false;
         if (activeVideo) activeVideo.pause();
     }
+    window.__dotfieldStart = start;
+    window.__dotfieldStop = stop;
 
     /* Fade with scroll and stop the loop entirely once past the hero */
     function onScroll() {
@@ -779,11 +781,15 @@ function trackEvent(path) {
     var HOLD_END = 0.71;  // hold drawn
     var FADE_END = 0.84;  // fade out, then pause before restart
     var start = null;
+    var syncReq = false;
+    // intro.js calls this the moment its pen lands on the squiggle: jump to "fully drawn, pen gone"
+    window.__heroWaveSync = function() { syncReq = true; };
 
     function ease(t) { return 0.5 - 0.5 * Math.cos(Math.PI * t); }
 
     function tick(ts) {
         if (!start) start = ts;
+        if (syncReq) { start = ts - (DRAW_END + 0.06) * DUR; syncReq = false; }
         var t = ((ts - start) % DUR) / DUR;
         var draw, lineOp, penOp;
 

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
     <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+    <!-- Intro (intro.js): decided here, before first paint, so the page never flashes underneath it -->
+    <style>html.intro-pending body::after{content:'';position:fixed;inset:0;background:#000;z-index:100002}</style>
+    <script>(function(){try{var q=location.search,d=document.documentElement;if(/[?&]nointro/.test(q))return;var force=/[?&]intro=1/.test(q);var seen=sessionStorage.getItem('introSeen');var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(force||(!seen&&!rm&&!navigator.webdriver&&!location.hash)){d.classList.add('intro-pending');window.__introHold=true;setTimeout(function(){if(!window.__introStarted){d.classList.remove('intro-pending');window.__introHold=false;if(window.__dotfieldStart)window.__dotfieldStart();}},4000);}}catch(e){}})();</script>
     <title>Ilan Lenzner | Creative Technologist & Design Engineer</title>
     <meta name="description" content="Ilan Lenzner - Creative Technologist & Design Engineer in Tel Aviv. I design and ship AI-powered products end-to-end, used daily by 100+ creatives.">
     <meta name="author" content="Ilan Lenzner">
@@ -691,7 +694,8 @@
     </div>
 </div>
 
-<script src="main.js?v=38" defer></script>
+<script src="main.js?v=39" defer></script>
+<script src="intro.js?v=2" defer></script>
 <script src="agent.js?v=37" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <style>
