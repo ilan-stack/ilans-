@@ -1389,7 +1389,13 @@ html[data-theme="light"] .agent-spotlight { animation: agentSpotlightLight 2.8s 
     .mini-grid { grid-template-columns: 1fr; }
     .about-photo-grid { grid-template-columns: 1fr; }
     .about-portrait { max-width: 220px; }
-    .stats-grid { gap: 10px; }
+    /* minmax(0,1fr), not 1fr: a 1fr track never shrinks below its content, so the nowrap
+       cube labels (~190px) pushed About to 405px and the whole page scrolled sideways */
+    .about-content, .about-photo-grid { grid-template-columns: minmax(0, 1fr); }
+    .stats-grid { gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* half a phone is too narrow for one-line labels: wrap them, and reserve two lines on
+       every face so the cube height main.js locks to the first facts fits the rest */
+    .stat.cubed .stat-label { white-space: normal; line-height: 1.35; min-height: 2.7em; }
     .stat, .stat.cubed .face { padding: 20px 18px 16px; }
     .stat.cubed { padding: 0; }
     .stat-number { font-size: 34px; }
