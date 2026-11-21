@@ -114,6 +114,9 @@
   <link rel="stylesheet" href="../fonts/fonts.css?v=1">
   <link rel="stylesheet" href="../writing/writing.css?v=5">
   <style>:lang(he){font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Arial Hebrew",Arial,sans-serif;letter-spacing:0;text-transform:none}</style>
+<!-- page transitions (js/pen-transition.js): cover the page before first paint when arriving from a transition -->
+<style>html.pen-arrive body::after{content:"";position:fixed;inset:0;z-index:2147483647;background:var(--bg,#0b0b0d);opacity:1;pointer-events:none}</style>
+<script>(function(){try{var d=document.documentElement,s=sessionStorage,a=+s.getItem('penArrive')||0,b=+s.getItem('penSoft')||0,n=Date.now();s.removeItem('penArrive');s.removeItem('penSoft');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(a&&n-a<5000)d.classList.add('pen-arrive');else if(b&&n-b<5000)d.classList.add('pen-arrive','pen-soft');else return;setTimeout(function(){d.classList.remove('pen-arrive','pen-soft')},3000);}catch(e){}})();</script>
 </head>
 <body class="c-teal">
   <div id="progress"></div>
@@ -166,5 +169,6 @@
     </footer>
   </div>
   <script src="../writing/writing.js?v=3" defer></script>
+<script src="../js/pen-transition.js?v=4" defer></script>
 </body>
 </html>

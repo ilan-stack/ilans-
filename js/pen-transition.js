@@ -1,8 +1,12 @@
-/* ilans.net page transition: the hero's pen line carries you to the CV.
-   Home: a click on a CV link -> the line thinks in one quick infinity loop, then its light floods the screen.
-   CV:   the light opens back up from the name, and the line slides in and settles under it as an underline.
-   Hand-off: sessionStorage 'penArrive', read before first paint by a small inline script in the CV <head>
-   (cv-build/build.py writes it), which covers the page until this file takes over.
+/* ilans.net page transitions.
+   To the CV (the full version): the hero's pen line (or a stroke under the clicked link) thinks in one quick
+   infinity loop, then its light floods the screen; on the CV the light opens from the name and the line settles
+   under it as an underline.
+   To any other page (the light version): a ring of light opens from the click and covers the page; the next
+   page opens back from the same spot.
+   Hand-off: sessionStorage 'penArrive' (full) / 'penSoft' + 'penSoftAt' (light), read before first paint by a
+   small inline script in every page's <head> (for the CV, cv-build/build.py writes it), which covers the page
+   until this file takes over.
    Skipped for reduced motion, modified clicks (new tab / window) and anything that is not a plain left click. */
 (() => {
 'use strict';
@@ -160,38 +164,105 @@ function leave(a, href) {
   }
   requestAnimationFrame(frame);
 }
-function cvLink(el) {
+/* ---------------- which links ---------------- */
+// Internal pages that carry the arrival cover (the head snippet): home, CV, writing, services, work.
+const PAGES = /^\/(index\.html)?$|^\/cv\/(index\.html)?$|^\/(writing|services|work)\/([\w-]+\.html)?$/;
+const isCV = path => /^\/cv\/(index\.html)?$/.test(path);
+function target(el) {
   const a = el && el.closest && el.closest('a[href]');
-  if (!a) return null;
-  const h = a.getAttribute('href');
-  return /^(\.\/|\/)?cv\/?(index\.html)?$/.test(h) ? a : null;
-}
-function onClick(e) {
-  const a = cvLink(e.target);
-  if (!a || RM || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-  if (a.target && a.target !== '_self') return;
-  if (document.getElementById('intro')) return;               // the intro still owns the screen
-  e.preventDefault();
-  leave(a, a.href);
-}
-let prefetched = false;
-function prefetch(e) {
-  if (prefetched || !cvLink(e.target)) return;
-  prefetched = true;
-  const l = document.createElement('link'); l.rel = 'prefetch'; l.href = cvLink(e.target).href; document.head.appendChild(l);
-}
-if (!root.classList.contains('pen-arrive')) {
-  document.addEventListener('click', onClick);
-  document.addEventListener('pointerover', prefetch, { passive: true });
-  document.addEventListener('touchstart', prefetch, { passive: true });
-  // coming Back from the CV: the page may be restored as it was left, cover and all
-  window.addEventListener('pageshow', e => {
-    if (leaving) { leaving.c.remove(); if (leaving.restore) leaving.restore(); leaving = null; }
-    try { sessionStorage.removeItem('penArrive'); } catch (err) {}
-  });
+  if (!a || a.hasAttribute('download') || (a.target && a.target !== '_self')) return null;
+  let u; try { u = new URL(a.href, location.href); } catch (e) { return null; }
+  if (u.origin !== location.origin || !PAGES.test(u.pathname)) return null;
+  if (u.pathname === location.pathname && u.search === location.search) return null;   // a jump within this page
+  return { a, url: u, cv: isCV(u.pathname) };
 }
 
-/* ---------------- arriving: the CV ---------------- */
+/* ---------------- the light version, for every other page ---------------- */
+// A ring of light opens from where you clicked and lays the next page's ground; that page opens back from the same spot.
+const SOFT_OUT = 0.38, SOFT_IN = 0.45;
+function softLeave(x, y, href) {
+  const o = overlay(), { ctx, W, H } = o, m = Math.min(W, H), max = reach(x, y, W, H) + 40;
+  leaving = o;
+  try {
+    sessionStorage.setItem('penSoft', String(Date.now() + SOFT_OUT * 1000));
+    sessionStorage.setItem('penSoftAt', (x / W).toFixed(3) + ',' + (y / H).toFixed(3));
+  } catch (e) {}
+  let t0 = 0;
+  function frame(now) {
+    if (leaving !== o) return;
+    if (!t0) t0 = now;
+    const t = (now - t0) / 1000, r = max * easeInOut(seg(t, 0, SOFT_OUT));
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = bgColor(); ctx.beginPath(); ctx.arc(x, y, Math.max(0, r - 14), 0, Math.PI * 2); ctx.fill();
+    rim(ctx, x, y, r, Math.max(40, m * 0.1), 0.6 * (1 - seg(t, SOFT_OUT - 0.08, SOFT_OUT)));
+    if (t >= SOFT_OUT) { ctx.fillStyle = bgColor(); ctx.fillRect(0, 0, W, H); location.href = href; return; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+// cut a soft-edged hole of radius r in the cover
+function hole(ctx, cx, cy, r) {
+  ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+  const g = ctx.createRadialGradient(cx, cy, Math.max(0, r - 30), cx, cy, r + 1);
+  g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r + 1, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(cx, cy, Math.max(0, r - 30), 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function softArrive() {
+  if (!root.classList.contains('pen-arrive')) return;
+  const o = overlay(), { ctx, W, H } = o, m = Math.min(W, H);
+  ctx.fillStyle = bgColor(); ctx.fillRect(0, 0, W, H);
+  root.classList.remove('pen-arrive', 'pen-soft');
+  let fx = 0.5, fy = 0.4;
+  try {
+    const p = (sessionStorage.getItem('penSoftAt') || '').split(',').map(Number);
+    if (p.length === 2 && p.every(isFinite)) { fx = p[0]; fy = p[1]; }
+    sessionStorage.removeItem('penSoftAt');
+  } catch (e) {}
+  const cx = fx * W, cy = fy * H, max = reach(cx, cy, W, H) + 40;
+  let t0 = 0;
+  function frame(now) {
+    if (!t0) t0 = now;
+    const t = (now - t0) / 1000, k = easeOut(seg(t, 0, SOFT_IN)), r = max * k;
+    ctx.clearRect(0, 0, W, H);
+    if (k < 1) { ctx.fillStyle = bgColor(); ctx.fillRect(0, 0, W, H); hole(ctx, cx, cy, r); }
+    rim(ctx, cx, cy, r, Math.max(40, m * 0.1), 0.6 * (1 - seg(t, SOFT_IN * 0.55, SOFT_IN)));
+    if (t >= SOFT_IN) { o.c.remove(); return; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function onClick(e) {
+  if (RM || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const t = target(e.target);
+  if (!t) return;
+  if (document.getElementById('intro')) return;               // the intro still owns the screen
+  e.preventDefault();
+  if (t.cv) { leave(t.a, t.url.href); return; }               // the CV keeps the full pen transition
+  let x = e.clientX, y = e.clientY;
+  if (!e.detail && !x && !y) { const r = t.a.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }   // keyboard
+  softLeave(x, y, t.url.href);
+}
+const prefetched = new Set();
+function prefetch(e) {
+  const t = target(e.target);
+  if (!t || prefetched.has(t.url.pathname)) return;
+  prefetched.add(t.url.pathname);
+  const l = document.createElement('link'); l.rel = 'prefetch'; l.href = t.url.href; document.head.appendChild(l);
+}
+document.addEventListener('click', onClick);
+document.addEventListener('pointerover', prefetch, { passive: true });
+document.addEventListener('touchstart', prefetch, { passive: true });
+// coming Back: the page may be restored exactly as it was left, cover and all
+window.addEventListener('pageshow', e => {
+  if (!e.persisted) return;
+  if (leaving) { leaving.c.remove(); if (leaving.restore) leaving.restore(); leaving = null; }
+  try { ['penArrive', 'penSoft', 'penSoftAt'].forEach(k => sessionStorage.removeItem(k)); } catch (err) {}
+});
+
+/* ---------------- arriving on the CV: the full version ---------------- */
 function arrive() {
   if (!root.classList.contains('pen-arrive')) return;          // the head script's safety timer already lifted the cover
   const h1 = document.querySelector('header.hero h1') || document.querySelector('h1');
@@ -245,7 +316,8 @@ function arrive() {
   requestAnimationFrame(frame);
 }
 if (root.classList.contains('pen-arrive')) {
-  const go = () => (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(arrive, arrive);
+  const go = root.classList.contains('pen-soft') ? softArrive
+    : () => (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(arrive, arrive);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 }
 })();
