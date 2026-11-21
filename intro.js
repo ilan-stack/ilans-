@@ -144,8 +144,9 @@ function spots() {
   };
 }
 // Each line stays lit about 3 s: enough to read it, and to catch the hidden word.
-const T = { appear: 0.9, aOpen: 1.6, aClose: 5.0, bArrive: 5.6, bOpen: 6.3, bClose: 9.3, cArrive: 9.9, cOpen: 10.7,
-            nameOn: 11.0, flyStart: 12.8, flood: 13.6, flyEnd: 15.3, fade: 15.45, end: 16.4 };
+// Between lights the pen wanders over as a line (moveAt / wanderPts), 2.2 s per move.
+const T = { appear: 0.9, aOpen: 1.6, aClose: 5.0, bArrive: 7.2, bOpen: 7.9, bClose: 10.9, cArrive: 13.1, cOpen: 13.9,
+            nameOn: 14.2, flyStart: 16.0, flood: 16.8, flyEnd: 18.5, fade: 18.65, end: 19.6 };
 
 // Beam state for time t
 function beamAt(t) {
@@ -457,7 +458,7 @@ function drawDots(b, g, t, dtk) {
 }
 
 // The light source is the site's pen squiggle: a pen draws it, the beam pours out of it,
-// it retracts into its dot to travel, and is drawn again where the light opens next.
+// and the line itself swims to where the light opens next.
 function rgb2hsl([r, g, b]) {
   r /= 255; g /= 255; b /= 255;
   const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2;
@@ -480,13 +481,8 @@ function penStops() {
   return [[0, A], [0.5, M], [1, B]].map(([p, c]) => [p, c.map(Math.round)]);
 }
 
-function penDraw(t) {
-  if (t < T.aClose) return ease(seg(t, 0.15, T.appear + 0.15));
-  if (t < T.bArrive) return 1 - ease(seg(t, T.aClose, T.aClose + 0.3));
-  if (t < T.bClose) return ease(seg(t, T.bArrive - 0.05, T.bArrive + 0.5));
-  if (t < T.cArrive) return 1 - ease(seg(t, T.bClose, T.bClose + 0.3));
-  return ease(seg(t, T.cArrive - 0.05, T.cArrive + 0.5));
-}
+// drawn once; after that the line stays whole and travels as itself
+function penDraw(t) { return ease(seg(t, 0.15, T.appear + 0.15)); }
 // Where the hero's pen squiggle (and the period before it) sit on screen, read live from the site.
 let penHome = false;
 function heroTarget(N) {
@@ -540,6 +536,106 @@ function flightHead(u, S, D) {
   p[0] += R * Math.sin(th); p[1] -= R * (1 - Math.cos(th));
   return p;
 }
+// ---- moving between lights: the line swims over, head first, like the flight home ----
+// The pen shape at a resting spot (the same curve the light starts from).
+function penAt(sp, g, t, N) {
+  const dx = Math.cos(sp.a), dy = Math.sin(sp.a), px = -dy, py = dx, out = [];
+  for (let i = 0; i <= N; i++) {
+    const s = -1 + 2 * i / N, o = penOffset(s, t, g);
+    out.push([sp.x + px * s * g.L + dx * o, sp.y + py * s * g.L + dy * o]);
+  }
+  return out;
+}
+// The route has a mind of its own: it walks off along the line it was, drifts out sideways,
+// slows down and thinks in a little infinity loop, swings the other way, and walks into the next line tail first.
+function catmullAt(Pts, k) {
+  const n = Pts.length - 1, x = Math.min(n - 1e-6, Math.max(0, k * n)), i = Math.floor(x), f = x - i;
+  const p0 = Pts[Math.max(0, i - 1)], p1 = Pts[i], p2 = Pts[i + 1], p3 = Pts[Math.min(n, i + 2)];
+  const c = j => 0.5 * ((2 * p1[j]) + (-p0[j] + p2[j]) * f + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * f * f + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * f * f * f);
+  return [c(0), c(1)];
+}
+function wanderRoute(src, dst, N) {
+  const back = [N, N * 3 / 4, N / 2, N / 4, 0].map(i => src[Math.round(i)]);   // tail -> head, along the old line
+  const into = [N, N * 3 / 4, N / 2, N / 4, 0].map(i => dst[Math.round(i)]);   // tail -> head, along the new one
+  const S0 = src[0], E0 = dst[N];
+  const vx = E0[0] - S0[0], vy = E0[1] - S0[1], d = Math.hypot(vx, vy) || 1, ux = vx / d, uy = vy / d;
+  let nx = -uy, ny = ux;                               // wander sideways, preferring up
+  if (ny > 0) { nx = -nx; ny = -ny; }
+  if (Math.abs(ny) < 0.2 && nx < 0) { nx = -nx; ny = -ny; }
+  // the loop is clearly bigger than the line, and even a short hop rises high enough for it to read
+  const m = Math.min(W, H), inf = m * (MOBILE ? 0.12 : 0.07);
+  const amp = Math.max(m * 0.25, inf * 3.5, Math.min(d * 0.3, m * 0.28)), pad = Math.max(m * 0.08, inf + 12);
+  const at = (fd, fn) => [Math.max(pad, Math.min(W - pad, S0[0] + ux * d * fd + nx * amp * fn)),
+                          Math.max(pad, Math.min(H - pad, S0[1] + uy * d * fd + ny * amp * fn))];
+  // the thinking loop: one lemniscate, long axis along the way it is heading; it starts and ends
+  // at the crossing, swinging back first (a second thought), then forward, then off
+  const C = at(0.42, 0.55), loop = [];
+  for (let j = 0; j <= 16; j++) {
+    const th = Math.PI / 2 + Math.PI * 2 * j / 16, q = 1 + Math.sin(th) ** 2;
+    const lx = inf * Math.cos(th) / q, ly = inf * Math.sin(th) * Math.cos(th) / q * 1.25;
+    loop.push([C[0] + ux * lx + nx * ly, C[1] + uy * lx + ny * ly]);
+  }
+  const way = [at(0.18, 0.9)].concat(loop, [at(0.68, -0.5)]);
+  const Pts = back.concat(way, into), n = Pts.length - 1;
+  const K = 900, L = [0]; let prev = catmullAt(Pts, 0);
+  for (let i = 1; i <= K; i++) { const q = catmullAt(Pts, i / K); L.push(L[i - 1] + Math.hypot(q[0] - prev[0], q[1] - prev[1])); prev = q; }
+  const len = L[K], fracAtPoint = j => L[Math.round(j / n * K)] / len;
+  return {
+    len,
+    fHead0: fracAtPoint(4),                            // the old line's head
+    fLoopA: fracAtPoint(6), fLoopB: fracAtPoint(22),  // the infinity loop
+    fTail1: fracAtPoint(n - 4),                        // the new line's tail
+    at: f => {                                         // point at arc-length fraction f
+      f = clamp01(f) * len; let lo = 0, hi = K;
+      while (hi - lo > 1) { const mm = (lo + hi) >> 1; if (L[mm] < f) lo = mm; else hi = mm; }
+      return catmullAt(Pts, (lo + (f - L[lo]) / ((L[hi] - L[lo]) || 1)) / K);
+    },
+  };
+}
+// Which move is running at time t, and how far along it is.
+function moveAt(t) {
+  const S = spots();
+  if (t >= T.aClose && t < T.bArrive) return { key: 'ab', P: S.A, Q: S.B, u: seg(t, T.aClose, T.bArrive) };
+  if (t >= T.bClose && t < T.cArrive) return { key: 'bc', P: S.B, Q: S.C, u: seg(t, T.bClose, T.cArrive) };
+  return null;
+}
+let route = null;
+// Head position along the route over the move: ease off, go slow and even round the loop, ease in to land.
+const hermite = (s, p0, p1, m0, m1) => {
+  const s2 = s * s, s3 = s2 * s;
+  return (2 * s3 - 3 * s2 + 1) * p0 + (s3 - 2 * s2 + s) * m0 + (-2 * s3 + 3 * s2) * p1 + (s3 - s2) * m1;
+};
+function headPlan(R) {
+  const D1 = R.fLoopA - R.fHead0, D2 = R.fLoopB - R.fLoopA, D3 = 1 - R.fLoopB;
+  let v2 = 0.5 * (1 - R.fHead0), d2 = D2 / v2;
+  if (d2 > 0.42) { d2 = 0.42; v2 = D2 / d2; }
+  const d1 = (1 - d2) * D1 / (D1 + D3), d3 = 1 - d2 - d1;
+  return u => clamp01(u < d1 ? hermite(u / d1, R.fHead0, R.fLoopA, 0, v2 * d1)
+                    : u < d1 + d2 ? R.fLoopA + v2 * (u - d1)
+                    : hermite((u - d1 - d2) / d3, R.fLoopB, 1, v2 * d3, 0));
+}
+function wanderPts(mv, g, t, N) {
+  const src = penAt(mv.P, g, t, N), dst = penAt(mv.Q, g, t, N);
+  const key = mv.key + W + 'x' + H;
+  if (!route || route.key !== key) { route = Object.assign(wanderRoute(src, dst, N), { key }); route.head = headPlan(route); }
+  const R = route, u = mv.u, fHead = R.head(u);
+  const hump = Math.sin(Math.PI * seg(fHead, R.fLoopA, R.fLoopB));      // 0..1..0 over the loop
+  // the body keeps its length (a little gathered while it thinks) and follows the route exactly
+  const body = lerp(R.fHead0, 1 - R.fTail1, u) * (1 - 0.1 * hump);
+  const swim = smooth(0.02, 0.14, u) * (1 - smooth(0.86, 0.98, u)) * (1 - 0.5 * hump);
+  const fromSrc = 1 - smooth(0, 0.06, u), toDst = smooth(0.9, 1, u);
+  const out = [];
+  for (let i = 0; i <= N; i++) {
+    const fi = fHead - body * i / N, h = R.at(fi), h2 = R.at(fi - 0.004);
+    const tx = h[0] - h2[0], ty = h[1] - h2[1], tl = Math.hypot(tx, ty) || 1;
+    const off = Math.sin(i * 0.3 - t * 9) * (MOBILE ? 2.4 : 3.2) * (0.35 + 0.65 * i / N) * swim;
+    let q = [h[0] - ty / tl * off, h[1] + tx / tl * off];
+    q = [lerp(q[0], src[i][0], fromSrc), lerp(q[1], src[i][1], fromSrc)];
+    out.push([lerp(q[0], dst[i][0], toDst), lerp(q[1], dst[i][1], toDst)]);
+  }
+  return out;
+}
+
 let penHead = null;                                 // the dots near the flying pen light up
 let flyNow = 0;                                     // flight progress, so the name can step back for the landing
 
@@ -549,14 +645,21 @@ function drawPen(b, g, t) {
   penHome = !!tgt;
   const flyU = tgt ? seg(t, T.flyStart, T.flyEnd) : 0;
   const fly = flyU; flyNow = flyU;
-  if (!tgt) { flightPts = null; penHead = null; }
+  if (!tgt) flightPts = null;
   const a = tgt ? b.slit : b.slit * (1 - ease(seg(t, T.flood, T.fade)));
   if (a <= 0.01) return;
   const k = penDraw(t);
-  const pts = [];
-  for (let i = 0; i <= N; i++) {
-    const s = -1 + 2 * i / N, o = penOffset(s, t, g);     // the same curve the light starts from
-    pts.push([b.x + g.px * s * g.L + g.dx * o, b.y + g.py * s * g.L + g.dy * o]);
+  const mv = fly > 0 ? null : moveAt(t);
+  let pts = [];
+  if (mv) {                                               // swimming to the next light
+    pts = wanderPts(mv, g, t, N);
+    penHead = mv.u > 0 && mv.u < 1 ? pts[0] : null;
+  } else {
+    if (!tgt) penHead = null;
+    for (let i = 0; i <= N; i++) {
+      const s = -1 + 2 * i / N, o = penOffset(s, t, g);   // the same curve the light starts from
+      pts.push([b.x + g.px * s * g.L + g.dx * o, b.y + g.py * s * g.L + g.dy * o]);
+    }
   }
   // the finale: the dot leads, the line follows it like a ribbon, and settles into the hero squiggle
   let dotP = pts[0];
