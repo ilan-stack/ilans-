@@ -143,10 +143,11 @@ function spots() {
     C: { x: W * 0.5, y: H * 0.96, a: -Math.PI / 2 },
   };
 }
-// Each line stays lit about 3 s: enough to read it, and to catch the hidden word.
-// Between lights the pen wanders over as a line (moveAt / wanderPts), 2.2 s per move.
-const T = { appear: 0.9, aOpen: 1.6, aClose: 5.0, bArrive: 7.2, bOpen: 7.9, bClose: 10.9, cArrive: 13.1, cOpen: 13.9,
-            nameOn: 14.2, flyStart: 16.0, flood: 16.8, flyEnd: 18.5, fade: 18.65, end: 19.6 };
+// About 11 s in all (10.85). Each line stays lit about 2 s: enough to read it, and to catch the hidden word.
+// Between lights the pen wanders over as a line (moveAt / wanderPts): the first move thinks in an
+// infinity loop (1 s), the second just goes (0.7 s); the flight home takes 1.1 s.
+const T = { appear: 0.6, aOpen: 1.15, aClose: 3.15, bArrive: 4.15, bOpen: 4.6, bClose: 6.5, cArrive: 7.2, cOpen: 7.75,
+            nameOn: 7.95, flyStart: 8.75, flood: 9.2, flyEnd: 9.85, fade: 10.0, end: 10.85 };
 
 // Beam state for time t
 function beamAt(t) {
@@ -351,7 +352,7 @@ function drawLetters(b, g, t, letters) {
 function drawRole(b, t) {
   tctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   tctx.clearRect(0, 0, W, H);
-  const k = ease(seg(t, T.nameOn + 0.6, T.nameOn + 1.6));
+  const k = ease(seg(t, T.nameOn + 0.3, T.nameOn + 0.9));
   if (b.text !== 'c' || k <= 0) return;
   const fs = Math.max(10, Math.min(W, H) * (MOBILE ? 0.026 : 0.017));
   tctx.font = `500 ${fs}px 'JetBrains Mono', monospace`;
@@ -416,7 +417,7 @@ function drawDots(b, g, t, dtk) {
     let nameI = 0;
     if (p.name > 0.25 && nameK > 0) {
       // ignites left to right, like the beam is writing it
-      const sweep = ease(seg(t, T.nameOn + (p.hx / W) * 0.9, T.nameOn + (p.hx / W) * 0.9 + 0.45));
+      const sweep = ease(seg(t, T.nameOn + (p.hx / W) * 0.55, T.nameOn + (p.hx / W) * 0.55 + 0.35));
       nameI = sweep * p.name * (0.85 + 0.15 * Math.min(1, I * 3));
       nameI *= 1 - 0.8 * smooth(0.6, 0.95, flyNow);   // the name dims so the landing reads
     }
@@ -554,7 +555,7 @@ function catmullAt(Pts, k) {
   const c = j => 0.5 * ((2 * p1[j]) + (-p0[j] + p2[j]) * f + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * f * f + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * f * f * f);
   return [c(0), c(1)];
 }
-function wanderRoute(src, dst, N) {
+function wanderRoute(src, dst, N, withLoop) {
   const back = [N, N * 3 / 4, N / 2, N / 4, 0].map(i => src[Math.round(i)]);   // tail -> head, along the old line
   const into = [N, N * 3 / 4, N / 2, N / 4, 0].map(i => dst[Math.round(i)]);   // tail -> head, along the new one
   const S0 = src[0], E0 = dst[N];
@@ -575,7 +576,8 @@ function wanderRoute(src, dst, N) {
     const lx = inf * Math.cos(th) / q, ly = inf * Math.sin(th) * Math.cos(th) / q * 1.25;
     loop.push([C[0] + ux * lx + nx * ly, C[1] + uy * lx + ny * ly]);
   }
-  const way = [at(0.18, 0.9)].concat(loop, [at(0.68, -0.5)]);
+  // without the loop it is just a soft S: out one way, back the other, and in
+  const way = withLoop ? [at(0.18, 0.9)].concat(loop, [at(0.68, -0.5)]) : [at(0.3, 0.75), at(0.7, -0.35)];
   const Pts = back.concat(way, into), n = Pts.length - 1;
   const K = 900, L = [0]; let prev = catmullAt(Pts, 0);
   for (let i = 1; i <= K; i++) { const q = catmullAt(Pts, i / K); L.push(L[i - 1] + Math.hypot(q[0] - prev[0], q[1] - prev[1])); prev = q; }
@@ -583,7 +585,7 @@ function wanderRoute(src, dst, N) {
   return {
     len,
     fHead0: fracAtPoint(4),                            // the old line's head
-    fLoopA: fracAtPoint(6), fLoopB: fracAtPoint(22),  // the infinity loop
+    fLoopA: fracAtPoint(withLoop ? 6 : 5), fLoopB: fracAtPoint(withLoop ? 22 : 5),   // the infinity loop (none: one point)
     fTail1: fracAtPoint(n - 4),                        // the new line's tail
     at: f => {                                         // point at arc-length fraction f
       f = clamp01(f) * len; let lo = 0, hi = K;
@@ -595,8 +597,8 @@ function wanderRoute(src, dst, N) {
 // Which move is running at time t, and how far along it is.
 function moveAt(t) {
   const S = spots();
-  if (t >= T.aClose && t < T.bArrive) return { key: 'ab', P: S.A, Q: S.B, u: seg(t, T.aClose, T.bArrive) };
-  if (t >= T.bClose && t < T.cArrive) return { key: 'bc', P: S.B, Q: S.C, u: seg(t, T.bClose, T.cArrive) };
+  if (t >= T.aClose && t < T.bArrive) return { key: 'ab', loop: true, P: S.A, Q: S.B, u: seg(t, T.aClose, T.bArrive) };
+  if (t >= T.bClose && t < T.cArrive) return { key: 'bc', loop: false, P: S.B, Q: S.C, u: seg(t, T.bClose, T.cArrive) };
   return null;
 }
 let route = null;
@@ -607,7 +609,8 @@ const hermite = (s, p0, p1, m0, m1) => {
 };
 function headPlan(R) {
   const D1 = R.fLoopA - R.fHead0, D2 = R.fLoopB - R.fLoopA, D3 = 1 - R.fLoopB;
-  let v2 = 0.5 * (1 - R.fHead0), d2 = D2 / v2;
+  // no loop: one smooth ease through the middle at the average speed
+  let v2 = (D2 > 0 ? 0.5 : 1) * (1 - R.fHead0), d2 = D2 / v2;
   if (d2 > 0.42) { d2 = 0.42; v2 = D2 / d2; }
   const d1 = (1 - d2) * D1 / (D1 + D3), d3 = 1 - d2 - d1;
   return u => clamp01(u < d1 ? hermite(u / d1, R.fHead0, R.fLoopA, 0, v2 * d1)
@@ -617,9 +620,9 @@ function headPlan(R) {
 function wanderPts(mv, g, t, N) {
   const src = penAt(mv.P, g, t, N), dst = penAt(mv.Q, g, t, N);
   const key = mv.key + W + 'x' + H;
-  if (!route || route.key !== key) { route = Object.assign(wanderRoute(src, dst, N), { key }); route.head = headPlan(route); }
+  if (!route || route.key !== key) { route = Object.assign(wanderRoute(src, dst, N, mv.loop), { key }); route.head = headPlan(route); }
   const R = route, u = mv.u, fHead = R.head(u);
-  const hump = Math.sin(Math.PI * seg(fHead, R.fLoopA, R.fLoopB));      // 0..1..0 over the loop
+  const hump = R.fLoopB > R.fLoopA ? Math.sin(Math.PI * seg(fHead, R.fLoopA, R.fLoopB)) : 0;   // 0..1..0 over the loop
   // the body keeps its length (a little gathered while it thinks) and follows the route exactly
   const body = lerp(R.fHead0, 1 - R.fTail1, u) * (1 - 0.1 * hump);
   const swim = smooth(0.02, 0.14, u) * (1 - smooth(0.86, 0.98, u)) * (1 - 0.5 * hump);
