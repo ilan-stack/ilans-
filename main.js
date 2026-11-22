@@ -409,13 +409,19 @@ function trackEvent(path) {
             for (var c = 0; c < cols; c++) {
                 var hx = c * spacing;
                 var hy = r * spacing;
+                // Soundtrack: direction from the centre (kick thump), equalizer slot and height
+                var ox = hx - W / 2, oy = hy - H / 2, od = Math.sqrt(ox * ox + oy * oy) || 1;
+                var eqOff = Math.abs(c - Math.round((cols - 1) / 2));
                 particles.push({
                     hx: hx, hy: hy,
                     x: hx, y: hy,
                     vx: 0, vy: 0,
                     col: c, row: r,
                     baseShape: (r + c) % 2 === 0 ? 'dot' : 'plus',
-                    lit: 0
+                    lit: 0,
+                    dc: od, ux: ox / od, uy: oy / od,
+                    eqSlot: Math.floor(eqOff / EQ_COLS), eqGap: eqOff % EQ_COLS === EQ_COLS - 1,
+                    eqH: hy
                 });
             }
         }
@@ -426,6 +432,7 @@ function trackEvent(path) {
         offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
 
         sampleMessage(MESSAGES[0]);
+        eqTextMapped = false;
     }
 
     // Glow hue drifts toward the active message's colour (violet is the rest state)
@@ -433,6 +440,33 @@ function trackEvent(path) {
     var hueCur = HUE_HOME.slice();
     var hueTarget = HUE_HOME.slice();
     var HUE_EASE = 0.012;               // deliberately slow - this should never read as a colour cycle
+    // Soundtrack equalizer: columns pair up into LED bars (2 lit + 1 gap), bass in the centre, hanging from the top
+    var EQ_COLS = 3, EQ_PX = 200;     // bars hang from the top edge, up to ~200px long
+    var lastPhrase = null;            // soundtrack phrase the banner last switched on
+    // Bars pass *behind* the hero copy: dots under a line of text glow at a quarter
+    var eqTextMapped = false, eqTop = 0;   // bars hang from just under the nav
+    function mapHeroText() {
+        eqTextMapped = true;
+        var cr = canvas.getBoundingClientRect(), boxes = [], PAD = 6;
+        var navEl = document.getElementById('nav');
+        eqTop = navEl ? Math.max(0, navEl.getBoundingClientRect().bottom - cr.top) : 0;
+        document.querySelectorAll('.hero-content > *, .scroll-hint').forEach(function(el) {
+            var rg = document.createRange();
+            rg.selectNodeContents(el);
+            var rs = rg.getClientRects();
+            for (var i = 0; i < rs.length; i++) {
+                if (rs[i].width < 2) continue;
+                boxes.push(rs[i].left - cr.left - PAD, rs[i].top - cr.top - PAD, rs[i].right - cr.left + PAD, rs[i].bottom - cr.top + PAD);
+            }
+        });
+        for (var j = 0; j < particles.length; j++) {
+            var q = particles[j], hit = false;
+            for (var k = 0; k < boxes.length && !hit; k += 4) {
+                hit = q.hx >= boxes[k] && q.hx <= boxes[k + 2] && q.hy >= boxes[k + 1] && q.hy <= boxes[k + 3];
+            }
+            q.eqUnder = hit;
+        }
+    }
 
     var litPixels = [];
     var currentIsImage = false;
@@ -578,10 +612,32 @@ function trackEvent(path) {
         frame += fAdv;
 
         var cycleFrame = frame % (MSG_DURATION + FADE_FRAMES * 2);
-        if (cycleFrame < prevCycle) {
+        // Soundtrack on: messages change on the musical phrase (every 4 bars) instead of a timer,
+        // so each cut lands on the downbeat
+        var sfxB = window.__soundFx, musicBar = sfxB && sfxB.on && sfxB.bar >= 0 ? sfxB.bar : -1;
+        var phraseAlpha = 1;
+        if (musicBar >= 0) {
+            var phrase = Math.floor(musicBar / 4), php = musicBar / 4 - phrase;
+            if (phrase !== lastPhrase) {
+                if (lastPhrase !== null) {
+                    msgIndex = (msgIndex + 1) % MESSAGES.length;
+                    sampleMessage(MESSAGES[msgIndex]);
+                }
+                lastPhrase = phrase;
+            }
+            if (php > 0.7) {
+                var nextM = MESSAGES[(msgIndex + 1) % MESSAGES.length];
+                if (nextM.video) ensureVideo(nextM.video);
+            }
+            phraseAlpha = php < 0.08 ? php / 0.08 : php > 0.92 ? (1 - php) / 0.08 : 1;
+            prevCycle = cycleFrame;
+        } else {
+            lastPhrase = null;
+        }
+        if (musicBar < 0 && cycleFrame < prevCycle) {
             msgIndex = (msgIndex + 1) % MESSAGES.length;
             sampleMessage(MESSAGES[msgIndex]);
-        } else if (prevCycle < MSG_DURATION && cycleFrame >= MSG_DURATION) {
+        } else if (musicBar < 0 && prevCycle < MSG_DURATION && cycleFrame >= MSG_DURATION) {
             // Prefetch the next message's video ~2s before it shows
             var next = MESSAGES[(msgIndex + 1) % MESSAGES.length];
             if (next.video) ensureVideo(next.video);
@@ -602,7 +658,9 @@ function trackEvent(path) {
         }
 
         var bannerAlpha = 1;
-        if (cycleFrame < FADE_FRAMES) {
+        if (musicBar >= 0) {
+            bannerAlpha = phraseAlpha;
+        } else if (cycleFrame < FADE_FRAMES) {
             bannerAlpha = cycleFrame / FADE_FRAMES;
         } else if (cycleFrame > MSG_DURATION + FADE_FRAMES) {
             bannerAlpha = 1 - (cycleFrame - MSG_DURATION - FADE_FRAMES) / FADE_FRAMES;
@@ -610,6 +668,21 @@ function trackEvent(path) {
 
         var radius = EFFECT_RADIUS + Math.sin(frame / 15) * 30;
         var radiusSq = radius * radius;
+
+        // Soundtrack (js/soundtrack.js), read live every frame:
+        // a dot-matrix LED equalizer hangs from the top edge (~200px)
+        // (bass in the centre, highs out to the edges) and thumps outward on every kick
+        var sfx = window.__soundFx, sOn = sfx && sfx.on;
+        var eqL = null, eqP = null, eqScale = 0, thump = 0, kickFlash = 0, peakTol = 0;
+        if (sOn) {
+            eqL = sfx.levels; eqP = sfx.peaks;
+            eqScale = (sfx.N - 1) / Math.max(1, Math.floor(cols / 2 / EQ_COLS));
+            thump = sfx.kick * 0.035;
+            kickFlash = sfx.kick * 0.08;
+            peakTol = 0.6 * H / rows;
+            var eqLen = Math.min(EQ_PX, H * 0.25);
+            if (!eqTextMapped) mapHeroText();
+        }
 
         for (var i = 0; i < particles.length; i++) {
             var p = particles[i];
@@ -639,9 +712,22 @@ function trackEvent(path) {
             p.y += p.vy;
 
             var glow = p.lit;
+            var px = p.x, py = p.y, eqPeak = false;
+            if (eqL) {
+                // Kick: a direct, sharp scale-out from the centre (not physics, so it stays tight)
+                var tk = thump * Math.min(p.dc, 800);
+                px += p.ux * tk; py += p.uy * tk;
+                if (!p.eqGap) {
+                    var bi = Math.min(sfx.N - 1, Math.round(p.eqSlot * eqScale));
+                    var top = Math.min(1, eqL[bi] * 1.25) * eqLen, rel = p.eqH - eqTop;
+                    if (rel >= 0 && rel <= top) glow = Math.max(glow, (0.35 + 0.65 * (rel / top)) * (p.eqUnder ? 0.25 : 1));
+                    else if (!p.eqUnder && rel >= 0 && Math.abs(rel - Math.min(1, eqP[bi] * 1.25) * eqLen) < peakTol && eqP[bi] > 0.04) { glow = 1; eqPeak = true; }
+                }
+            }
             var baseAlpha = themeLight
                 ? ((p.col + p.row) % 3 === 0 ? 0.32 : 0.22)
                 : ((p.col + p.row) % 3 === 0 ? 0.18 : 0.12);
+            baseAlpha += kickFlash;
             var alpha = baseAlpha + glow * 0.65;
             var r_c, g_c, b_c;
 
@@ -669,6 +755,7 @@ function trackEvent(path) {
                 g_c = Math.round(237 + glow * (hueCur[1] - 237));
                 b_c = Math.round(234 + glow * (hueCur[2] - 234));
             }
+            if (eqPeak) { r_c = themeLight ? 40 : 250; g_c = themeLight ? 36 : 248; b_c = themeLight ? 60 : 255; alpha = 0.95; }
             var color = 'rgba(' + r_c + ',' + g_c + ',' + b_c + ',' + alpha + ')';
 
             var shape = p.baseShape;
@@ -679,7 +766,7 @@ function trackEvent(path) {
             if (shape === 'dot') {
                 var dotR = (themeLight ? 0.7 : DOT_R) + glow * (pixelColor && currentIsImage ? 1.8 : 1.2);
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, dotR, 0, Math.PI * 2);
+                ctx.arc(px, py, dotR, 0, Math.PI * 2);
                 ctx.fillStyle = color;
                 ctx.fill();
             } else {
@@ -687,10 +774,10 @@ function trackEvent(path) {
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1 + glow * 0.5;
                 ctx.beginPath();
-                ctx.moveTo(p.x - s, p.y);
-                ctx.lineTo(p.x + s, p.y);
-                ctx.moveTo(p.x, p.y - s);
-                ctx.lineTo(p.x, p.y + s);
+                ctx.moveTo(px - s, py);
+                ctx.lineTo(px + s, py);
+                ctx.moveTo(px, py - s);
+                ctx.lineTo(px, py + s);
                 ctx.stroke();
             }
         }
@@ -971,6 +1058,7 @@ function trackEvent(path) {
         { l: 'Talking Vacuum',       k: 'Project', go: function() { focusCard('roborock'); } },
         { l: 'Auto-Caption',         k: 'Project', go: function() { focusCard('auto-caption'); } },
         { l: 'Toggle light / dark',  k: 'Action',  go: function() { var b = document.getElementById('themeToggle'); if (b) b.click(); } },
+        { l: 'Play / pause soundtrack', k: 'Action', go: function() { var b = document.getElementById('soundToggle'); if (b) b.click(); } },
         { l: 'Email me',             k: 'Action',  go: function() { var a = document.querySelector('.nav-cta'); if (a) a.click(); } },
         { l: 'Open CV',              k: 'Action',  go: function() { window.location.href = 'cv/'; } },
         { l: 'Download profile',     k: 'Action',  go: function() { window.open('ilan-lenzner-profile.pdf', '_blank', 'noopener'); } },

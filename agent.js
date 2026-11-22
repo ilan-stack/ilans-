@@ -23,7 +23,9 @@
             leadNote: 'Anything he should know? (optional)',
             leadSend: 'Send to Ilan',
             leadSent: 'Got it - passed straight to the real Ilan. He usually replies fast.',
-            leadError: "That didn't go through - try again or just email ilan@ilans.net."
+            leadError: "That didn't go through - try again or just email ilan@ilans.net.",
+            musicPlay: 'Play the soundtrack',
+            musicPause: 'Pause the soundtrack'
         },
         he: {
             greeting: "היי - אני AI אילן, התאום הדיגיטלי של אילן האמיתי. שאלו אותי כל דבר על העבודה שלו, הפרויקטים, או אם הוא האדם שאתם מחפשים. אני יודע רק דברים אמיתיים עליו - לכל השאר יש ilan@ilans.net.",
@@ -37,7 +39,9 @@
             leadNote: '(משהו שכדאי שידע? (לא חובה',
             leadSend: 'שלחו לאילן',
             leadSent: 'נשלח לאילן האמיתי - הוא בדרך כלל עונה מהר.',
-            leadError: 'משהו השתבש - נסו שוב או כתבו ל-ilan@ilans.net.'
+            leadError: 'משהו השתבש - נסו שוב או כתבו ל-ilan@ilans.net.',
+            musicPlay: 'הפעילו את הסאונדטרק',
+            musicPause: 'עצרו את הסאונדטרק'
         }
     };
     // Default to Hebrew only if the visitor's browser is Hebrew; the toggle
@@ -383,6 +387,31 @@
         return btn;
     }
 
+    /* ── Soundtrack: the agent emits [[music]] and a play button appears.
+       A real click is a user gesture, so the browser lets the music start
+       (the agent itself can't autoplay it). ── */
+    function showMusicButton() {
+        var toggle = document.getElementById('soundToggle');
+        if (!toggle) return;
+        var c = COPY[uiLang];
+        var playing = function() { return toggle.getAttribute('aria-pressed') === 'true'; };
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'agent-chip agent-play';
+        b.setAttribute('data-soundtrack', '');
+        var label = function() { b.textContent = (playing() ? '❚❚ ' + c.musicPause : '▶ ' + c.musicPlay); };
+        label();
+        // stay in sync when the music is toggled from the nav or the footer
+        new MutationObserver(label).observe(toggle, { attributes: true, attributeFilter: ['aria-pressed'] });
+        b.addEventListener('click', function() {
+            toggle.click();
+            track(playing() ? 'agent-music-play' : 'agent-music-pause');
+            label();
+        });
+        msgsEl.appendChild(b);
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
     /* ── Lead capture: the agent emits [[lead]] and this inline form
        appears; details go straight to the real Ilan. ── */
     function showLeadForm() {
@@ -681,6 +710,7 @@
                     maybeSwitchLang(clean);   // confirm the conversation language from the reply
                     history.push({ role: 'assistant', content: clean });
                     if (/\[\[lead\]\]/.test(answer)) showLeadForm();
+                    if (/\[\[music\]\]/.test(answer)) showMusicButton();
                     var speakBtn = attachSpeaker(aiEl, answer);
                     if (voiceMode && speakBtn) {
                         var pp = parseFocusParts(answer);

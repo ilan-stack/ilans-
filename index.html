@@ -132,7 +132,7 @@
     <link rel="preload" href="/fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/fonts/fonts.css?v=1">
-    <link rel="stylesheet" href="style.css?v=55">
+    <link rel="stylesheet" href="style.css?v=59">
 <!-- page transitions (js/pen-transition.js): cover the page before first paint when arriving from a transition -->
 <style>html.pen-arrive body::after{content:"";position:fixed;inset:0;z-index:2147483647;background:var(--bg,#0b0b0d);opacity:1;pointer-events:none}</style>
 <script>(function(){try{var d=document.documentElement,s=sessionStorage,a=+s.getItem('penArrive')||0,b=+s.getItem('penSoft')||0,n=Date.now();s.removeItem('penArrive');s.removeItem('penSoft');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(a&&n-a<5000)d.classList.add('pen-arrive');else if(b&&n-b<5000)d.classList.add('pen-arrive','pen-soft');else return;setTimeout(function(){d.classList.remove('pen-arrive','pen-soft')},3000);}catch(e){}})();</script>
@@ -157,6 +157,7 @@
             </div>
             <a href="mailto:ilan@ilans.net?subject=Hello%20from%20ilans.net" class="nav-cta">Contact</a>
             <button class="cmdk-hint" id="cmdkHint" aria-label="Open command menu" title="Command menu"><kbd>⌘</kbd>K</button>
+            <button class="sound-toggle" id="soundToggle" aria-label="Play soundtrack" aria-pressed="false" title="Soundtrack"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
                 <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                 <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -677,7 +678,7 @@
 
 <footer>
     <div class="container">
-        <p>© 2026 Ilan Lenzner · <span lang="he" dir="rtl">אילן לנצנר</span> · Tel Aviv <span class="footer-clock" id="tlvClock" aria-hidden="true"></span> · <a class="footer-he" href="https://ai.ilans.net/" hreflang="he" title="AI implementation services, in Hebrew">עברית</a></p>
+        <p>© 2026 Ilan Lenzner · <span lang="he" dir="rtl">אילן לנצנר</span> · Tel Aviv <span class="footer-clock" id="tlvClock" aria-hidden="true"></span> · <a class="footer-he" href="https://ai.ilans.net/" hreflang="he" title="AI implementation services, in Hebrew">עברית</a> · <button class="footer-np" id="nowPlaying" type="button" title="An AI-made soundtrack for this site" aria-label="Play the soundtrack, Voltage"><span class="np-dot" aria-hidden="true"></span><span class="np-label">Soundtrack: Voltage</span><span class="np-time" id="npTime"></span></button></p>
         <p class="footer-sign">Designed in Figma, shipped in <em>code</em>.</p>
     </div>
 </footer>
@@ -697,10 +698,11 @@
     </div>
 </div>
 
-<script src="main.js?v=39" defer></script>
+<script src="main.js?v=48" defer></script>
 <script src="intro.js?v=4" defer></script>
-<script src="agent.js?v=37" defer></script>
+<script src="agent.js?v=39" defer></script>
 <script src="js/pen-transition.js?v=4" defer></script>
+<script src="js/soundtrack.js?v=6" defer></script>
 <script data-goatcounter="https://ilans.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <style>
 /* Window Layouts card: the demo IS the product, so the thumbnail animates rather than
