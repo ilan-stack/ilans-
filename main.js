@@ -231,6 +231,9 @@ function trackEvent(path) {
     document.querySelectorAll('a[href$=".pdf"]').forEach(function(a) {
         a.addEventListener('click', function() { trackEvent('resume-click'); });
     });
+    document.querySelectorAll('a[href*="wa.me/"]').forEach(function(a) {
+        a.addEventListener('click', function() { trackEvent('whatsapp-assistant-click'); });
+    });
     document.querySelectorAll('a[href*="linkedin.com"]').forEach(function(a) {
         a.addEventListener('click', function() { trackEvent('linkedin-click'); });
     });
