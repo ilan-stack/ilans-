@@ -29,6 +29,7 @@ Works in Hebrew and English, in Tel Aviv or remote. Contact: ilan@ilans.net.
 ## Writing
 
 - [All writing](https://ilans.net/writing/): long-form posts on building AI tools, including the experiments that failed.
+- [How to choose someone to build AI tools for your creative team](https://ilans.net/writing/how-to-choose-someone-to-build-ai-tools-for-a-creative-team.html): seven questions to ask before hiring, from the side of the person who builds them.
 
 ## Optional
 

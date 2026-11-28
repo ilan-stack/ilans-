@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0d" id="themeColorMeta">
+  <script>(function(){try{var t=localStorage.getItem('theme');var light=t?(t==='light'):(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);if(light){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeColorMeta').setAttribute('content','#faf9f7');}}catch(e){}})();</script>
+  <title>How to choose someone to build AI tools for your creative team - Ilan Lenzner</title>
+  <meta name="description" content="Seven questions to ask before you hire someone to build AI tools for a creative or ad production team: where they start, where the tool lives, who designs it, how it is tested, where your files go, what number says it worked, and what they will tell you not to automate.">
+  <meta name="author" content="Ilan Lenzner">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="keywords" content="Ilan Lenzner, AI tools for creative teams, creative technologist, After Effects AI, ad production automation, design engineer, hiring an AI developer">
+
+  <link rel="canonical" href="https://ilans.net/writing/how-to-choose-someone-to-build-ai-tools-for-a-creative-team.html">
+  <meta property="og:title" content="How to choose someone to build AI tools for your creative team - Ilan Lenzner">
+  <meta property="og:description" content="Seven questions that separate a tool your designers will use every day from a demo that dies in a month.">
+  <meta property="og:image" content="https://ilans.net/images/og-card.png">
+  <meta property="og:url" content="https://ilans.net/writing/how-to-choose-someone-to-build-ai-tools-for-a-creative-team.html">
+  <meta property="og:type" content="article">
+  <meta property="article:author" content="Ilan Lenzner">
+  <meta property="article:published_time" content="2026-11-28">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How to choose someone to build AI tools for your creative team">
+  <meta name="twitter:description" content="Seven questions that separate a tool your designers will use every day from a demo that dies in a month.">
+  <meta name="twitter:image" content="https://ilans.net/images/og-card.png">
+
+  <link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png?v=5">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=5">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"TechArticle",
+    "headline":"How to choose someone to build AI tools for your creative team",
+    "description":"Seven questions to ask before hiring someone to build AI tools for a creative or ad production team, from the side of the person who builds them.",
+    "image":"https://ilans.net/images/og-card.png",
+    "datePublished":"2026-11-28","dateModified":"2026-11-28","inLanguage":"en",
+    "author":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner","url":"https://ilans.net/"},
+    "publisher":{"@type":"Person","@id":"https://ilans.net/#ilan","name":"Ilan Lenzner"},
+    "about":["AI Tools for Creative Teams","Creative Production","Hiring","Evaluation","Design Engineering"],
+    "mainEntityOfPage":"https://ilans.net/writing/how-to-choose-someone-to-build-ai-tools-for-a-creative-team.html",
+    "isPartOf":{"@id":"https://ilans.net/#website"}
+  }
+  </script>
+
+  <link rel="preload" href="../fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/instrument-serif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="writing.css?v=5">
+<!-- page transitions (js/pen-transition.js): cover the page before first paint when arriving from a transition -->
+<style>html.pen-arrive body::after{content:"";position:fixed;inset:0;z-index:2147483647;background:var(--bg,#0b0b0d);opacity:1;pointer-events:none}</style>
+<script>(function(){try{var d=document.documentElement,s=sessionStorage,a=+s.getItem('penArrive')||0,b=+s.getItem('penSoft')||0,n=Date.now();s.removeItem('penArrive');s.removeItem('penSoft');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(a&&n-a<5000)d.classList.add('pen-arrive');else if(b&&n-b<5000)d.classList.add('pen-arrive','pen-soft');else return;setTimeout(function(){d.classList.remove('pen-arrive','pen-soft')},3000);}catch(e){}})();</script>
+</head>
+<body class="c-violet">
+  <div id="progress"></div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a href="../index.html" class="logo">ILAN LENZNER<span>.</span></a>
+      <div class="nav-right">
+        <a href="index.html" class="back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All writing
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light or dark theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <header class="post-hero">
+      <p class="eyebrow">Writing / AI · Creative production</p>
+      <h1>How to choose someone to build <em>AI tools for your creative team</em></h1>
+      <p class="dek">Every creative and ad production team I talk to is asking the same thing: who should build our AI tools? The pitches all sound alike and every demo looks good. These are the seven questions I would ask, written from the side of the person who does the building. They apply to me too.</p>
+      <p class="byline">
+        <span>Ilan Lenzner</span><span>28 November 2026</span><span>~6 min read</span>
+        <span class="tags"><span class="tag">AI</span><span class="tag">Creative production</span><span class="tag">Hiring</span></span>
+      </p>
+    </header>
+
+    <article>
+      <p>A demo proves that the technology works. It does not prove that your designers will still be using the tool in six months. The gap between the two is where most creative AI projects die: a clever prototype in a browser tab that nobody opens after the second week, because it lives outside the work, guesses confidently on the hard cases, and saves time on a step that was never the slow one.</p>
+
+      <p>I have designed more than 45 AI production tools for playable-ad teams, and After Effects Hub, my set of AI modules inside After Effects, was used every day by a creative team of more than 100 people. The tools that stuck had a few things in common. The questions below are those things, turned around so you can ask them of anyone, including me.</p>
+
+      <h2>1. Do they start from your slowest step, on your real files?</h2>
+
+      <p>Someone who arrives with a finished product before they have watched your team work is going to sell you that product. A good start is boring: look at the work, find the step that eats the most hours, and see which files go in and out of it. Then prototype that one step on your actual files, not on a curated sample.</p>
+
+      <p><b>Ask:</b> which step would you automate first, and why that one?</p>
+
+      <h2>2. Will the tool live inside the software your team already uses?</h2>
+
+      <p>Designers do not want another tab. After Effects Hub puts ten AI modules (image expansion, upscaling, background removal, video generation, audio and copywriting) inside After Effects, so nobody leaves the timeline. That is a large part of why it was opened every day. A tool that makes people export, upload, wait and re-import gets used for a week.</p>
+
+      <p><b>Ask:</b> where will my team click to use this, and what do they have to leave to get there?</p>
+
+      <h2>3. Can they design the interface, not only wire up a model?</h2>
+
+      <p>The model is the easy part to replace. The interface is what decides adoption. When the same person designs the screens in Figma and ships the code, what the team tested is what they get, with nothing lost in a handoff. Before AI tools I spent years as a creative director and product designer, and that background matters more in this work than any single model choice.</p>
+
+      <p><b>Ask:</b> who designs what my designers will see, and can I try it before it is built?</p>
+
+      <h2>4. Have they tested it on inputs where the right answer is nothing?</h2>
+
+      <p>Every AI tool looks good on the examples chosen for the demo. The real test is the case where the honest answer is "I can't do this" or "there is nothing here". I build a control set of fake inputs before I trust a tool on real ones, because measuring on real inputs alone cannot tell you whether the model is confabulating. A tool that says when it is guessing is worth more than one that is always confident.</p>
+
+      <p><b>Ask:</b> what does it do with an input it should not be able to handle?</p>
+
+      <h2>5. Can it run without your assets leaving the building?</h2>
+
+      <p>Client assets, unreleased campaigns and licensed material often cannot go to a cloud AI service. That is less of a blocker than people assume. In one experiment I turned a $500 secondhand PC into a headless GPU server running more than 25 open models through one web app, with no cloud and no subscriptions. The limits are real, and finding them on your own files before you commit is the point.</p>
+
+      <p><b>Ask:</b> where do our files go, and what would it take to keep them in-house?</p>
+
+      <h2>6. What number will tell you it worked?</h2>
+
+      <p>"The team likes it" is not a result. Pick the step, time it before, time it after. With the AI character-animation system I led the UX for, that number was four hours per asset before and fifteen minutes after. If the person you are hiring cannot name the number they are aiming at, they cannot tell you whether they hit it.</p>
+
+      <p><b>Ask:</b> what will you measure, and who measures it?</p>
+
+      <h2>7. Will they tell you what is not worth automating?</h2>
+
+      <p>Some steps are worth a tool and some are not, and some are worth it only for a team three times your size. Someone who says AI can do all of it is either guessing or selling. The most useful thing in a first conversation is often a clear "not this one".</p>
+
+      <p><b>Ask:</b> what is a project you turned down, and why?</p>
+
+      <h2>Red flags</h2>
+
+      <ul>
+        <li>A finished product before they have seen how your team works.</li>
+        <li>A tool that lives in its own tab, away from the software people already use.</li>
+        <li>Only demos on hand-picked examples, never on your files.</li>
+        <li>No number that defines success.</li>
+        <li>"AI can handle all of it."</li>
+      </ul>
+
+      <div class="pull">A demo proves the technology works. The questions are about whether your team will still be using it in six months.</div>
+
+      <p>I build AI tools for creative and ad production teams, in Tel Aviv or remotely, in English and Hebrew. If you are weighing someone for this kind of work, these questions are a fair test for me as well. The details of how I work are on the <a href="../services/ai-tools-for-creative-teams.html">creative teams page</a>, and a Hebrew version of this guide, aimed at organizations bringing in AI more broadly, is <a href="https://ai.ilans.net/articles/how-to-choose-ai-implementer.html">on ai.ilans.net</a>.</p>
+    </article>
+
+    <div class="end">
+      <div class="morenav">
+        <a href="who-is-this-without-leaving-the-chat.html">
+          <div class="k">More writing</div>
+          <div class="t">Who is this, without leaving the chat</div>
+        </a>
+        <a class="next" href="build-the-fake-inputs-first.html">
+          <div class="k">Read next</div>
+          <div class="t">Build the fake inputs first</div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      Written by <a href="../index.html">Ilan Lenzner</a> - Creative Technologist &amp; Design Engineer, Tel Aviv.<br>
+      <a href="index.html">All writing</a>
+    </footer>
+  </div>
+
+  <script src="writing.js?v=3" defer></script>
+<script src="../js/pen-transition.js?v=4" defer></script>
+</body>
+</html>
